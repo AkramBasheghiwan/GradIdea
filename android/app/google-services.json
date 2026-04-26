@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526715549752",
+    "project_id": "gradhub-126e3",
+    "storage_bucket": "gradhub-126e3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526715549752:android:421a5f04add83079678ecd",
+        "android_client_info": {
+          "package_name": "com.example.graduation_management_idea_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6tnB5_6pMErFDZW_-kncj1Kx7gKgG3TU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
