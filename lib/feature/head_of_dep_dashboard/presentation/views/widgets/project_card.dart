@@ -23,26 +23,33 @@ class ProjectCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
       decoration: BoxDecoration(
-        color: AppColor.surface,
-        borderRadius: BorderRadius.circular(16.r),
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColor.onSurface.withValues(alpha:  0.06),
+            color: AppColor.onSurface.withValues(alpha: 0.06),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Blue side border
+          // الخط الجانبي الملون
           Positioned(
             right: 0,
             top: 0,
             bottom: 0,
-            width: 4.w,
-            child: Container(color: AppColor.primaryColor),
+            child: Container(
+              width: 6.w,
+              decoration: BoxDecoration(
+                gradient: AppColor.primaryGradient,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20.r),
+                  bottomRight: Radius.circular(20.r),
+                ),
+              ),
+            ),
           ),
           Padding(
             padding: EdgeInsets.all(20.w),
@@ -55,88 +62,88 @@ class ProjectCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 12.w,
-                        vertical: 4.h,
+                        vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.,
+                        color: AppColor.tertiaryFixed,
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Row(
                         children: [
                           Icon(
-                            Icons.pending,
+                            Icons.access_time_filled,
                             size: 14.sp,
                             color: AppColor.onTertiaryFixed,
                           ),
-                          SizedBox(width: 4.w),
+                          SizedBox(width: 6.w),
                           Text(
-                            AppStrings.pendingStatus,
-                            style: AppTextStyle.badgeText,
+                            AppStrings.statusPending,
+                            style: AppTextStyle.medium(14),
                           ),
                         ],
                       ),
                     ),
-                    Text(id, style: AppTextStyle.labelSmall),
+                    Text(
+                      id,
+                      style: TextStyle(
+                        color: AppColor.outline,
+                        fontSize: 12.sp,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 16.h),
-                Text(title, style: AppTextStyle.titleMedium),
+                Text(title, style: AppTextStyle.bold(18)),
                 SizedBox(height: 8.h),
                 Text(
                   description,
-                  style: AppTextStyle.bodyMedium,
+                  style: AppTextStyle.bold(16),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 16.h),
-                Divider(color: AppColor.outlineVariant.withValues(alpha:  0.2)),
-                Text(AppStrings.teamWork, style: AppTextStyle.labelSmall),
+                Divider(color: AppColor.outline.withValues(alpha: 0.1)),
+                SizedBox(height: 8.h),
+                Text(AppString.teamLabel, style: AppTextStyle.medium(16)),
                 SizedBox(height: 8.h),
                 Wrap(
                   spacing: 8.w,
                   children: team
                       .map(
-                        (name) => Chip(
+                        (member) => Chip(
+                          backgroundColor: AppColor.secondaryContainer
+                              .withValues(alpha: 0.2),
                           label: Text(
-                            name,
-                            style: AppTextStyle.bodyMedium.copyWith(
-                              fontSize: 12.sp,
+                            member,
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: const Color(0xFF004666),
                             ),
                           ),
-                          backgroundColor: AppColor.secondaryContainer
-                              .withOpacity(0.1),
-                          side: BorderSide.none,
-                          shape: const StadiumBorder(),
                         ),
                       )
                       .toList(),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 20.h),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 12.h,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.chevron_left, color: AppColor.white),
+                    label: const Text(
+                      AppStrings.viewDetails,
+                      style: TextStyle(
+                        color: AppColor.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      gradient: AppColor.primaryGradient,
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          AppStrings.viewDetails,
-                          style: AppTextStyle.buttonText,
-                        ),
-                        SizedBox(width: 8.w),
-                        Icon(
-                          Icons.chevron_left,
-                          color: Colors.white,
-                          size: 20.sp,
-                        ),
-                      ],
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primaryColor,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 12.h,
+                      ),
+                      shape: const StadiumBorder(),
                     ),
                   ),
                 ),

@@ -1,253 +1,218 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-// مسارات ملفاتك (تأكد منها)
-import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_project_card_skeleton.dart';
+import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_bloc.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_state_event.dart';
 
-// استيراد بطاقة المستخدم الاحترافية التي صممناها سابقاً
-import 'package:graduation_management_idea_system/feature/user/presentation/view/widgets/build_user_card.dart';
-
-class SearchUserViewBody extends StatefulWidget {
-  const SearchUserViewBody({super.key});
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
 
   @override
-  State<SearchUserViewBody> createState() => _SearchUserViewBodyState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchUserViewBodyState extends State<SearchUserViewBody> {
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _searchController = TextEditingController();
-  Timer? _debounce; // لتأخير البحث أثناء الكتابة للحفاظ على أداء السيرفر
+class _SearchPageState extends State<SearchPage> {
+  final _scrollController = ScrollController();
+  final _textController = TextEditingController();
+  late SearchBloc _searchBloc;
 
   @override
   void initState() {
     super.initState();
+    _searchBloc = context.read<SearchBloc>();
     _scrollController.addListener(_onScroll);
-
-    // استدعاء أولي لجلب البيانات عند فتح الشاشة (اختياري)
-    // context.read<SearchBloc>().add(FetchInitialData());
   }
 
   @override
   void dispose() {
+    _textController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _searchController.dispose();
-    _debounce?.cancel();
     super.dispose();
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) return;
     final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    // طلب الصفحة التالية عند الوصول لـ 90% من التمرير
-    if (currentScroll >= (maxScroll * 0.9)) {
-      context.read<SearchBloc>().add(FetchNextPage());
+    final currentScroll = _scrollController.position.pixels;
+    if (currentScroll >= (maxScroll * 0.9) &&
+        _searchBloc.state is SearchLoaded) {
+      final currentState = _searchBloc.state as SearchLoaded;
+      _searchBloc.add(FetchNextPage(currentState.currentQuery));
     }
-  }
-
-  // دالة البحث مع تأخير (Debounce)
-  void _onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      // قم بتغيير اسم الحدث (Event) حسب الموجود لديك في ملف search_state_event.dart
-      // context.read<SearchBloc>().add(SearchQueryChanged(query));
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background, // لون خلفية هادئ
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text(
+          'بحث المستخدمين',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Theme.of(context).canvasColor,
+        foregroundColor: Colors.black,
+        elevation: 0.5,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
-            // ==========================================
-            // 1. شريط البحث المبتكر (Floating Search Bar)
-            // ==========================================
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-              child:
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: _onSearchChanged,
-                      style: AppTextStyle.bodyLarge16NormalStyle,
-                      decoration: InputDecoration(
-                        hintText: 'ابحث عن مستخدم، إيميل، أو دور...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 14.sp,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: AppColor.primaryColor,
-                          size: 24.sp,
-                        ),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.clear,
-                                  color: Colors.grey.shade400,
-                                  size: 20.sp,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  _onSearchChanged(''); // تحديث البحث بعد المسح
-                                  setState(() {}); // لتحديث أيقونة الـ clear
-                                },
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16.h),
-                      ),
-                    ),
-                  ).animate().fadeIn().slideY(
-                    begin: -0.2,
-                    end: 0,
-                    duration: 500.ms,
-                  ),
-            ),
-
-            // ==========================================
-            // 2. عرض نتائج البحث مع التعامل مع الحالات
-            // ==========================================
-            Expanded(
-              child: BlocBuilder<SearchBloc, SearchState>(
-                builder: (context, state) {
-                  // -- حالة التحميل (Loading) --
-                  // افترض أن لديك حالة اسمها SearchLoading
-                  // if (state is SearchLoading) {
-                  //   return const Center(child: CircularProgressIndicator(color: AppColor.primaryColor));
-                  // }
-
-                  // -- حالة نجاح جلب البيانات (Loaded) --
-                  if (state is SearchLoaded) {
-                    final users = state.users;
-                    final hasReachedMax = state.hasReachedMax;
-
-                    // إذا كانت القائمة فارغة (لا توجد نتائج)
-                    if (users.isEmpty) {
-                      return _buildEmptyState();
-                    }
-
-                    // عرض قائمة المستخدمين
-                    return ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 10.h,
-                      ),
-                      physics:
-                          const BouncingScrollPhysics(), // تأثير تمرير ناعم
-                      itemCount: hasReachedMax
-                          ? users.length
-                          : users.length + 1,
-                      itemBuilder: (context, index) {
-                        // عرض مؤشر التحميل في نهاية القائمة (Pagination Loader)
-                        if (index >= users.length) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.h),
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 3),
-                            ),
-                          );
-                        }
-
-                        // عرض بطاقة المستخدم الاحترافية
-                        final user = users[index];
-                        return BuildUserCard(users: user, index: index);
-                      },
-                    );
-                  }
-
-                  // -- حالة الخطأ (Error) --
-                  // if (state is SearchError) {
-                  //   return _buildErrorState(state.message);
-                  // }
-
-                  // -- الحالة الافتراضية (قبل البحث) --
-                  return _buildInitialState();
-                },
-              ),
-            ),
+            const SizedBox(height: 20),
+            _buildSearchBar(),
+            const SizedBox(height: 20),
+            Expanded(child: _buildResults()),
           ],
         ),
       ),
     );
   }
 
-  // ==========================================
-  // أدوات مساعدة للحالات الفارغة والافتراضية
-  // ==========================================
-
-  Widget _buildInitialState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_search_rounded,
-            size: 80.sp,
-            color: Colors.grey.shade300,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            "ابدأ بكتابة اسم المستخدم للبحث...",
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 16.sp),
-          ),
-        ],
-      ).animate().fadeIn(duration: 600.ms),
+  Widget _buildSearchBar() {
+    return TextField(
+      controller: _textController,
+      autofocus: true,
+      onChanged: (query) => _searchBloc.add(SearchQueryChanged(query: query)),
+      decoration: InputDecoration(
+        hintText: 'ابحث بالاسم أو البريد (اكتب "error" للخطأ)',
+        hintStyle: TextStyle(color: Colors.grey.shade500),
+        prefixIcon: Icon(Icons.search, color: Colors.grey.shade600),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.clear, color: Colors.grey),
+          onPressed: () {
+            _textController.clear();
+            _searchBloc.add(ClearSearch());
+          },
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade200,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+      ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.search_off_rounded,
-                size: 80.sp,
-                color: AppColor.secondaryColor.withOpacity(0.5),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                "لا توجد نتائج مطابقة لبحثك",
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
+  Widget _buildResults() {
+    return BlocBuilder<SearchBloc, SearchState>(
+      builder: (context, state) {
+        if (state is SearchInitial) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.people_outline, size: 80, color: Colors.grey),
+                SizedBox(height: 16),
+                Text(
+                  'ابحث عن مستخدمين في النظام',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
                 ),
+              ],
+            ),
+          );
+        }
+        if (state is SearchLoading) {
+          return ListView.builder(
+            itemCount: 7,
+            itemBuilder: (context, index) => const ProjectCardSkeleton(),
+          );
+        }
+        if (state is SearchError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 80,
+                  color: Colors.redAccent,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  state.message,
+                  style: const TextStyle(fontSize: 18, color: Colors.redAccent),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+        if (state is SearchLoaded) {
+          if (state.users.isEmpty) {
+            return const Center(
+              child: Text(
+                'لا توجد نتائج لهذا البحث.',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
-              SizedBox(height: 8.h),
-              Text(
-                "تأكد من كتابة الاسم أو البريد بشكل صحيح",
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 14.sp),
-              ),
-            ],
-          ).animate().fadeIn().scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1, 1),
-          ),
+            );
+          }
+          return ListView.builder(
+            controller: _scrollController,
+            itemCount: state.hasReachedMax
+                ? state.users.length
+                : state.users.length + 1,
+            itemBuilder: (context, index) {
+              if (index >= state.users.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return UserListItem(user: state.users[index]);
+            },
+          );
+        }
+        return Container(); // حالة غير متوقعة
+      },
+    );
+  }
+}
+
+// -------- ودجت عرض عنصر المستخدم --------
+class UserListItem extends StatelessWidget {
+  final UserEntity user;
+  const UserListItem({super.key, required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 12.0,
+        ),
+        leading: CircleAvatar(
+          radius: 28,
+
+          backgroundColor: Colors.grey.shade200,
+        ),
+        title: Text(
+          user.name,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Text(
+          user.email,
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios_rounded,
+          size: 16,
+          color: Colors.grey,
+        ),
+        onTap: () {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text('تم الضغط على ${user.name}')),
+            );
+        },
+      ),
     );
   }
 }

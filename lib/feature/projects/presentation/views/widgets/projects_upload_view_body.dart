@@ -1,21 +1,20 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_area.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/custom_build_select_year.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_field.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_form.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_file_area.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_select_major.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_submit_buttom.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProjectUploadViewBody extends StatefulWidget {
   final bool isLoading;
-  final ProjectEntity?
-  projects; // إذا كان null يعني إضافة، وإذا كان يحمل بيانات يعني تعديل
+  final ProjectEntity? projects;
 
   const ProjectUploadViewBody({
     required this.isLoading,
@@ -28,15 +27,14 @@ class ProjectUploadViewBody extends StatefulWidget {
 }
 
 class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
-  // 1. تعريف مفتاح الفورم للتحقق (Validation)
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
-  final TextEditingController _deptController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _studentsController = TextEditingController();
-  final TextEditingController _supervisorController = TextEditingController();
+  // Controllers
+  late final TextEditingController _nameController;
+  late final TextEditingController _descController;
+  late final TextEditingController _yearController;
+  late final TextEditingController _studentsController;
+  late final TextEditingController _supervisorController;
 
   String? _selectedDept;
 
@@ -45,38 +43,306 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
   @override
   void initState() {
     super.initState();
-    _initData();
-  }
-
-  void _initData() {
-    if (isEditing) {
-      _nameController.text = widget.projects!.name;
-      _descController.text = widget.projects!.description;
-      _deptController.text = widget.projects!.department;
-      _selectedDept = widget.projects!.department;
-      _yearController.text = widget.projects!.year
-          .toString(); // افتراض أن السنة رقم أو نص
-
-      // افتراض أن الطلاب مصفوفة (List)، نقوم بتحويلها لنص مفصول بفواصل لعرضه في الحقل
-      _studentsController.text = widget.projects!.students.join(', ');
-
-      _supervisorController.text = widget.projects!.supervisor;
-    }
+    _nameController = TextEditingController(text: widget.projects?.name);
+    _descController = TextEditingController(text: widget.projects?.description);
+    _yearController = TextEditingController(
+      text: widget.projects?.year.toString() ?? '',
+    );
+    _studentsController = TextEditingController(
+      text: widget.projects?.students.join(', '),
+    );
+    _supervisorController = TextEditingController(
+      text: widget.projects?.supervisor,
+    );
+    _selectedDept = widget.projects?.department;
   }
 
   @override
   void dispose() {
-    // لا تقم باستدعاء دالة التهيئة هنا أبداً
     _nameController.dispose();
     _descController.dispose();
-    _deptController.dispose();
     _yearController.dispose();
     _studentsController.dispose();
     _supervisorController.dispose();
     super.dispose();
   }
 
-  void _submitProject() {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          // استخدام AlwaysScrollableScrollPhysics لجعل التمرير يعمل دائماً بسلاسة
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+          child: Form(
+            key: _formKey,
+            autovalidateMode:
+                AutovalidateMode.onUserInteraction, // تفعيل التحقق التلقائي
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                SizedBox(height: 25.h),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     ProjectUploadBuildField(
+                //       controller: _descController,
+                //       label: AppStrings.projectDesc,
+                //       hint: "اكتب وصفاً مختصراً للمشروع...",
+                //       icon: Icons.description_outlined,
+                //       maxLines: 4,
+                //       validator: (v) =>
+                //           v!.length < 10 ? 'الوصف قصير جداً' : null,
+                //     ),
+                //     SizedBox(height: 8.h),
+
+                //     // زر مسح الوصف باستخدام BlocBuilder
+                //     Align(
+                //       alignment: AlignmentDirectional.centerEnd,
+                //       child:
+                //           BlocBuilder<UploadProjectCubit, UploadProjectState>(
+                //             builder: (context, state) {
+                //               if (state.status == UploadProjectStatus.scanImage) {
+                //                 return Padding(
+                //                   padding: EdgeInsets.only(
+                //                     left: 10.w,
+                //                     right: 10.w,
+                //                   ),
+                //                   child: SizedBox(
+                //                     width: 20.w,
+                //                     height: 20.w,
+                //                     child: const CircularProgressIndicator(
+                //                       strokeWidth: 2,
+                //                     ),
+                //                   ),
+                //                 );
+                //               }
+
+                //               return TextButton.icon(
+                //                 onPressed: () {
+                //                   // استدعاء الدالة من الكيوبت
+                //                   context
+                //                       .read<UploadProjectCubit>()
+                //                       .scanDescriptionFromCamera();
+                //                 },
+                //                 icon: Icon(
+                //                   Icons.document_scanner_outlined,
+                //                   size: 18.sp,
+                //                   color: AppColor.primaryColor,
+                //                 ),
+                //                 label: Text(
+                //                   "مسح الوصف بالكاميرا",
+                //                   style: AppTextStyle.bodyMedium.copyWith(
+                //                     color: AppColor.primaryColor,
+                //                     fontWeight: FontWeight.bold,
+                //                     fontSize: 13.sp,
+                //                   ),
+                //                 ),
+                //                 style: TextButton.styleFrom(
+                //                   padding: EdgeInsets.symmetric(
+                //                     horizontal: 12.w,
+                //                     vertical: 6.h,
+                //                   ),
+                //                   backgroundColor: AppColor.primaryColor
+                //                       .withValues(alpha: 0.05),
+                //                   shape: RoundedRectangleBorder(
+                //                     borderRadius: BorderRadius.circular(8.r),
+                //                   ),
+                //                 ),
+                //               );
+                //             },
+                //           ),
+                //     ),
+                //   ],
+                // ),
+                // 1. قسم تفاصيل المشروع
+                _buildSectionContainer(
+                  title: "تفاصيل المشروع",
+                  icon: Icons.lightbulb_outline,
+                  children: [
+                    ProjectUploadBuildField(
+                      controller: _nameController,
+                      label: AppStrings.projectName,
+                      hint: "مثلاً: نظام إدارة ذكي",
+                      icon: Icons.title,
+                      validator: (v) => v!.isEmpty ? 'اسم المشروع مطلوب' : null,
+                    ),
+                    SizedBox(height: 15.h),
+                    ProjectUploadBuildField(
+                      controller: _descController,
+                      label: AppStrings.projectDesc,
+                      hint: "اكتب وصفاً مختصراً للمشروع...",
+                      icon: Icons.description_outlined,
+                      maxLines: 4,
+                      validator: (v) =>
+                          v!.length < 10 ? 'الوصف قصير جداً' : null,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+
+                // 2. قسم التصنيف (تخصص وسنة)
+                _buildSectionContainer(
+                  title: "التصنيف الزمني والأكاديمي",
+                  icon: Icons.category_outlined,
+                  children: [
+                    Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start, // لضمان استقامة الحقول
+                      children: [
+                        Expanded(
+                          child: ProjectUploadBuildSelectMajor(
+                            onChanged: (val) =>
+                                setState(() => _selectedDept = val),
+                            selectedValue: _selectedDept,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: ProjectUploadBuildSelectYear(
+                            selectedValue: _yearController.text.isEmpty
+                                ? null
+                                : _yearController.text,
+                            onChanged: (String? value) {
+                              setState(() {
+                                _yearController.text = value ?? '';
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+
+                // 3. قسم الفريق
+                _buildSectionContainer(
+                  title: "فريق العمل",
+                  icon: Icons.groups_outlined,
+                  children: [
+                    ProjectUploadBuildField(
+                      controller: _supervisorController,
+                      label: "الدكتور المشرف",
+                      hint: "اسم الدكتور المشرف",
+                      icon: Icons.person_search_outlined,
+                    ),
+                    SizedBox(height: 15.h),
+                    ProjectUploadBuildField(
+                      controller: _studentsController,
+                      label: "أعضاء الفريق",
+                      hint: "الأسماء (افصل بينهم بفاصلة ,)",
+                      icon: Icons.group_add_outlined,
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+
+                // 4. المرفقات
+                _buildSectionContainer(
+                  title: "المرفقات والملفات",
+                  icon: Icons.cloud_upload_outlined,
+                  children: [const ProjectFileUploadArea()],
+                ),
+                SizedBox(height: 35.h),
+
+                // 5. زر الإرسال
+                ProjectUploadBuildSubmitButtom(
+                  isLoading: widget.isLoading,
+                  onPressed: _submitProposal,
+                ),
+
+                // مساحة إضافية في الأسفل لضمان راحة التمرير عند ظهور الكيبورد
+                SizedBox(height: 40.h),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // دالة بناء الهيدر (بقيت كما هي مع تحسين بسيط في التنسيق)
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          isEditing ? "تحديث المشروع" : "مقترح جديد",
+          style: AppTextStyle.titleLarge18NormalStyle.copyWith(
+            fontSize: 24.sp,
+            fontWeight: FontWeight.w800,
+            color: AppColor.primaryColor,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        Text(
+          isEditing
+              ? "قم بتعديل البيانات المطلوبة أدناه"
+              : AppStrings.uploadSubTitle,
+          style: AppTextStyle.bodyMedium.copyWith(
+            color: Colors.grey.withValues(alpha: 0.7),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // دالة بناء القسم (Container)
+  Widget _buildSectionContainer({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20.sp, color: AppColor.primaryColor),
+              SizedBox(width: 8.w),
+              Text(
+                title,
+                style: AppTextStyle.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.sp,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            child: Divider(
+              color: Colors.grey.withValues(alpha: 0.1),
+              thickness: 1,
+            ),
+          ),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  void _submitProposal() {
     if (_formKey.currentState!.validate()) {
       final studentsList = _studentsController.text
           .split(',')
@@ -89,158 +355,21 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
           id: widget.projects!.id!,
           name: _nameController.text,
           description: _descController.text,
-          department: _deptController.text,
+          department: _selectedDept ?? '',
           year: int.tryParse(_yearController.text) ?? DateTime.now().year,
           students: studentsList,
           supervisor: _supervisorController.text,
         );
-        log("تم التحقق بنجاح! جاهز لتعديل المشروع.");
       } else {
         context.read<UploadProjectCubit>().submitProject(
           name: _nameController.text,
           description: _descController.text,
-          department: _deptController.text,
+          department: _selectedDept ?? '',
           year: int.tryParse(_yearController.text) ?? DateTime.now().year,
           students: studentsList,
           supervisor: _supervisorController.text,
         );
-        log("تم التحقق بنجاح! جاهز لإرسال مشروع جديد.");
       }
-    } else {
-      log("يرجى ملء جميع الحقول المطلوبة.");
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              isEditing ? "تعديل بيانات المشروع" : AppStrings.uploadSubTitle,
-              style: AppTextStyle.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 25.h),
-
-            // 1. قسم معلومات المشروع
-            ProjectUploadBuildForm(
-              title: "معلومات المشروع",
-              icon: Icons.assignment_outlined,
-              children: [
-                ProjectUploadBuildField(
-                  controller: _nameController,
-                  label: AppStrings.projectName,
-                  hint: "مثلاً: نظام إدارة ذكي",
-                  icon: Icons.title,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'يرجى إدخال اسم المشروع';
-                    }
-                    if (value.length < 5) {
-                      return 'اسم المشروع يجب أن يكون 5 أحرف على الأقل';
-                    }
-                    return null;
-                  },
-                ),
-                ProjectUploadBuildField(
-                  controller: _descController,
-                  label: AppStrings.projectDesc,
-                  hint: "اكتب وصفاً مختصراً للمشروع...",
-                  icon: Icons.description,
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'يرجى كتابة وصف للمشروع';
-                    }
-                    if (value.length < 20) {
-                      return 'الوصف قصير جداً، يرجى التفصيل أكثر (20 حرفاً على الأقل)';
-                    }
-                    return null;
-                  },
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ProjectUploadBuildSelectMajor(
-                        onChanged: (String? value) {
-                          setState(() {
-                            _selectedDept = value;
-                            _deptController.text = value ?? '';
-                          });
-                        },
-                        selectedValue: _selectedDept,
-                      ),
-                    ),
-                    SizedBox(width: 15.w),
-                    Expanded(
-                      child: ProjectUploadBuildField(
-                        controller: _yearController,
-                        label: "السنة",
-                        hint: "2026-2025", // يمكنك جعله ديناميكي أيضاً
-                        icon: Icons.calendar_today_outlined,
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'مطلوب';
-                          if (int.tryParse(value) == null) return 'أرقام فقط';
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-
-            // 2. قسم فريق العمل (Team Info)
-            ProjectUploadBuildForm(
-              title: "فريق العمل والمشرف",
-              icon: Icons.groups_outlined,
-              children: [
-                ProjectUploadBuildField(
-                  controller: _studentsController,
-                  label: AppStrings.studentsNames,
-                  hint: "أدخل الأسماء مفصولة بفاصلة (,)",
-                  icon: Icons.people_outline,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'يرجى إدخال أسماء الطلاب';
-                    }
-                    return null;
-                  },
-                ),
-                ProjectUploadBuildField(
-                  controller: _supervisorController,
-                  label: AppStrings.supervisorName,
-                  hint: "اسم الدكتور المشرف",
-                  icon: Icons.person_outline,
-                  validator: (value) =>
-                      value!.isEmpty ? 'يرجى إدخال اسم المشرف' : null,
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-
-            // 3. منطقة رفع الملفات (File Upload Area)
-            const ProjectFileUploadArea(),
-            SizedBox(height: 40.h),
-
-            // 4. زر الإرسال الرئيسي (Submit Button)
-            ProjectUploadBuildSubmitButtom(
-              isLoading: widget.isLoading,
-              onPressed: _submitProject,
-            ),
-            SizedBox(height: 40.h),
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -12,7 +12,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.7),
+        backgroundColor: Colors.white.withValues(0.7),
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
@@ -65,7 +65,7 @@ class DashboardPage extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(32.w),
       decoration: BoxDecoration(
-        color: AppColor.primary.withOpacity(0.05),
+        color: AppColor.primary.withValues(0.05),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: AppColor.outlineVariant,

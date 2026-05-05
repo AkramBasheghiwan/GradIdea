@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+//import 'package:google_generative_ai/google_generative_ai.dart';
+//import 'package:graduation_management_idea_system/core/utils/extract_text_frome_image.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/uploud_project.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_state.dart';
@@ -11,9 +13,49 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
   UploadProjectCubit({required this.repository}) : super(UploadProjectState());
 
   // ==========================================
-  // 1. دوال التعامل مع الملفات
-  // ==========================================
+  // 1.   دالة مسح وصف المشروع باستخدام Gemini
+  // // ==========================================
+  // Future<void> scanDescriptionWithGemini() async {
+  //   emit(state.copyWith(status: UploadProjectStatus.loading));
 
+  //   try {
+  //     // final ImagePicker picker = ImagePicker();
+  //     // final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+  //     if (image == null) {
+  //       emit(state.copyWith(status: UploadProjectStatus.initial));
+  //       return;
+  //     }
+
+  //     // تحويل الصورة إلى bytes لإرسالها
+  //     final bytes = await image.readAsBytes();
+
+  //     final extractText = ExtractTextFromeImage();
+  //     final response = await extractText.extractTextFromImage(
+  //       DataPart('image/jpeg', bytes),
+  //     );
+
+  //     if (response.isNotEmpty) {
+  //       emit(state.copyWith(status: UploadProjectStatus.scanImage));
+  //     } else {
+  //       emit(
+  //         state.copyWith(
+  //           status: UploadProjectStatus.error,
+  //           errorMessage: 'لم يستطع الذكاء الاصطناعي قراءة النص',
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     emit(
+  //       state.copyWith(
+  //         status: UploadProjectStatus.error,
+  //         errorMessage: 'حدث خطأ أثناء الاتصال بـ Gemini',
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // دالة لاختيار ملف المشروع من الجهاز
   Future<void> pickProjectFile() async {
     try {
       FilePickerResult? result = await FilePicker.pickFiles(

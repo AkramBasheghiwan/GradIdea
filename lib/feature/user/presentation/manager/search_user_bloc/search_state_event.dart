@@ -11,7 +11,10 @@ class SearchQueryChanged extends SearchEvent {
   SearchQueryChanged({required this.query});
 }
 
-class FetchNextPage extends SearchEvent {}
+class FetchNextPage extends SearchEvent {
+  final String query;
+  FetchNextPage(this.query);
+}
 
 class ClearSearch extends SearchEvent {}
 

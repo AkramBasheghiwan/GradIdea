@@ -175,4 +175,15 @@ class AppStrings {
   static const String improvementTitle = "تحسين الفكرة؟";
   static const String similarProjectsTitle = "مشاريع سابقة مشابهة";
   static const String matchingResults = "3 نتائج مطابقة";
+
+  /////////////////////
+
+  static const String headerTitle = "رئيس القسم";
+  static const String mainTitle = "قائمة المشاريع المعلقة";
+  static const String mainSubtitle = "بانتظار المراجعة والاعتماد النهائي";
+  static const String statusPending = "قيد الانتظار";
+  static const String teamLabel = "فريق العمل";
+  static const String viewDetails = "عرض التفاصيل";
+  static const String addNewProject = "إضافة مشروع مخصص";
+  static const String addNewProjectSub = "أرشفة مشروع يدوي في النظام";
 }

@@ -6,25 +6,37 @@ import 'package:graduation_management_idea_system/core/services/file_servicrs/fi
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-abstract class ProjectRemoteDataSource {
+abstract class UploadProjectRemoteDataSource {
   Future<List<ProjectModel>> findSimilarProjects(String projectDescription);
   Future<void> uploadProject(ProjectModel project);
   Future<void> updateProject(ProjectModel project);
   Future<void> deleteProject(String projectId);
+  Future<List<ProjectModel>> fetchMyProjects({required String status});
+  Future<List<ProjectModel>> fetchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  });
+  Future<void> updateProjectsStatus(String projectId, String newStatus);
+  Future<void> updateProjectsStatusReject({
+    required int id,
+    required String status,
+    String? reason,
+  });
 }
 
-class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
+class UploadProjectRemoteDataSourceImpl
+    implements UploadProjectRemoteDataSource {
   final SupabaseClient supabase;
   late final GenerativeModel _embeddingModel;
 
-  ProjectRemoteDataSourceImpl({required this.supabase}) {
+  UploadProjectRemoteDataSourceImpl({required this.supabase}) {
     const apiKey = 'AIzaSyAmqZtjZHYAV4Z3HNVwHn60yVNFbkiPBgk';
     _embeddingModel = GenerativeModel(
       model: 'gemini-embedding-001',
       apiKey: apiKey,
     );
   }
-
+  final String table = 'projects';
   // ==========================================
   // 0. دالة مساعدة لتوليد الـ Vector
   // ==========================================
@@ -40,11 +52,10 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       );
       return embeddingResult.embedding.values;
     } on GenerativeAIException catch (e) {
-      // 🚨 الطباعة هنا لاكتشاف الخطأ
-      log("❌ خطأ Gemini: ${e.message}");
+      log(" خطأ Gemini: ${e.message}");
       throw ServerException('فشل الذكاء الاصطناعي: ${e.message}');
     } catch (e) {
-      log("❌ خطأ غير متوقع في Gemini: $e");
+      log(" خطأ غير متوقع في Gemini: $e");
       throw ServerException('حدث خطأ أثناء معالجة نصوص المشروع: $e');
     }
   }
@@ -58,20 +69,20 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
     try {
       String? fileUrl;
 
-      log("⏳ بدأ الرفع: التحقق من وجود ملف...");
+      log(" بدأ الرفع: التحقق من وجود ملف...");
       if (project.projectFile != null) {
-        log("⏳ جاري رفع الملف لـ Supabase Storage...");
-        // 🚨 إذا كانت المشكلة هنا، ستتوقف الطباعة
+        log(" جاري رفع الملف لـ Supabase Storage...");
+
         fileUrl = await AppFileUpload.uploadFile(
           project.projectFile!,
           supabase,
         );
-        log("✅ تم رفع الملف: $fileUrl");
+        log(" تم رفع الملف: $fileUrl");
       }
 
-      log("⏳ جاري توليد المتجه (Vector)...");
+      log(" جاري توليد المتجه (Vector)...");
       final vectorArray = await _generateEmbeddingVector(project);
-      log("✅ تم توليد المتجه بنجاح");
+      log(" تم توليد المتجه بنجاح");
 
       final projectData = project.toMap();
       if (fileUrl != null) {
@@ -79,18 +90,18 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       }
       projectData['embedding_vector'] = vectorArray;
 
-      log("⏳ جاري إرسال البيانات: $projectData");
+      log(" جاري إرسال البيانات: $projectData");
       await supabase.from('projects').insert(projectData);
-      log("✅ تم حفظ المشروع بنجاح!");
+      log(" تم حفظ المشروع بنجاح!");
     } on PostgrestException catch (e) {
-      // 🚨 طباعة تفاصيل خطأ قاعدة البيانات
+      //  طباعة تفاصيل خطأ قاعدة البيانات
       log(
-        "❌ خطأ Database (Postgrest): كود=${e.code}, رسالة=${e.message}, تفاصيل=${e.details}",
+        " خطأ Database (Postgrest): كود=${e.code}, رسالة=${e.message}, تفاصيل=${e.details}",
       );
       throw ServerException('خطأ قاعدة البيانات: ${e.message}');
     } catch (e) {
-      // 🚨 طباعة أي خطأ آخر (مثل StorageException لو جاء من AppFileUpload)
-      log("❌ خطأ عام أثناء الرفع: $e");
+      //  طباعة أي خطأ آخر (مثل StorageException لو جاء من AppFileUpload)
+      log(" خطأ عام أثناء الرفع: $e");
       if (e is ServerException)
         rethrow; // يرمي الـ ServerException القادم من الدوال المساعدة
       throw ServerException('حدث خطأ غير متوقع: $e');
@@ -146,7 +157,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       final projectData = project.toMap();
       projectData['embedding_vector'] = vectorArray;
 
-      await supabase.from('projects').update(projectData).eq('id', project.id!);
+      await supabase.from(table).update(projectData).eq('id', project.id!);
     } on PostgrestException catch (e) {
       _handleDatabaseError(e, 'تحديث المشروع');
     } catch (e) {
@@ -161,7 +172,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
   @override
   Future<void> deleteProject(String projectId) async {
     try {
-      await supabase.from('projects').delete().eq('id', projectId);
+      await supabase.from(table).delete().eq('id', projectId);
     } on PostgrestException catch (e) {
       _handleDatabaseError(e, 'حذف المشروع');
     } catch (e) {
@@ -180,6 +191,104 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       throw ServerException(
         'خطأ في قاعدة البيانات ($operationName): ${e.message}',
       );
+    }
+  }
+
+  @override
+  Future<List<ProjectModel>> fetchMyProjects({required String status}) async {
+    try {
+      final response = await supabase
+          .from(table)
+          .select()
+          .eq('status', status)
+          .order('created_at', ascending: false);
+
+      return (response as List)
+          .map((data) => ProjectModel.fromMap(data))
+          .toList();
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
+    }
+  }
+
+  @override
+  Future<List<ProjectModel>> fetchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  }) async {
+    try {
+      final response = await supabase
+          .from(table)
+          .select()
+          .eq('department', departmentId)
+          .eq('status', status)
+          .order('created_at', ascending: false);
+
+      return (response as List)
+          .map((data) => ProjectModel.fromMap(data))
+          .toList();
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
+    }
+  }
+
+  @override
+  Future<void> updateProjectsStatus(String projectId, String newStatus) async {
+    try {
+      final response = await supabase
+          .from(table)
+          .update({'status': newStatus})
+          .eq('id', projectId);
+
+      if (response.error != null) {
+        throw ServerException(
+          'فشل تحديث حالة المشروع: ${response.error!.message}',
+        );
+      }
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
+    }
+  }
+
+  @override
+  Future<void> updateProjectsStatusReject({
+    required int id,
+    required String status,
+    String? reason,
+  }) async {
+    try {
+      final response = await supabase
+          .from(table)
+          .update({'status': status, 'rejection_reason': reason})
+          .eq('id', id);
+
+      if (response.error != null) {
+        throw ServerException(
+          'فشل تحديث حالة المشروع: ${response.error!.message}',
+        );
+      }
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
     }
   }
 }

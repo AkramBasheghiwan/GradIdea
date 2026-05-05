@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/foreget_passwords_cubit.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/forget_password_states.dart';
-import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/forget_password_new_screan_body.dart';
+//import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/forget_password_new_screan_body.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/forgetpassword_new_email.dart';
 
 class ForgotPasswordOtpScreen extends StatefulWidget {
-  final String email; // نحتاج الإيميل لإرساله للـ Cubit
+  final String email;
 
   const ForgotPasswordOtpScreen({super.key, required this.email});
 
@@ -32,11 +33,10 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
       body: BlocConsumer<ForgotPasswordCubits, ForgotPasswordStates>(
         listener: (context, state) {
           if (state is ForgotPasswordError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
+            AppSnackBar.show(
+              context: context,
+              message: state.message,
+              type: SnackBarType.error,
             );
           } else if (state is ForgotPasswordCodeVerified) {
             // الانتقال لشاشة كلمة المرور الجديدة

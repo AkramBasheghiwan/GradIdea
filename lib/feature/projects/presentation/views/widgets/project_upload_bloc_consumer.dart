@@ -5,7 +5,8 @@ import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_state.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/projects_upload_view_body.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/uploud_projects_body.dart';
+//import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/projects_upload_view_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +26,13 @@ class ProjectUploadBlocConsumer extends StatelessWidget {
           AppStrings.uploadTitle,
           style: AppTextStyle.titleLarge18NormalStyle.copyWith(fontSize: 20.sp),
         ),
+        //    if (state is UploadProjectScanSuccess) {
+        //   _descController.text = state.scannedText;
+        // } else if (state is UploadProjectScanFailure) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text(state.errMessage)),
+        //   );
+        // }
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(
@@ -50,8 +58,9 @@ class ProjectUploadBlocConsumer extends StatelessWidget {
             log(state.errorMessage!);
           }
         },
+
         builder: (context, state) {
-          return ProjectUploadViewBody(
+          return ProjectUploadViewBodys(
             isLoading: state.status == UploadProjectStatus.loading,
           );
         },

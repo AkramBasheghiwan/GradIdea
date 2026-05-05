@@ -11,4 +11,17 @@ class AppRoutes {
   static const String splash = '/splash';
   static const String userView = '/userView';
   static const String mapperView = '/mapperView';
+  static const String projectDetail = '/projectDetail';
+  static const String uploudProject = 'uploudproject';
+  static const String aiValidationIdea = 'aivalidationidea';
+
+  static const String myProject = 'myproject';
+  static const String exploureProjects = 'exploureprojects';
+  static const String searchProjects = 'searchprojects';
+  static const String searchProposal = 'searchproposal';
+  static const String proposalDetail = '/proposalDetail';
+  static const String uploudProposal = '/uploudpropsal';
+  static const String myproposal = '/myproposal';
+  static const String exploureProposal = '/exploureproposal';
+  static const String supervisorProposal = 'supervisorproposal';
 }

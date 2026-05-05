@@ -21,9 +21,7 @@ class HeadOfDepartmentRepositoryImpl implements HeadRepository {
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(
-        NetworkFailure('An unexpected error occurred: ${e.toString()}'),
-      );
+      return const Left();
     }
   }
 

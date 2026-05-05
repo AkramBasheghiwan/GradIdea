@@ -11,7 +11,10 @@ class UsersCubit extends Cubit<UsersState> {
 
   UsersCubit({required this.userRepository, required this.role})
     : super(UsersInitial());
-
+  //List<UserEntity> _currentUser = [];
+  // int _currentPage = 0;
+  // bool boolReachedMax = false;
+  // bool _isFetchingMore = false;
   Future<void> fetchUsers() async {
     //if (state is UsersLoaded && !isRefresh) return;
     emit(UsersLoading());

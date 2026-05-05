@@ -2,378 +2,462 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
-
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_strings.dart';
 import '../../../../../core/utils/app_text_style.dart';
 
 class ProjectDetailsViewBody extends StatelessWidget {
-  final ProjectEntity? projects;
+  const ProjectDetailsViewBody({super.key, required this.projects});
 
-  const ProjectDetailsViewBody({super.key, this.projects});
+  final ProjectEntity projects;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background,
-
-      appBar: AppBar(
-        backgroundColor: AppColor.primaryColor,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          "تفاصيل المشروع",
-          style: AppTextStyle.titleLarge18NormalStyle.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      // 2. المحتوى القابل للتمرير
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ترويسة المشروع (الاسم + التخصص والسنة)
-            _buildHeaderSection(),
-
-            Padding(
-              padding: EdgeInsets.all(20.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // نبذة عن المشروع
-                  _buildSectionTitle(
-                    AppStrings.aboutProject,
-                    Icons.info_outline,
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildDescriptionText(),
-
-                  SizedBox(height: 30.h),
-
-                  // المشرف
-                  _buildSectionTitle(
-                    AppStrings.supervisor,
-                    Icons.person_pin_outlined,
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildSupervisorCard(),
-
-                  SizedBox(height: 30.h),
-
-                  // أعضاء الفريق
-                  _buildSectionTitle(
-                    AppStrings.teamMembers,
-                    Icons.groups_outlined,
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildTeamList(),
-
-                  SizedBox(height: 20.h),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      // 3. أزرار الإجراءات السفلية
-      bottomNavigationBar: _buildActionButtons(),
-    );
-  }
-
-  // ==========================================
-  // الهيدر العلوي (يحتوي على اسم المشروع والعلامات)
-  // ==========================================
-  Widget _buildHeaderSection() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        left: 20.r,
-        right: 20.r,
-        bottom: 30.h,
-        top: 10.h,
-      ),
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30.r),
-          bottomRight: Radius.circular(30.r),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          Text(
-            projects?.name ?? "اسم المشروع غير متوفر",
-            style: AppTextStyle.wellComeText.copyWith(
-              fontSize: 22.sp,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              height: 1.4,
-            ),
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              _buildInfoChip(
-                Icons.calendar_today,
-                projects?.year.toString() ?? "السنة غير محددة",
+          /// background glow
+          Positioned(
+            top: -120.h,
+            right: -60.w,
+            child: Container(
+              width: 280.w,
+              height: 280.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.primaryColor.withValues(alpha: .08),
               ),
-              SizedBox(width: 12.w),
-              _buildInfoChip(
-                Icons.school_outlined,
-                projects?.department ?? "التخصص غير محدد",
+            ),
+          ),
+
+          Positioned(
+            top: 140.h,
+            left: -70.w,
+            child: Container(
+              width: 220.w,
+              height: 220.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.secondaryColor.withValues(alpha: .08),
+              ),
+            ),
+          ),
+
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              _buildSliverHeader(context),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 26.h, 20.w, 140.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDescriptionCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildSupervisorCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildTeamCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildAttachmentCard(),
+                    ],
+                  ),
+                ),
               ),
             ],
-          ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
+          ),
+
+          Positioned(
+            left: 20.w,
+            right: 20.w,
+            bottom: 24.h,
+            child: _buildBottomActions(context),
+          ),
         ],
       ),
     );
   }
 
-  // تصميم الـ Chips داخل الهيدر
-  Widget _buildInfoChip(IconData icon, String label) {
+  /// HEADER
+  Widget _buildSliverHeader(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 320.h,
+      pinned: true,
+      elevation: 0,
+      backgroundColor: AppColor.primaryColor,
+      leading: Padding(
+        padding: EdgeInsets.all(8.r),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: .18),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColor.primaryColor, AppColor.secondaryColor],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(36.r),
+              bottomRight: Radius.circular(36.r),
+            ),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 55.h),
+
+                  Container(
+                    width: 76.w,
+                    height: 76.w,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .18),
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Colors.white,
+                      size: 34.sp,
+                    ),
+                  ).animate().scale(duration: 450.ms),
+
+                  SizedBox(height: 22.h),
+
+                  Text(
+                    projects.name ?? "اسم المشروع",
+                    style: AppTextStyle.bold(24, color: Colors.white),
+                  ).animate().fade().slideY(begin: .2),
+
+                  SizedBox(height: 14.h),
+
+                  Wrap(
+                    spacing: 10.w,
+                    runSpacing: 10.h,
+                    children: [
+                      _heroChip(
+                        Icons.school_outlined,
+                        projects.department ?? "غير محدد",
+                      ),
+                      _heroChip(
+                        Icons.calendar_month_rounded,
+                        projects.year.toString() ?? "",
+                      ),
+                      _heroChip(
+                        Icons.groups_2_outlined,
+                        "${projects.students.length ?? 0} أعضاء",
+                      ),
+                    ],
+                  ).animate().fade(delay: 200.ms),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _heroChip(IconData icon, String title) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(
-          alpha: 0.2,
-        ), // شفافية خفيفة على اللون الأساسي
-        borderRadius: BorderRadius.circular(8.r),
+        color: Colors.white.withValues(alpha: .16),
+        borderRadius: BorderRadius.circular(30.r),
+        border: Border.all(color: Colors.white.withValues(alpha: .15)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 16.r),
+          Icon(icon, size: 16.sp, color: Colors.white),
           SizedBox(width: 6.w),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12.sp,
-            ),
-          ),
+          Text(title, style: AppTextStyle.medium(12, color: Colors.white)),
         ],
       ),
     );
   }
 
-  // ==========================================
-  // العناوين الفرعية
-  // ==========================================
-  Widget _buildSectionTitle(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: AppColor.primaryColor, size: 24.r),
-        SizedBox(width: 8.w),
-        Text(
-          title,
-          style: AppTextStyle.titleLarge18NormalStyle.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+  Widget _sectionTitle(String title, IconData icon) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14.h),
+      child: Row(
+        children: [
+          Container(
+            width: 42.w,
+            height: 42.w,
+            decoration: BoxDecoration(
+              color: AppColor.primaryColor.withValues(alpha: .08),
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+            child: Icon(icon, color: AppColor.primaryColor, size: 20.sp),
           ),
-        ),
-      ],
-    ).animate().fadeIn().slideX(begin: -0.1, end: 0);
-  }
-
-  // ==========================================
-  // نص الوصف (نظيف وبسيط للقراءة)
-  // ==========================================
-  Widget _buildDescriptionText() {
-    return Text(
-      projects?.description ?? "لا يوجد وصف متاح لهذا المشروع حتى الآن.",
-      style: AppTextStyle.bodyMedium.copyWith(
-        height: 1.7,
-        fontSize: 14.sp,
-        color: Colors.black87,
+          SizedBox(width: 12.w),
+          Text(title, style: AppTextStyle.bold(17)),
+        ],
       ),
-      textAlign: TextAlign.justify,
-    ).animate().fadeIn(delay: 300.ms);
+    );
   }
 
-  // ==========================================
-  // بطاقة الدكتور المشرف
-  // ==========================================
-  Widget _buildSupervisorCard() {
+  Widget _cardShell({required Widget child}) {
     return Container(
-      padding: EdgeInsets.all(16.r),
+      width: double.infinity,
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(28.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: .04),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  /// DESCRIPTION
+  Widget _buildDescriptionCard() {
+    return _cardShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle(AppStrings.aboutProject, Icons.description_outlined),
+          Text(
+            projects.description ?? "لا يوجد وصف للمشروع.",
+            style: AppTextStyle.medium(
+              14,
+              color: AppColor.grey,
+            ).copyWith(height: 1.8),
+          ),
+        ],
+      ),
+    ).animate().fade(delay: 100.ms).slideY(begin: .1);
+  }
+
+  /// SUPERVISOR
+  Widget _buildSupervisorCard() {
+    return _cardShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle(AppStrings.supervisor, Icons.person_outline),
+
+          Row(
+            children: [
+              Container(
+                width: 64.w,
+                height: 64.w,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColor.primaryColor, AppColor.secondaryColor],
+                  ),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Icon(
+                  Icons.school_rounded,
+                  color: Colors.white,
+                  size: 28.sp,
+                ),
+              ),
+
+              SizedBox(width: 14.w),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      projects.supervisor ?? "غير محدد",
+                      style: AppTextStyle.bold(16),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      "المشرف الأكاديمي",
+                      style: AppTextStyle.medium(13, color: AppColor.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate().fade(delay: 200.ms).slideY(begin: .1);
+  }
+
+  /// TEAM
+  Widget _buildTeamCard() {
+    final students = projects.students ?? [];
+
+    return _cardShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle(AppStrings.teamMembers, Icons.groups_outlined),
+
+          if (students.isEmpty)
+            Text(
+              "لا يوجد أعضاء فريق",
+              style: AppTextStyle.medium(13, color: AppColor.grey),
+            )
+          else
+            Wrap(
+              spacing: 10.w,
+              runSpacing: 10.h,
+              children: students.map((e) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 10.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColor.background,
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 12.r,
+                        backgroundColor: AppColor.primaryColor.withValues(
+                          alpha: .1,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 14.sp,
+                          color: AppColor.primaryColor,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(e.toString(), style: AppTextStyle.medium(12)),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    ).animate().fade(delay: 300.ms).slideY(begin: .1);
+  }
+
+  /// FILE
+  Widget _buildAttachmentCard() {
+    final hasFile = projects.fileUrl != null;
+    // && projects.fileUrl.isNotEmpty;
+
+    return _cardShell(
+      child: Row(
+        children: [
+          Container(
+            width: 58.w,
+            height: 58.w,
+            decoration: BoxDecoration(
+              color: Colors.red.withValues(alpha: .08),
+              borderRadius: BorderRadius.circular(18.r),
+            ),
+            child: Icon(
+              Icons.picture_as_pdf_outlined,
+              color: Colors.red,
+              size: 28.sp,
+            ),
+          ),
+
+          SizedBox(width: 14.w),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("ملف المشروع", style: AppTextStyle.bold(15)),
+                SizedBox(height: 4.h),
+                Text(
+                  hasFile ? "ملف جاهز للعرض والتنزيل" : "لا يوجد ملف مرفق",
+                  style: AppTextStyle.medium(12, color: AppColor.grey),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fade(delay: 400.ms).slideY(begin: .1);
+  }
+
+  /// BOTTOM ACTIONS
+  Widget _buildBottomActions(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .08),
+            blurRadius: 25,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, color: AppColor.primaryColor, size: 28.r),
-          ),
-          SizedBox(width: 16.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  projects?.supervisor ?? "غير محدد",
-                  style: AppTextStyle.bodyLarge16NormalStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            child: ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.download_rounded, color: Colors.white),
+              label: Text(
+                AppStrings.downloadFiles,
+                style: AppTextStyle.medium(14, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                minimumSize: Size(0, 56.h),
+                backgroundColor: AppColor.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.r),
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  "المشرف الأكاديمي",
-                  style: AppTextStyle.bodyMedium.copyWith(
-                    fontSize: 12.sp,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
+              ),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(18.r),
+            child: Container(
+              width: 56.w,
+              height: 56.w,
+              decoration: BoxDecoration(
+                color: AppColor.secondaryColor.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(18.r),
+              ),
+              child: Icon(
+                Icons.play_arrow_rounded,
+                color: AppColor.secondaryColor,
+                size: 30.sp,
+              ),
             ),
           ),
         ],
       ),
-    ).animate().fadeIn(delay: 400.ms);
-  }
-
-  // ==========================================
-  // قائمة الطلاب (مترتبة عمودياً كقائمة رسمية)
-  // ==========================================
-  Widget _buildTeamList() {
-    // جلب الطلاب من الـ Entity
-    final List<dynamic> studentsList = projects?.students ?? [];
-
-    if (studentsList.isEmpty) {
-      return const Text("لا يوجد طلاب مسجلين في هذا المشروع.");
-    }
-
-    return Column(
-      children: studentsList.map((studentName) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 10.h),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.account_circle,
-                  color: AppColor.secondaryColor,
-                  size: 24.r,
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    studentName.toString(),
-                    style: AppTextStyle.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    ).animate().fadeIn(delay: 500.ms);
-  }
-
-  // ==========================================
-  // شريط الأزرار السفلي الثابت
-  // ==========================================
-  Widget _buildActionButtons() {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 20.r,
-        right: 20.r,
-        top: 16.h,
-        bottom: 20.h,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // حدث التحميل
-                },
-                icon: const Icon(
-                  Icons.download_for_offline_rounded,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  AppStrings.downloadFiles,
-                  style: AppTextStyle.mainButtonText.copyWith(fontSize: 14.sp),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primaryColor,
-                  minimumSize: Size(0, 56.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              flex: 1,
-              child: OutlinedButton(
-                onPressed: () {
-                  // حدث العرض
-                },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size(0, 56.h),
-                  side: const BorderSide(color: AppColor.secondaryColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-                child: Icon(
-                  Icons.play_circle_outline,
-                  color: AppColor.secondaryColor,
-                  size: 28.r,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate().slideY(begin: 1, end: 0, duration: 600.ms);
+    ).animate().slideY(begin: 1);
   }
 }

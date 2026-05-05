@@ -373,7 +373,7 @@
 //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //           decoration: isActive
 //               ? BoxDecoration(
-//                   color: const Color(0xFF3525CD).withOpacity(0.1),
+//                   color: const Color(0xFF3525CD).withValues(0.1),
 //                   borderRadius: BorderRadius.circular(16),
 //                 )
 //               : null,

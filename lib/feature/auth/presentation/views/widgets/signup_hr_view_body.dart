@@ -30,7 +30,7 @@ class _SignUpExternalEntityViewBodyState
   final TextEditingController phoneHrController = TextEditingController();
   final TextEditingController nameHrController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  bool _isOsecure = false;
   @override
   void dispose() {
     nameHrController.dispose();
@@ -115,9 +115,9 @@ class _SignUpExternalEntityViewBodyState
                           CustomAuthTextField(
                             controller: phoneHrController,
                             label: AppStrings.phoneNumber,
-                            hintText: AppString.hint,
-                            prefixIcon: Icons.lock_outline,
-
+                            hintText: 'رقم الهاتف',
+                            prefixIcon: Icons.phone_android_outlined,
+                            keyboardType: TextInputType.phone,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'يرجى إدخال رقم الهاتف';
@@ -132,13 +132,24 @@ class _SignUpExternalEntityViewBodyState
                             controller: passwordHrController,
                             label: AppStrings.passwordLabel,
                             hintText: AppString.hint,
-                            prefixIcon: Icons.lock_outline,
-                            suffixIcon: const Icon(
-                              Icons.visibility_off_outlined,
-                              color: AppColor.grey,
+                            obscureText: _isOsecure,
+                            prefixIcon: Icons.lock,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isOsecure = !_isOsecure;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.visibility_off_outlined,
+                                color: AppColor.grey,
+                              ),
                             ),
                             validator: (value) {
-                              return ValidatorManager.validatePassword(value);
+                              if (value == null || value.length < 6) {
+                                return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                              }
+                              return null;
                             },
                           ),
 

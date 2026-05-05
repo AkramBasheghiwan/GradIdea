@@ -6,9 +6,15 @@ abstract class ProjectsRepository {
   Future<Either<Failure, List<ProjectEntity>>> findSimilarProjects(
     String description,
   );
-  Future<Either<Failure, List<ProjectEntity>>> fetchAllProjects(
-    String departmentId,
-    String status,
-    int pag,
-  );
+  Future<Either<Failure, List<ProjectEntity>>> fetchAllProjects({
+    required String departmentId,
+    required String status,
+    required int page,
+  });
+  Future<Either<Failure, List<ProjectEntity>>> searchProjects({
+    required String query,
+    required int page,
+    String? department,
+    String? year,
+  });
 }

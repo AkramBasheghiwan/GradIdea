@@ -12,7 +12,12 @@ abstract class ProjectRemoteDataSource {
     int limit = 15,
   });
 
-  Future<List<ProjectModel>> searchProjects(String query);
+  Future<List<ProjectModel>> searchProjects({
+    required String query,
+    String? department,
+    String? year,
+    required int page,
+  });
 }
 
 class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
@@ -67,10 +72,48 @@ class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
   }
 
   @override
-  Future<List<ProjectModel>> searchProjects(String query) {
-    // TODO: implement searchProjects
-    throw UnimplementedError();
+  Future<List<ProjectModel>> searchProjects({
+    required String query,
+    String? department,
+    String? year,
+    required int page,
+  }) async {
+    try {
+      const limit = 15;
+      final from = page * limit;
+      final to = from + limit - 1;
+
+      var queryBuilder = supabase.from('projects').select();
+      if (query.isNotEmpty) {
+        queryBuilder = queryBuilder.or(
+          'name.ilike.%$query%,description.ilike.%$query%,supervisor.ilike.%$query%',
+        );
+      }
+      if (department != null && department.isNotEmpty) {
+        queryBuilder = queryBuilder.eq('department', department);
+      }
+
+      if (year != null && year.isNotEmpty) {
+        queryBuilder = queryBuilder.eq('year', year);
+      }
+      final response = await queryBuilder
+          .order('created_at', ascending: false) // ترتيب من الأحدث للأقدم
+          .range(from, to);
+
+      return (response as List<dynamic>)
+          .map((e) => ProjectModel.fromMap(e))
+          .toList();
+    } on SocketException {
+      throw const ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب أرشيف المشاريع');
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء الجلب: $e');
+    }
   }
+} 
+
 
   // @override
   //  Future<List<ProjectModel>> searchProjects(String query,int page,int limit =15)async {
@@ -81,4 +124,4 @@ class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
   //      final result = await supabase.from(table).select().eq(column, value).range(from, to)
   //    }
   //  }
-}
+

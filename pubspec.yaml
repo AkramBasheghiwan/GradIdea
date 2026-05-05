@@ -45,7 +45,10 @@ dependencies:
   get_it: ^9.2.1
   go_router: ^17.0.0
   google_generative_ai: ^0.4.7
+  iconsax: ^0.0.8
   internet_connection_checker: ^3.0.1
+  pinput: ^6.0.2
+  rxdart: ^0.28.0
   shared_preferences: ^2.5.3
   supabase_flutter: ^2.0.0
 dev_dependencies:

@@ -84,10 +84,12 @@ class ProjectFileUploadArea extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 15.w),
                 decoration: BoxDecoration(
                   color: hasFile
-                      ? Colors.green.withValues(alpha: 0.05)
+                      ? AppColor.primaryColor.withValues(alpha: 0.05)
                       : Colors.grey.withValues(alpha: 0.05),
                   border: Border.all(
-                    color: hasFile ? Colors.green : Colors.grey.shade400,
+                    color: hasFile
+                        ? AppColor.primaryColor
+                        : Colors.grey.shade400,
                     style: BorderStyle
                         .solid, // يمكنك استخدام حزمة dotted_border لجعله متقطعاً
                     width: 1.5,
@@ -138,12 +140,12 @@ class ProjectFileUploadArea extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(8.r),
           decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.1),
+            color: AppColor.primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Icon(
             Icons.insert_drive_file,
-            color: Colors.green,
+            color: AppColor.primaryColor,
             size: 24.sp,
           ),
         ),

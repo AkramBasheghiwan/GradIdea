@@ -15,7 +15,7 @@ class VerifyEmailOtp extends StatelessWidget {
           sl<VerifyOtpCubit>(), // استبدل null بإنشاء الـ Cubit الخاص بك
       child: VerifySignUpOtpScreen(
         email: email,
-      ), // استبدل 'test@example.com' بالإيميل الذي تريد اختباره
+      ), 
     );
   }
 }

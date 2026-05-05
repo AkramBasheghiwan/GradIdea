@@ -34,4 +34,22 @@ class AppColor {
   static const Color amber = Color(0xFFF59E0B);
   static const Color surfaceContainerLow = Color(0xFFF1F3FF);
   static const Color primaryLight = Color(0xFFDAD7FF);
+  //
+
+  static const Color outline = Color(0xFF777587);
+  static const Color tertiaryFixed = Color(0xFFFFDBCC);
+  static const Color onTertiaryFixed = Color(0xFF351000);
+  static const Color secondaryContainer = Color(0xFF39B8FD);
+
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [primaryColor, primaryContainer],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+  );
+  static const cardPurple = Color(0xffEEF2FF);
+  static const cardBlue = Color(0xffF0F9FF);
+  static const cardMint = Color(0xffECFDF5);
+
+  static const shadow = Color(0x14000000);
+  static const border = Colors.black;
 }

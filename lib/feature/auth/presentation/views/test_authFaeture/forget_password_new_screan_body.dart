@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/foreget_passwords_cubit.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/forget_password_states.dart';
+import 'package:graduation_management_idea_system/feature/auth/presentation/views/widgets/custom_auth_text_field.dart';
+import 'package:graduation_management_idea_system/feature/auth/presentation/views/widgets/custom_build_button.dart';
 
 class ForgotPasswordNewViewBody extends StatefulWidget {
   const ForgotPasswordNewViewBody({super.key});
@@ -67,20 +70,18 @@ class _ForgotPasswordNewViewBodyState extends State<ForgotPasswordNewViewBody> {
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 30),
-                  TextFormField(
+                  CustomAuthTextField(
                     controller: _passwordController,
+                    hintText: 'كلمة المرور الجديدة',
+                    label: 'كلمة المرور الجديدة',
+                    prefixIcon: Icons.lock,
                     obscureText: _isObscure,
-                    decoration: InputDecoration(
-                      labelText: 'كلمة المرور الجديدة',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isObscure ? Icons.visibility_off : Icons.visibility,
-                        ),
-                        onPressed: () =>
-                            setState(() => _isObscure = !_isObscure),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility,
+                        color: AppColor.activeColor,
                       ),
+                      onPressed: () => setState(() => _isObscure = !_isObscure),
                     ),
                     validator: (value) {
                       if (value == null || value.length < 6) {
@@ -89,14 +90,20 @@ class _ForgotPasswordNewViewBodyState extends State<ForgotPasswordNewViewBody> {
                       return null;
                     },
                   ),
+
                   const SizedBox(height: 20),
-                  TextFormField(
+                  CustomAuthTextField(
                     controller: _confirmPasswordController,
+                    hintText: 'تأكيد كلمة المرور',
+                    label: 'تأكيد كلمة المرور',
+                    prefixIcon: Icons.lock_outline,
                     obscureText: _isObscure,
-                    decoration: const InputDecoration(
-                      labelText: 'تأكيد كلمة المرور',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility,
+                        color: AppColor.activeColor,
+                      ),
+                      onPressed: () => setState(() => _isObscure = !_isObscure),
                     ),
                     validator: (value) {
                       if (value != _passwordController.text) {
@@ -106,7 +113,7 @@ class _ForgotPasswordNewViewBodyState extends State<ForgotPasswordNewViewBody> {
                     },
                   ),
                   const SizedBox(height: 30),
-                  ElevatedButton(
+                  BuildMainButton(
                     onPressed: state is ForgotPasswordLoading
                         ? null
                         : () {
@@ -116,15 +123,10 @@ class _ForgotPasswordNewViewBodyState extends State<ForgotPasswordNewViewBody> {
                                   .updatePassword(_passwordController.text);
                             }
                           },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
-                    child: state is ForgotPasswordLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'حفظ كلمة المرور',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                    backgroundColor: AppColor.primaryColor,
+                    nameTextButton: 'حفظ كلمة المرور',
+                    isLoadig: state is ForgotPasswordLoading,
+                    shodowColor: AppColor.containerShadow,
                   ),
                 ],
               ),

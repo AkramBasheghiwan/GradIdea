@@ -1,3 +1,4 @@
+import 'package:graduation_management_idea_system/core/widgets/custom_project_card_skeleton.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/cubit/cubit.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/cubit/state.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/view/widgets/user_view_body.dart';
@@ -11,8 +12,12 @@ class UsersListViewBlocBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UsersCubit, UsersState>(
       builder: (BuildContext context, UsersState state) {
-        if (state is UsersLoading) {
-          return const Center(child: CircularProgressIndicator());
+        if (state is UsersLoading || state is UsersInitial) {
+          return ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: 6, // عرض 6 بطاقات تحميل
+            itemBuilder: (context, index) => const ProjectCardSkeleton(),
+          );
         } else if (state is UsersError) {
           return Center(
             child: Text(

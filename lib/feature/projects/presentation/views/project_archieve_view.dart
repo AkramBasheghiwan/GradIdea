@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_icon_search_bar.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_bulid_tab_bar.dart';
-import 'package:graduation_management_idea_system/feature/projects/data/repository/project_repository_imp.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/project_archieve_cubit/projects_archive.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_bloc_consumer.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_archive_view_body.dart';
 
 class ProjectsArchiveView extends StatelessWidget {
   const ProjectsArchiveView({super.key});
@@ -26,7 +26,7 @@ class ProjectsArchiveView extends StatelessWidget {
             style: AppTextStyle.headline24BoldStyle,
           ),
           centerTitle: false,
-          actions: const [BuildIconSearchBar()],
+          actions: [BuildIconSearchBar(onpressed: () {})],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -71,44 +71,31 @@ class ProjectsArchiveView extends StatelessWidget {
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProjectsArchiveCubit(
-                          ProjectRepositoryImp(),
-                          'IT',
-                        );
-                        cubit.fetchFirstPage();
-
+                        final cubit = ProjectsArchiveCubit(sl(), 'IT');
                         return cubit;
                       },
 
-                      child: const ProjectUploadBlocConsumer(),
+                      child: const ProjectsArchiveScreen(),
                     ),
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProjectsArchiveCubit(
-                          ProjectRepositoryImp(),
-                          'IS',
-                        );
-                        cubit.fetchFirstPage();
+                        final cubit = ProjectsArchiveCubit(sl(), 'IS');
 
                         return cubit;
                       },
 
-                      child: const ProjectUploadBlocConsumer(),
+                      child: const ProjectsArchiveScreen(),
                     ),
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProjectsArchiveCubit(
-                          ProjectRepositoryImp(),
-                          'CS',
-                        );
-                        cubit.fetchFirstPage();
+                        final cubit = ProjectsArchiveCubit(sl(), 'CS');
 
                         return cubit;
                       },
 
-                      child: const ProjectUploadBlocConsumer(),
+                      child: const ProjectsArchiveScreen(),
                     ),
                   ],
                 ),

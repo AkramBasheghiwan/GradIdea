@@ -4,11 +4,11 @@ import 'package:graduation_management_idea_system/feature/head_of_dep_dashboard/
 
 import '../../../domain/head_repo/head_repository.dart';
 
-
 class HeadOfDepartmentCubit extends Cubit<HeadOfDepartmentState> {
   final HeadRepository repository;
 
-  HeadOfDepartmentCubit({required this.repository}) : super(HeadOfDepartmentInitial());
+  HeadOfDepartmentCubit({required this.repository})
+    : super(HeadOfDepartmentInitial());
 
   // --- دالة جلب المشاريع المعلقة ---
   Future<void> getPendingProjects() async {
@@ -21,22 +21,20 @@ class HeadOfDepartmentCubit extends Cubit<HeadOfDepartmentState> {
     );
   }
 
-  
   Future<void> approveProject(String projectId) async {
-    // يمكنك استخدام هذه الحالة لإظهار مؤشر تحميل خاص بالعنصر الذي يتم تحديثه
-    // emit(HeadOfDepartmentProjectUpdating(projectId));
+    emit(HeadOfDepartmentProjectUpdating(projectId));
 
     final result = await repository.approveProject(projectId);
 
-    result.fold(
-      (failure) => emit(HeadOfDepartmentError(failure.message)),
-      (success) {
-        // بعد النجاح، أعد جلب القائمة المحدثة
-        getPendingProjects();
-        // يمكنك أيضًا إرسال حالة خاصة لإظهار رسالة نجاح
-        // emit(HeadOfDepartmentUpdateSuccess('Project Approved Successfully!'));
-      },
-    );
+    result.fold((failure) => emit(HeadOfDepartmentError(failure.message)), (
+      success,
+    ) {
+      getPendingProjects();
+
+      emit(
+        const HeadOfDepartmentUpdateSuccess('Project Approved Successfully!'),
+      );
+    });
   }
 
   // --- دالة رفض المشروع ---
@@ -45,13 +43,12 @@ class HeadOfDepartmentCubit extends Cubit<HeadOfDepartmentState> {
 
     final result = await repository.rejectProject(projectId, reason);
 
-    result.fold(
-      (failure) => emit(HeadOfDepartmentError(failure.message)),
-      (success) {
-        // بعد النجاح، أعد جلب القائمة المحدثة
-        getPendingProjects();
-        // emit(HeadOfDepartmentUpdateSuccess('Project Rejected Successfully!'));
-      },
-    );
+    result.fold((failure) => emit(HeadOfDepartmentError(failure.message)), (
+      success,
+    ) {
+      // بعد النجاح، أعد جلب القائمة المحدثة
+      getPendingProjects();
+      // emit(HeadOfDepartmentUpdateSuccess('Project Rejected Successfully!'));
+    });
   }
 }

@@ -15,7 +15,6 @@ abstract class UserSupabaseRemoteDataSource {
 }
 
 class UserSupabaseRemoteDataSourceImpl implements UserSupabaseRemoteDataSource {
-  // استبدلنا Firestore و FirebaseAuth بـ SupabaseClient
   final SupabaseClient supabase;
 
   UserSupabaseRemoteDataSourceImpl({required this.supabase});

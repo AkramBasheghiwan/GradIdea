@@ -5,6 +5,19 @@ import 'package:graduation_management_idea_system/feature/projects/domain/entiti
 abstract class UploudProjectRepository {
   Future<Either<Failure, Unit>> uploadProjectToArchive(ProjectEntity project);
   Future<Either<Failure, Unit>> deleteProject(String id);
-
+  Future<Either<Failure, List<ProjectEntity>>> fetchMyProjects({
+    required String status,
+  });
   Future<Either<Failure, Unit>> updateProject(ProjectEntity newProject);
+
+  Future<Either<Failure, List<ProjectEntity>>> fetchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  });
+  Future<Either<Failure, Unit>> updateProjectsStatusReject({
+    required int id,
+    required String status,
+    String? reason,
+  });
+  Future<Either<Failure, Unit>> updateProjectStatus(int id);
 }

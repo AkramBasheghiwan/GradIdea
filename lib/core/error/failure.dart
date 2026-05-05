@@ -16,6 +16,10 @@ class EmailNotVerifiedFailure extends Failure {
   const EmailNotVerifiedFailure(super.message);
 }
 
+class NetworkFailure extends Failure {
+  const NetworkFailure(super.message);
+}
+
 class OfflineFailure extends Failure {
   const OfflineFailure(super.message);
 }

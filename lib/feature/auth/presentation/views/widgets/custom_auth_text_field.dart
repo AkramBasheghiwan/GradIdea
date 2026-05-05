@@ -12,16 +12,20 @@ class CustomAuthTextField extends StatelessWidget {
   final String label;
   final IconData prefixIcon;
   final Widget? suffixIcon;
+  final bool obscureText;
+  final TextInputType? keyboardType;
   final String? Function(dynamic)? validator;
 
   const CustomAuthTextField({
     super.key,
+    this.obscureText = false,
     required this.controller,
     required this.hintText,
     required this.label,
     required this.prefixIcon,
     this.suffixIcon,
     this.validator,
+    this.keyboardType,
   });
 
   @override
@@ -37,6 +41,8 @@ class CustomAuthTextField extends StatelessWidget {
         ),
         SizedBox(height: AppDimens.p8.h),
         TextFormField(
+          keyboardType: keyboardType,
+          obscureText: obscureText,
           validator: validator,
           controller: controller,
           decoration: InputDecoration(
@@ -44,7 +50,7 @@ class CustomAuthTextField extends StatelessWidget {
             hintStyle: AppTextStyle.bodyMedium.copyWith(
               color: AppColor.textSecondary.withValues(alpha: 0.5),
             ),
-            suffix: suffixIcon,
+
             prefixIcon: Icon(
               prefixIcon,
               color: AppColor.primaryColor,

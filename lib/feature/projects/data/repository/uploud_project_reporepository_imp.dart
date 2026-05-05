@@ -1,13 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
+import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/data_source/supabase_upload_project_remote_data_sourcr.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/uploud_project.dart';
 
 class UploudProjectRepositoryImpl implements UploudProjectRepository {
-  final ProjectRemoteDataSource remoteDataSource;
+  final UploadProjectRemoteDataSource remoteDataSource;
 
   UploudProjectRepositoryImpl({required this.remoteDataSource});
 
@@ -58,6 +59,85 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
     } catch (e) {
       return const Left(
         ServerFailure('فشل حذف المشروع، يرجى المحاولة لاحقاً.'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProjectEntity>>> fetchMyProjects({
+    required String status,
+  }) async {
+    try {
+      final projects = await remoteDataSource.fetchMyProjects(status: status);
+      return Right(
+        projects.map((model) => ProjectModel.fromEntity(model)).toList(),
+      );
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(
+        ServerFailure('فشل جلب المشاريع، يرجى المحاولة لاحقاً.'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProjectEntity>>> fetchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  }) async {
+    try {
+      final projects = await remoteDataSource.fetchAllProjectsByDepartment(
+        departmentId: departmentId,
+        status: status,
+      );
+      return Right(
+        projects.map((model) => ProjectModel.fromEntity(model)).toList(),
+      );
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(
+        ServerFailure('فشل جلب المشاريع، يرجى المحاولة لاحقاً.'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateProjectStatus(int id) async {
+    try {
+      await remoteDataSource.updateProjectsStatus(
+        id.toString(),
+        AppProjectsStatus.approved,
+      );
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(
+        ServerFailure('فشل جلب المشاريع، يرجى المحاولة لاحقاً.'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> updateProjectsStatusReject({
+    required int id,
+    required String status,
+    String? reason,
+  }) async {
+    try {
+      await remoteDataSource.updateProjectsStatusReject(
+        id: id,
+        status: status,
+        reason: reason,
+      );
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return const Left(
+        ServerFailure('فشل جلب المشاريع، يرجى المحاولة لاحقاً.'),
       );
     }
   }

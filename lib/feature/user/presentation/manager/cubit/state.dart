@@ -15,6 +15,8 @@ final class UsersLoading extends UsersState {}
 
 final class UsersLoaded extends UsersState {
   final List<UserEntity> users;
+  // final int page;
+  // final bool hasReacgedMax;
 
   const UsersLoaded({required this.users});
 

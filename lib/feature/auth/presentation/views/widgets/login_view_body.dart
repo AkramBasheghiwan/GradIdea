@@ -29,6 +29,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isOsecure = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,25 +103,39 @@ class _LoginViewBodyState extends State<LoginViewBody> {
 
                         CustomAuthTextField(
                           validator: (value) {
-                            return ValidatorManager.validatePassword(value);
+                            if (value == null || value.length < 6) {
+                              return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                            }
+                            return null;
                           },
                           controller: _passwordController,
                           label: AppString.password,
                           hintText: AppString.passwordHint,
-                          prefixIcon: Icons.lock_outline,
-                          suffixIcon: const Icon(
-                            Icons.visibility_off_outlined,
-                            color: AppColor.grey,
+                          prefixIcon: Icons.lock,
+                          obscureText: _isOsecure,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isOsecure = !_isOsecure;
+                              });
+                            },
+                            icon: Icon(
+                              _isOsecure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: AppColor.primaryColor,
+                            ),
                           ),
                         ).animate().fadeIn(delay: 400.ms),
-
                         SizedBox(height: AppDimens.p32.h),
-                        BuildLoginButton(
+                        BuildMainButton(
                           onPressed: widget.isLoading
                               ? null
                               : () {
-                                  if (!_formKey.currentState!.validate())
+                                  if (!_formKey.currentState!.validate()) {
                                     return;
+                                  }
+
                                   context.read<LoginSupCubit>().login(
                                     email: _emailController.text,
                                     password: _passwordController.text,

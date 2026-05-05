@@ -8,8 +8,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/router/app_router.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
+//import 'package:graduation_management_idea_system/feature/Student_home/home/presentation/views/dashboard_student.dart';
+//import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/dashboard_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/auth_cubit/auth_cubit.dart';
+//import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
+//import 'package:graduation_management_idea_system/feature/profile_header/presentation/views/edite_profile_view.dart';
+//import 'package:graduation_management_idea_system/feature/profile_header/presentation/views/profile_view.dart';
+//import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_detail_view_body.dart';
+//import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/projects_upload_view_body.dart';
 import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
+//import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
+//import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
+//import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
+//import 'package:graduation_management_idea_system/feature/user/presentation/view/search_user_view.dart';
+//import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
 import 'package:graduation_management_idea_system/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -54,6 +66,20 @@ class GMIS extends StatelessWidget {
 
             debugShowCheckedModeBanner: false,
             home: const SplashView(),
+            // const ProjectDetailsViewBody(),
+            //  EditProfileView(
+            //   currentStep: 0,
+            //   onBack: null,
+            //   onNext: null,
+            //   onSubmit: null,
+            //   onPickImage: null,
+            // ),
+            //const ProfileView(),
+            //const HomeView()
+            //const SearchUserView(),
+            //const SearchProjectsView(),
+
+            // const DashboardView(),
             //VerifyEmailOtp(email: "basheghiwana@gmail.com"),
 
             //OnboardingView(),
@@ -265,7 +291,9 @@ void _showBlurredBottomSheet(BuildContext context) {
           child: Container(
             // 3. هذا الـ Container هو "الزجاج المصنفر"
             // نعطيه لون شبه شفاف ليعطي انطباع الزجاج
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.2)),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -289,7 +317,7 @@ void _showBlurredBottomSheet(BuildContext context) {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.withOpacity(0.7),
+                      backgroundColor: Colors.red.withValues(alpha: 0.7),
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Text('إلغاء'),

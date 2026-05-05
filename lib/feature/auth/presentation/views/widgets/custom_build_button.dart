@@ -6,14 +6,14 @@ import 'package:graduation_management_idea_system/core/utils/app_text_style.dart
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_dimens.dart';
 
-class BuildLoginButton extends StatelessWidget {
+class BuildMainButton extends StatelessWidget {
   final bool isLoadig;
   final VoidCallback? onPressed;
   final String nameTextButton;
 
   final Color shodowColor;
   final Color? backgroundColor;
-  const BuildLoginButton({
+  const BuildMainButton({
     super.key,
     required this.onPressed,
     required this.backgroundColor,

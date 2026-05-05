@@ -3,7 +3,6 @@ import 'package:graduation_management_idea_system/core/utils/app_projects_status
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/projects_repository.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/project_archieve_cubit/projects_archieve_state.dart';
-// ... استيرادات الـ States والـ Entity والـ Repo
 
 class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
   final ProjectsRepository repository;
@@ -17,24 +16,20 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
   ProjectsArchiveCubit(this.repository, this.departmentId)
     : super(ProjectArchieveInitial());
 
-  // 1. جلب الصفحة الأولى (عند فتح الشاشة أو السحب للتحديث Pull-to-refresh)
   Future<void> fetchFirstPage() async {
     emit(ProjectArchieveLoading()); // دائرة تحميل في منتصف الشاشة
 
-    _currentPage = 0;
-    _currentProjects = [];
-    _hasReachedMax = false;
-
     final result = await repository.fetchAllProjects(
-      departmentId,
-      _currentPage,
+      departmentId: departmentId,
+      page: _currentPage,
+      status: AppProjectsStatus.approved,
     );
 
     result.fold(
       (failure) => emit(ProjectArchieveError(message: failure.message)),
       (projects) {
         _currentProjects = projects;
-        _hasReachedMax = projects.length < 10; // إذا رجع أقل من 10، يعني خلصوا
+        _hasReachedMax = projects.length < 10;
         emit(
           ProjectArchieveLoaded(
             users: _currentProjects,
@@ -46,6 +41,8 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
     );
   }
 
+  // في ملف upload_project_cubit.dart
+
   // 2. جلب الصفحة التالية (عند التمرير لنهاية القائمة)
   Future<void> fetchNextPage() async {
     if (_isFetchingMore || _hasReachedMax) return;
@@ -54,15 +51,15 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
     _currentPage++;
 
     final result = await repository.fetchAllProjects(
-      departmentId,
-      AppProjectsStatus._currentPage,
+      departmentId: departmentId,
+      page: _currentPage,
+      status: AppProjectsStatus.approved,
     );
 
     result.fold(
       (failure) {
         _currentPage--;
         _isFetchingMore = false;
-        // هنا يمكن إطلاق حالة خطأ خاصة بالـ Pagination دون مسح القائمة الحالية
       },
       (moreProjects) {
         _currentProjects.addAll(

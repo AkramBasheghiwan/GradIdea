@@ -28,7 +28,9 @@ class ProjectUploadBuildSubmitButtom extends StatelessWidget {
       ),
       onPressed: isLoading ? null : onPressed,
       child: isLoading
-          ? Center(child: CircularProgressIndicator(color: AppColor.white))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColor.white),
+            )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

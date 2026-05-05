@@ -1,6 +1,6 @@
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/verify_email_cubit/verify_email_cubit.dart';
-import 'package:graduation_management_idea_system/feature/auth/presentation/views/widgets/verify_email_view_body.dart';
+import 'package:graduation_management_idea_system/feature/auth/presentation/views/widgets/verify_sign_up_otp_screan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

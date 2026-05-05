@@ -28,5 +28,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSCameraUsageDescription</key>
+    <string>نحتاج للوصول للكاميرا لتصوير وصف المشروع واستخراج النص</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>نحتاج للوصول لمعرض الصور لاختيار صور المشاريع</string>
 </dict>
 </plist>

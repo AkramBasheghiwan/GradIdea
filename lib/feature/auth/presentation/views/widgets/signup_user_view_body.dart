@@ -37,6 +37,7 @@ class _SignUpUserViewBodyState extends State<SignUpUserViewBody> {
   }
 
   String? selectedSpecialization;
+  bool _isOsecure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +171,24 @@ class _SignUpUserViewBodyState extends State<SignUpUserViewBody> {
                             controller: passUserController,
                             label: AppStrings.passwordLabel,
                             hintText: AppString.hint,
-                            prefixIcon: Icons.lock_outline,
-                            suffixIcon: const Icon(
-                              Icons.visibility_off_outlined,
-                              color: AppColor.grey,
+                            obscureText: _isOsecure,
+                            prefixIcon: Icons.lock,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isOsecure = !_isOsecure;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.visibility_off_outlined,
+                                color: AppColor.grey,
+                              ),
                             ),
                             validator: (value) {
-                              return ValidatorManager.validatePassword(value);
+                              if (value == null || value.length < 6) {
+                                return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                              }
+                              return null;
                             },
                           ),
 

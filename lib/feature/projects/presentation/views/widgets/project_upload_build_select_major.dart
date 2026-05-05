@@ -5,88 +5,65 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProjectUploadBuildSelectMajor extends StatelessWidget {
   final ValueChanged<String?>? onChanged;
-
   final String? selectedValue;
 
-  // 2. استخدمنا const Constructor لتحسين الأداء
   const ProjectUploadBuildSelectMajor({
     required this.onChanged,
-    required this.selectedValue, // نطلبه هنا
+    required this.selectedValue,
     super.key,
   });
 
-  // 3. جعلنا القائمة ثابتة (static const) لعدم استهلاك الذاكرة في كل Rebuil
   static const List<String> _departments = ['IT', 'CS', 'IS'];
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment
-                .start, // تحسين المظهر ليكون النص على اليمين/اليسار
-            children: [
-              Text(
-                'اختر التخصص',
-                style: AppTextStyle.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13.sp,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonFormField<String>(
-                  borderRadius: BorderRadius.circular(
-                    16.r,
-                  ), // استخدمنا .r للـ radius
-                  elevation: 2,
-                  alignment: Alignment.topCenter,
-                  // 4. نمرر القيمة التي جاءت من الأب هنا لكي يتم عرضها
-                  value: selectedValue,
-                  dropdownColor: AppColor.background,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(
-                      // إضافة const هنا
-                      Icons.school_outlined,
-                      color: AppColor.secondaryColor,
-                      size: 20,
-                    ),
-                    hintStyle: TextStyle(
-                      color: AppColor.textSecondary.withValues(alpha: 0.4),
-                      fontSize: 13.sp,
-                    ),
-                    fillColor: AppColor.inputBackground.withValues(alpha: 0.5),
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText:
-                        "اختر القسم", // من الأفضل وضع نص تلميحي بدلاً من تركه فارغاً
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                  ),
-                  items: _departments.map((String dept) {
-                    return DropdownMenuItem<String>(
-                      value: dept,
-                      child: Text(
-                        dept,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: onChanged,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'هذا الحقل مطلوب' : null,
-                ),
-              ),
-            ],
+        Text(
+          'اختر التخصص',
+          style: AppTextStyle.bodyMedium.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 13.sp,
           ),
+        ),
+        SizedBox(height: 8.h),
+        DropdownButtonFormField<String>(
+          // 🟢 هذه الخاصية هي مفتاح الحل لمنع الـ Overflow الداخلي
+          isExpanded: true,
+          borderRadius: BorderRadius.circular(16.r),
+          elevation: 2,
+          value: selectedValue,
+          dropdownColor: Colors.white,
+          // تحسين مظهر النص المختار
+          style: AppTextStyle.bodyMedium.copyWith(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(
+              Icons.school_outlined,
+              color: AppColor.secondaryColor,
+              size: 20,
+            ),
+            fillColor: AppColor.inputBackground.withValues(alpha: 0.5),
+            filled: true,
+            hintText: "التخصص",
+            hintStyle: TextStyle(fontSize: 12.sp, color: Colors.grey),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12.w,
+              vertical: 12.h,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          items: _departments.map((String dept) {
+            return DropdownMenuItem<String>(value: dept, child: Text(dept));
+          }).toList(),
+          onChanged: onChanged,
+          validator: (value) => value == null ? 'مطلوب' : null,
         ),
       ],
     );

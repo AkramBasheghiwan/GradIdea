@@ -1,6 +1,8 @@
 import 'package:graduation_management_idea_system/core/widgets/buid_nav_bar_item.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_floating_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/dashboard_view.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_archieve_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
@@ -17,7 +19,8 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
   final List<Widget> _screens = <Widget>[
     const UserView(), // 0
     const ProjectsUploadView(), // 2
-    const PlaceholderScreen(title: "الملف الشخصي"), // 3
+    const ProjectsArchiveView(), // 3
+    const DashboardView(),
   ];
 
   onTap(int index) {
@@ -39,18 +42,18 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 0,
-            title: "المحادثات",
-            icon: Icons.chat_bubble_outline_rounded,
-            activeIcon: Icons.chat_bubble_rounded,
+            title: "الاداره",
+            icon: Icons.person_pin_outlined,
+            activeIcon: Icons.person_pin_rounded,
           ),
 
           BuildNavBarItem(
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 1,
-            title: "جهات الاتصال",
-            icon: Icons.people_outline_rounded,
-            activeIcon: Icons.people_alt_rounded,
+            title: "رفع المشروع",
+            icon: Icons.assignment_returned_outlined,
+            activeIcon: Icons.assignment_returned_sharp,
           ),
           // 2: الإعدادات
           BuildNavBarItem(
