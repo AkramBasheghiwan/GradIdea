@@ -23,7 +23,6 @@ class ProjectModel extends ProjectEntity {
       'students': students,
       'department': department,
       'year': year,
-
       if (fileUrl != null) 'fileurl': fileUrl,
       if (status != null) 'status': status,
       if (rejectionReason != null) 'rejection_reason': rejectionReason,

@@ -5,7 +5,7 @@ import 'package:graduation_management_idea_system/core/utils/app_text_style.dart
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final IconData? icon;
 
   const CustomButton({

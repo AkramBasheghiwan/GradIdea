@@ -24,70 +24,68 @@ class OnboardingViewBody extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Expanded(
-                flex: AppDimens.topFlex,
-                child: PageView.builder(
-                  controller: cubit.pageController,
-                  itemCount: items.length,
-                  onPageChanged: context.watch<OnboardingCubit>().onPageChanged,
-                  //  (index) =>
-                  //     setState(() => _currentIndex = index),
-                  itemBuilder: (BuildContext context, int index) {
-                    return OnboardingBuildIllustration(item: items[index]);
-                  },
-                ),
-              ),
-              // 2. الجزء السفلي: الحاوية البيضاء (White Card)
-              Expanded(
-                flex: AppDimens.bottomFlex, // 4
-                child:
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppDimens.p24.w,
+          SizedBox(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.65,
+            child: PageView.builder(
+              controller: cubit.pageController,
+              itemCount: items.length,
+              onPageChanged: context.watch<OnboardingCubit>().onPageChanged,
+              //  (index) =>
+              //     setState(() => _currentIndex = index),
+              itemBuilder: (BuildContext context, int index) {
+                return OnboardingBuildIllustration(item: items[index]);
+              },
+            ),
+          ),
+          // 2. الجزء السفلي: الحاوية البيضاء (White Card)
+          Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child:
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: AppDimens.p24.w),
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                        AppDimens.bottomContainerRadius.r,
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                            AppDimens.bottomContainerRadius.r,
-                          ),
-                          topRight: Radius.circular(
-                            AppDimens.bottomContainerRadius.r,
-                          ),
-                        ),
+                      topRight: Radius.circular(
+                        AppDimens.bottomContainerRadius.r,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          OnboardingBuildText(currentIndex: cubit.currentIndex),
-                          SizedBox(height: AppDimens.p32.h),
-                          _buildBottomControls(context),
-                        ],
-                      ),
-                    ).animate().slideY(
-                      begin: 0.2,
-                      end: 0,
-                      duration: 600.ms,
-                      curve: Curves.easeOut,
                     ),
-              ),
-            ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OnboardingBuildText(currentIndex: cubit.currentIndex),
+                      SizedBox(height: AppDimens.p32.h),
+                      _buildBottomControls(context),
+                    ],
+                  ),
+                ).animate().slideY(
+                  begin: 0.2,
+                  end: 0,
+                  duration: 600.ms,
+                  curve: Curves.easeOut,
+                ),
           ),
 
-          // زر التخطي (Skip)
-          Positioned(
-            top: 50.h,
-            right: AppDimens.p20.w,
-            child: TextButton(
-              onPressed: () {
-                cubit.submitOnboarding();
-              },
-              child: Text(AppStrings.skip, style: AppTextStyle.skipButton),
-            ),
-          ).animate().fadeIn(delay: 400.ms),
+          if (!cubit.isLastPage) ...[
+            Positioned(
+              top: 50.h,
+              right: AppDimens.p20.w,
+              child: TextButton(
+                onPressed: () {
+                  cubit.submitOnboarding();
+                },
+                child: Text(AppStrings.skip, style: AppTextStyle.skipButton),
+              ),
+            ).animate().fadeIn(delay: 400.ms),
+          ],
         ],
       ),
     );
@@ -124,6 +122,7 @@ class OnboardingViewBody extends StatelessWidget {
               )
             : Row(
                 children: <Widget>[
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.3),
                   // المؤشرات (Dots)
                   ...List.generate(
                     items.length,
@@ -146,16 +145,20 @@ class OnboardingViewBody extends StatelessWidget {
               );
             },
             child: Container(
-              width: AppDimens.nextButtonSize.w,
-              height: AppDimens.nextButtonSize.h,
-              decoration: const BoxDecoration(
+              width: 60.w,
+              height: 40.h,
+              decoration: BoxDecoration(
                 color: AppColor.primaryColor,
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
-                size: 18,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'التالي',
+                    style: AppTextStyle.medium(16, color: AppColor.white),
+                  ),
+                ],
               ),
             ),
           ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),

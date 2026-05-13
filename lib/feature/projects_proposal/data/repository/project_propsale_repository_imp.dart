@@ -37,7 +37,7 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
 
   // 2. حذف مقترح ومعالجة الأخطاء
   @override
-  Future<Either<Failure, Unit>> deleteProjectProposal(int id) async {
+  Future<Either<Failure, Unit>> deleteProjectProposal(String id) async {
     try {
       await remoteDataSource.deleteProjectProposal(id);
       return const Right(unit); // وحدة نجاح
@@ -72,7 +72,7 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
 
   @override
   Future<Either<Failure, Unit>> updateProposalStatus({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   }) async {

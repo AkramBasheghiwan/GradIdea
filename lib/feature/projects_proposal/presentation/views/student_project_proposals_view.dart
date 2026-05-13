@@ -6,6 +6,7 @@ import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_bulid_tab_bar.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/domain/repository/student_project_proposal_repository.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/student_project_proposals_approve.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/student_project_proposals_pending.dart';
@@ -81,41 +82,41 @@ class StudentProjectProposalsView extends StatelessWidget {
 
                 SizedBox(height: 24.h),
 
-                /// search
-                Container(
-                  height: 54.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: .04),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.search_rounded,
-                        color: AppColor.grey,
-                        size: 22.sp,
-                      ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: Text(
-                          "ابحث عن مشروع...",
-                          style: AppTextStyle.medium(14, color: AppColor.grey),
-                        ),
-                      ),
-                      // BuildIconSearchBar(onpressed: () {}),
-                    ],
-                  ),
-                ),
+                // /// search
+                // Container(
+                //   height: 54.h,
+                //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     borderRadius: BorderRadius.circular(18.r),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black.withValues(alpha: .04),
+                //         blurRadius: 20,
+                //         offset: const Offset(0, 8),
+                //       ),
+                //     ],
+                //   ),
+                //   child: Row(
+                //     children: [
+                //       Icon(
+                //         Icons.search_rounded,
+                //         color: AppColor.grey,
+                //         size: 22.sp,
+                //       ),
+                //       SizedBox(width: 10.w),
+                //       Expanded(
+                //         child: Text(
+                //           "ابحث عن مشروع...",
+                //           style: AppTextStyle.medium(14, color: AppColor.grey),
+                //         ),
+                //       ),
+                //       // BuildIconSearchBar(onpressed: () {}),
+                //     ],
+                //   ),
+                // ),
 
-                SizedBox(height: 24.h),
+                // SizedBox(height: 24.h),
 
                 /// tabs
                 const CustomBulidTabBar(
@@ -135,21 +136,21 @@ class StudentProjectProposalsView extends StatelessWidget {
                       BlocProvider(
                         create: (context) => StudentProposalCubit(
                           status: AppProjectsStatus.padding,
-                          repository: sl(),
+                          repository: sl<StudentProjectProposalRepository>(),
                         ),
                         child: const StudentProjectProposalsPending(),
                       ),
                       BlocProvider(
                         create: (context) => StudentProposalCubit(
                           status: AppProjectsStatus.approved,
-                          repository: sl(),
+                          repository: sl<StudentProjectProposalRepository>(),
                         ),
                         child: const StudentProjectProposalsApprove(),
                       ),
                       BlocProvider(
                         create: (context) => StudentProposalCubit(
                           status: AppProjectsStatus.approved,
-                          repository: sl(),
+                          repository: sl<StudentProjectProposalRepository>(),
                         ),
                         child: const StudentProjectProposalsRejected(),
                       ),

@@ -44,7 +44,7 @@ class EditeProfileBlocCunsumer extends StatelessWidget {
           academicForm: academicForm,
 
           onBack: cubit.previousStep,
-          onPickImage: cubit.pickImage,
+          ,
 
           onNext: () {
             if (state.currentStep == 0) {

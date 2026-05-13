@@ -5,6 +5,7 @@ import 'package:graduation_management_idea_system/feature/projects/data/reposito
 import 'package:graduation_management_idea_system/feature/projects/data/repository/uploud_project_reporepository_imp.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/projects_repository.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/uploud_project.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_bloc.dart';
 
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
 
@@ -22,6 +23,8 @@ Future<void> initProjectsinjectionScope(GetIt scope) async {
   scope.registerLazySingleton<ProjectsRepository>(
     () => ProjectRepositoryImp(scope()),
   );
-
+  scope.registerFactory<ProjectSearchBloc>(
+    () => ProjectSearchBloc(scope<ProjectsRepository>()),
+  );
   scope.registerFactory<UploadProjectCubit>(() => scope());
 }

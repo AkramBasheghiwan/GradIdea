@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/failure.dart';
 import '../entities/validation_result_entity.dart';
 
-abstract class IdeaValidationRepositoryImp {
+abstract class IdeaValidationRepository {
   Future<Either<Failure, ValidationResultEntity>> validateStudentIdea(
     String studentIdea,
   );

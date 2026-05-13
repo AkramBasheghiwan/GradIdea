@@ -6,15 +6,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/auth_injection.dart'
     as auth;
+import 'package:graduation_management_idea_system/feature/idea_validation/presentation/validation_injection.dart';
 import 'package:graduation_management_idea_system/feature/projects/projects_injections.dart'
     as pro;
-
+import 'package:graduation_management_idea_system/feature/projects_proposal/proposal_injection.dart';
+import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/proposal_and_search_injection.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/view/user_injection.dart '
     as user;
-
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../../network/network_info.dart';
 
 final sl = GetIt.instance;
@@ -37,14 +37,43 @@ Future<void> initBaseScope() async {
 // 2. نطاق الطالب (Student Scope)
 // ==========================================
 void initStudentScope() {
-  sl.pushNewScope(scopeName: 'studentScope');
+  if (!sl.hasScope('studentScope')) {
+    sl.pushNewScope(
+      scopeName: 'studentScope',
+      init: (scope) {
+        pro.initProjectsinjectionScope(scope);
+        ProposalInjection.initPrposalInhection(scope);
+        ValidationInjection.init(scope);
+      },
+    );
+  }
+}
+
+void initSupervisorScope() {
+  if (!sl.hasScope('supervisorScope')) {
+    sl.pushNewScope(
+      scopeName: 'supervisorScope',
+      init: (scope) {
+        ProposalInjection.initPrposalInhection(scope);
+      },
+    );
+  }
 }
 
 // ==========================================
 // 3. نطاق المسؤول (Admin Scope)
 // ==========================================
 void initAdminScope() {
-  sl.pushNewScope(scopeName: 'adminScope');
+  if (!sl.hasScope('adminScope')) {
+    sl.pushNewScope(
+      scopeName: 'adminScope',
+      init: (scope) {
+        pro.initProjectsinjectionScope(scope);
+        ProposalInjection.initPrposalInhection(scope);
+        ProposalAndSearchInjection.init(scope);
+      },
+    );
+  }
 }
 
 // ==========================================
@@ -56,6 +85,8 @@ void initHeadOfDepartScope() async {
     sl.pushNewScope(
       scopeName: 'headOfDepartScope',
       init: (scope) {
+        ProposalInjection.initPrposalInhection(scope);
+        ProposalAndSearchInjection.init(scope);
         // hod.initHodInjection(scope);
       },
     );

@@ -35,7 +35,7 @@ class ProjectProposalsModel extends ProjectProposals {
 
   factory ProjectProposalsModel.fromMap(Map<String, dynamic> map) {
     return ProjectProposalsModel(
-      id: map['id']?.toInt(),
+      id: map['id']?.toString(),
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       supervisor: map['supervisor'] ?? '',

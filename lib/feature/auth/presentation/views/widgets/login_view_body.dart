@@ -29,16 +29,17 @@ class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isOsecure = false;
+  bool _isOsecure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background, // الخلفية الزرقاء العلوية
       body: Stack(
+        alignment: Alignment.topCenter,
         children: <Widget>[
           // خلفية الصور الهندسية (Pattern)
-          Align(
-            alignment: Alignment.topCenter,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
             child: Image.asset(
               height: 350.h,
               AppImageAssets.backgroundGlow,

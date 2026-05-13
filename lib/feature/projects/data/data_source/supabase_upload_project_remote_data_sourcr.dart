@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:graduation_management_idea_system/core/services/file_servicrs/file_upload.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,7 +20,7 @@ abstract class UploadProjectRemoteDataSource {
   });
   Future<void> updateProjectsStatus(String projectId, String newStatus);
   Future<void> updateProjectsStatusReject({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   });
@@ -37,6 +39,8 @@ class UploadProjectRemoteDataSourceImpl
     );
   }
   final String table = 'projects';
+
+  final userId = CacheHelper.getData(key: AppConstatnce.getUid);
   // ==========================================
   // 0. دالة مساعدة لتوليد الـ Vector
   // ==========================================
@@ -63,16 +67,12 @@ class UploadProjectRemoteDataSourceImpl
   // ==========================================
   // 1. إضافة مشروع جديد
   // ==========================================
-  @override
+
   @override
   Future<void> uploadProject(ProjectModel project) async {
     try {
       String? fileUrl;
-
-      log(" بدأ الرفع: التحقق من وجود ملف...");
       if (project.projectFile != null) {
-        log(" جاري رفع الملف لـ Supabase Storage...");
-
         fileUrl = await AppFileUpload.uploadFile(
           project.projectFile!,
           supabase,
@@ -193,6 +193,11 @@ class UploadProjectRemoteDataSourceImpl
       );
     }
   }
+  // Future<List<ProjectModel>> fetchMyprojects(String status)async {
+  //   try{
+  //     final result = await supabase.from(table).select().eq('leader_id', )
+  //   }
+  // }
 
   @override
   Future<List<ProjectModel>> fetchMyProjects({required String status}) async {
@@ -201,6 +206,7 @@ class UploadProjectRemoteDataSourceImpl
           .from(table)
           .select()
           .eq('status', status)
+          .eq('leader_id': userId)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -267,7 +273,7 @@ class UploadProjectRemoteDataSourceImpl
 
   @override
   Future<void> updateProjectsStatusReject({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   }) async {

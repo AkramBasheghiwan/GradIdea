@@ -85,7 +85,6 @@ class _ProjectsArchiveScreenState extends State<ProjectsArchiveScreen> {
             // رسم القائمة اللانهائية
             return ListView.builder(
               controller: _scrollController,
-
               itemCount: hasReachedMax ? projects.length : projects.length + 1,
               itemBuilder: (context, index) {
                 if (index >= projects.length) {

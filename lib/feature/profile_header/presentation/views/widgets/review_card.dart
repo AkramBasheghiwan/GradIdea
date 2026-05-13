@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/home/presentation/views/widgets/build_app_card.dart';
+import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/widgets/build_app_card.dart';
 
 import '../../../../../../core/utils/app_colors.dart';
 import '../../../../../../core/utils/app_text_style.dart';

@@ -14,12 +14,12 @@ abstract class ProjectProposalRepository {
     String departmentId,
   );
 
-  Future<Either<Failure, Unit>> deleteProjectProposal(int id);
+  Future<Either<Failure, Unit>> deleteProjectProposal(String id);
 
   Future<Either<Failure, Unit>> updateProposal(ProjectProposals project);
 
   Future<Either<Failure, Unit>> updateProposalStatus({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   });

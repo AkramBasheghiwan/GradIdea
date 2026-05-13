@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 
 class ProjectProposals extends Equatable {
-  final int? id;
+  final String? id;
   final String idSupervisor;
   final String idLeader;
   final String name;

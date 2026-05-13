@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_project_card_skeleton.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_bloc.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_event.dart';
@@ -334,7 +336,12 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
                 );
               }
 
-              return ExpandableProjectCard(project: state.projects[index]);
+              return CustomBuildCardProjectsApproved(
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.projectDetail);
+                },
+                project: state.projects[index],
+              );
             },
           );
         }

@@ -6,6 +6,7 @@ import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_icon_search_bar.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_bulid_tab_bar.dart';
+import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/domain/repository/proposal_approved_repository.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_approved/proposal_approve_cubit.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/widgets/supervisor_proposal_approved_body.dart';
 
@@ -71,7 +72,10 @@ class SupervisorProposalApproved extends StatelessWidget {
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProposalApprovedCubit(sl(), 'IT');
+                        final cubit = ProposalApprovedCubit(
+                          sl<ProposalApprovedRepository>(),
+                          'IT',
+                        );
                         return cubit;
                       },
 
@@ -80,7 +84,10 @@ class SupervisorProposalApproved extends StatelessWidget {
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProposalApprovedCubit(sl(), 'IS');
+                        final cubit = ProposalApprovedCubit(
+                          sl<ProposalApprovedRepository>(),
+                          'IS',
+                        );
 
                         return cubit;
                       },
@@ -90,7 +97,10 @@ class SupervisorProposalApproved extends StatelessWidget {
                     BlocProvider(
                       lazy: true,
                       create: (BuildContext context) {
-                        final cubit = ProposalApprovedCubit(sl(), 'CS');
+                        final cubit = ProposalApprovedCubit(
+                          sl<ProposalApprovedRepository>(),
+                          'CS',
+                        );
 
                         return cubit;
                       },

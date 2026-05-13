@@ -104,7 +104,7 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateProjectStatus(int id) async {
+  Future<Either<Failure, Unit>> updateProjectStatus(String id) async {
     try {
       await remoteDataSource.updateProjectsStatus(
         id.toString(),
@@ -122,7 +122,7 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
 
   @override
   Future<Either<Failure, Unit>> updateProjectsStatusReject({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   }) async {

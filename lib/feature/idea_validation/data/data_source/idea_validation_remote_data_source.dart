@@ -63,7 +63,7 @@ class IdeaValidationRemoteDataSourceImpl
         'match_projects',
         params: {
           'query_embedding': queryVector,
-          'match_threshold': 0.85,
+          'match_threshold': 0.75,
           'match_count': 5,
         },
       );
@@ -73,25 +73,21 @@ class IdeaValidationRemoteDataSourceImpl
       for (var item in similarProjects) {
         final data = item as Map<String, dynamic>;
 
-        final distance = data['distance'] as double? ?? 1.0;
+        final distance = (data['distance'] as num?)?.toDouble() ?? 1.0;
 
-        // حساب نسبة التشابه: Similarity = (1 - Distance) * 100
         double similarityPercentage = (1 - distance) * 100;
 
-        if (distance < 0.15) {
-          if (similarityPercentage >= 70) {
-            similarProjectsList.add(
-              SimilarProjectEntity(
-                id: data['id']?.toString() ?? '',
-
-                title: data['name'] ?? 'بدون عنوان',
-                description: data['description'] ?? '',
-                similarityPercentage: similarityPercentage,
-                department: data['department'] ?? '',
-                year: data['year'],
-              ),
-            );
-          }
+        if (similarityPercentage >= 80) {
+          similarProjectsList.add(
+            SimilarProjectEntity(
+              id: data['id']?.toString() ?? '',
+              title: data['name'] ?? 'بدون عنوان',
+              description: data['description'] ?? '',
+              similarityPercentage: similarityPercentage,
+              department: data['department'] ?? '',
+              year: data['year'],
+            ),
+          );
         }
       }
 

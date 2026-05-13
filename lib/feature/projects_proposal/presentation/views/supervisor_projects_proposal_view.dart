@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_bulid_tab_bar.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/domain/repository/project_proposal_repository.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervisor_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/project_proposal_approve.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/project_proposal_pending.dart';
@@ -132,16 +134,25 @@ class SuperVisorProjectsProposalView extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       BlocProvider(
-                        create: (context) => sl<ProjectProposalCubit>(),
+                        create: (context) => ProjectProposalCubit(
+                          repository: sl<ProjectProposalRepository>(),
+                          status: AppProjectsStatus.padding,
+                        ),
                         child: const SupervisorProjectProposalsView(),
                       ),
 
                       BlocProvider(
-                        create: (context) => sl<ProjectProposalCubit>(),
+                        create: (context) => ProjectProposalCubit(
+                          repository: sl<ProjectProposalRepository>(),
+                          status: AppProjectsStatus.approved,
+                        ),
                         child: const SupervisorProjectProposalApprove(),
                       ),
                       BlocProvider(
-                        create: (context) => sl<ProjectProposalCubit>(),
+                        create: (context) => ProjectProposalCubit(
+                          repository: sl<ProjectProposalRepository>(),
+                          status: AppProjectsStatus.rejected,
+                        ),
                         child: const SupervisorProjectProposalRejected(),
                       ),
                     ],

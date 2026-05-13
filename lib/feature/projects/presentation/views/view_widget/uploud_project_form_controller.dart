@@ -1,10 +1,10 @@
 // project_upload_form_controller.dart
 
 import 'package:flutter/material.dart';
-import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
+import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 
 class ProjectUploadFormController {
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
   final descController = TextEditingController();
@@ -14,7 +14,7 @@ class ProjectUploadFormController {
 
   String? selectedDepartment;
 
-  ProjectUploadFormController({ProjectProposals? project}) {
+  ProjectUploadFormController({ProjectEntity? project}) {
     if (project != null) {
       nameController.text = project.name;
       descController.text = project.description;
@@ -39,5 +39,13 @@ class ProjectUploadFormController {
     yearController.dispose();
     studentsController.dispose();
     supervisorController.dispose();
+  }
+
+  void clear() {
+    nameController.clear();
+    descController.clear();
+    yearController.clear();
+    studentsController.clear();
+    supervisorController.clear();
   }
 }

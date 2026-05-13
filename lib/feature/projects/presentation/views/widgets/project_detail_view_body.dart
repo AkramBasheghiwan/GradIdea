@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_strings.dart';
 import '../../../../../core/utils/app_text_style.dart';
@@ -89,7 +90,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
       expandedHeight: 320.h,
       pinned: true,
       elevation: 0,
-      backgroundColor: AppColor.primaryColor,
+      backgroundColor: AppColor.background,
       leading: Padding(
         padding: EdgeInsets.all(8.r),
         child: Container(
@@ -99,10 +100,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
-            ),
+            icon: const Icon(Iconsax.arrow_right, color: Colors.white),
           ),
         ),
       ),
@@ -135,7 +133,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24.r),
                     ),
                     child: Icon(
-                      Icons.auto_awesome_rounded,
+                      Iconsax.teacher,
                       color: Colors.white,
                       size: 34.sp,
                     ),
@@ -144,7 +142,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                   SizedBox(height: 22.h),
 
                   Text(
-                    projects.name ?? "اسم المشروع",
+                    projects.name,
                     style: AppTextStyle.bold(24, color: Colors.white),
                   ).animate().fade().slideY(begin: .2),
 
@@ -155,15 +153,15 @@ class ProjectDetailsViewBody extends StatelessWidget {
                     runSpacing: 10.h,
                     children: [
                       _heroChip(
-                        Icons.school_outlined,
+                        Iconsax.teacher,
                         projects.department ?? "غير محدد",
                       ),
                       _heroChip(
-                        Icons.calendar_month_rounded,
+                        Iconsax.calendar,
                         projects.year.toString() ?? "",
                       ),
                       _heroChip(
-                        Icons.groups_2_outlined,
+                        Iconsax.profile_2user,
                         "${projects.students.length ?? 0} أعضاء",
                       ),
                     ],
@@ -242,7 +240,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle(AppStrings.aboutProject, Icons.description_outlined),
+          _sectionTitle(AppStrings.aboutProject, Iconsax.document_text),
           Text(
             projects.description ?? "لا يوجد وصف للمشروع.",
             style: AppTextStyle.medium(
@@ -261,7 +259,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle(AppStrings.supervisor, Icons.person_outline),
+          _sectionTitle(AppStrings.supervisor, Iconsax.teacher),
 
           Row(
             children: [
@@ -274,11 +272,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
-                child: Icon(
-                  Icons.school_rounded,
-                  color: Colors.white,
-                  size: 28.sp,
-                ),
+                child: Icon(Iconsax.teacher, color: Colors.white, size: 28.sp),
               ),
 
               SizedBox(width: 14.w),
@@ -344,7 +338,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                           alpha: .1,
                         ),
                         child: Icon(
-                          Icons.person,
+                          Iconsax.people,
                           size: 14.sp,
                           color: AppColor.primaryColor,
                         ),
@@ -377,7 +371,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
               borderRadius: BorderRadius.circular(18.r),
             ),
             child: Icon(
-              Icons.picture_as_pdf_outlined,
+              Iconsax.document_download,
               color: Colors.red,
               size: 28.sp,
             ),

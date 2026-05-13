@@ -14,7 +14,7 @@ class AppRoutes {
   static const String projectDetail = '/projectDetail';
   static const String uploudProject = 'uploudproject';
   static const String aiValidationIdea = 'aivalidationidea';
-
+  static const String supervisorHome = 'supervisorhome';
   static const String myProject = 'myproject';
   static const String exploureProjects = 'exploureprojects';
   static const String searchProjects = 'searchprojects';
@@ -23,5 +23,5 @@ class AppRoutes {
   static const String uploudProposal = '/uploudpropsal';
   static const String myproposal = '/myproposal';
   static const String exploureProposal = '/exploureproposal';
-  static const String supervisorProposal = 'supervisorproposal';
+  static const String reviewProposal = 'revewproposal';
 }

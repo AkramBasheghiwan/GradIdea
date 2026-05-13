@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ProjectUploadBuildSelectYear extends StatelessWidget {
   final String? selectedValue;
@@ -41,7 +42,7 @@ class ProjectUploadBuildSelectYear extends StatelessWidget {
           dropdownColor: Colors.white,
           decoration: InputDecoration(
             prefixIcon: const Icon(
-              Icons.calendar_today_outlined,
+              Iconsax.calendar,
               color: AppColor.secondaryColor,
               size: 20,
             ),

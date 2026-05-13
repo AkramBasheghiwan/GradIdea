@@ -19,7 +19,7 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
     );
   }
 
-  Future<void> acceptProposal(int id) async {
+  Future<void> acceptProposal(String id) async {
     emit(ProjectProposalLoading());
     final result = await repository.updateProposalStatus(
       id: id,
@@ -32,7 +32,7 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
     });
   }
 
-  Future<void> rejectProposal(int id, String reason) async {
+  Future<void> rejectProposal(String id, String reason) async {
     emit(ProjectProposalLoading());
     final result = await repository.updateProposalStatus(
       id: id,
@@ -43,7 +43,7 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
     result.fold((failure) => emit(ProjectProposalError(failure.message)), (_) {
       emit(
         const ProjectProposalActionSuccess(
-          "تم رفض المقترح وإرسال السبب للطلاب ❌",
+          "تم رفض المقترح وإرسال السبب للطلاب ",
         ),
       );
       fetchProposalsToSupervisor();
@@ -51,7 +51,7 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
   }
 
   // 5. حذف مقترح مشروع
-  Future<void> deleteProposal(int id) async {
+  Future<void> deleteProposal(String id) async {
     emit(ProjectProposalLoading());
     final result = await repository.deleteProjectProposal(id);
 

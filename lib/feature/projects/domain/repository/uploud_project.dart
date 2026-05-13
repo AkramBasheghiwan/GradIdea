@@ -15,9 +15,9 @@ abstract class UploudProjectRepository {
     required String status,
   });
   Future<Either<Failure, Unit>> updateProjectsStatusReject({
-    required int id,
+    required String id,
     required String status,
     String? reason,
   });
-  Future<Either<Failure, Unit>> updateProjectStatus(int id);
+  Future<Either<Failure, Unit>> updateProjectStatus(String id);
 }

@@ -7,4 +7,7 @@ class AppConstatnce {
 
   static const String userCollection = "users";
   static const String isFirstTime = 'isFirstTime';
+
+  static const String getRole = 'role';
+  static const String getUid = 'uid';
 }

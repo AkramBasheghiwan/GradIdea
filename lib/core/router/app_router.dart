@@ -1,8 +1,11 @@
 //import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
+import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/student_main_layout.dart';
+import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/main_layout_admin.dart';
+import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/idea_validation_views.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/uploud_proposal_views/uploud_proposal_view.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/student_project_proposals_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/forget_email.dart';
@@ -11,7 +14,7 @@ import 'package:graduation_management_idea_system/feature/auth/presentation/view
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/mapper_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/signup_hr_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/signup_view.dart';
-import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/verify_email_otp.dart';
+import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/verify_email_otp_view.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/views/verify_email_view.dart';
 import 'package:graduation_management_idea_system/feature/onboarding/presentation/view/onboarding_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
@@ -20,9 +23,11 @@ import 'package:graduation_management_idea_system/feature/projects/presentation/
 
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_detail_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/supervisor_projects_proposal_view.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/supervisor_proposal_approved.dart';
 import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
-import 'package:graduation_management_idea_system/feature/user/presentation/view/main_layout_view.dart';
+import 'package:graduation_management_idea_system/feature/supervisor_home/presentation/views/main_layout_supervisor.dart';
+
 //import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
 class AppRouter {
@@ -55,12 +60,15 @@ class AppRouter {
         );
       case AppRoutes.verifyEmail:
         return MaterialPageRoute(
-          builder: (BuildContext context) => VerifyEmailOtp(
+          builder: (BuildContext context) => VerifyEmailOtpView(
             email: settings.arguments as String,
           ), // تأكد من تمرير الإيميل كوسيط
           //VerifyEmailView(),
         );
-
+      case AppRoutes.dashboardStudent:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const StudentMainLayout(),
+        );
       case AppRoutes.userView:
         return MaterialPageRoute(
           builder: (BuildContext context) => const MainLayoutScreen(),
@@ -76,7 +84,7 @@ class AppRouter {
         );
       case AppRoutes.aiValidationIdea:
         return MaterialPageRoute(
-          builder: (BuildContext context) => Container(),
+          builder: (BuildContext context) => const IdeaValidationView(),
         );
       case AppRoutes.uploudProject:
         final ProjectEntity? project = settings.arguments as ProjectEntity?;
@@ -108,6 +116,19 @@ class AppRouter {
       case AppRoutes.proposalDetail:
         return MaterialPageRoute(
           builder: (BuildContext context) => Container(),
+        );
+      case AppRoutes.reviewProposal:
+        return MaterialPageRoute(
+          builder: (BuildContext context) =>
+              const SuperVisorProjectsProposalView(),
+        );
+      case AppRoutes.supervisorHome:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const MainLayoutSupervisor(),
+        );
+      case AppRoutes.searchProjects:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const SearchProjectsView(),
         );
 
       default:

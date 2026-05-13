@@ -224,6 +224,12 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
                   icon: Icons.groups_outlined,
                   children: [
                     ProjectUploadBuildField(
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'اسم الدكتور المشرف مطلوب';
+                        }
+                        return null;
+                      },
                       controller: _supervisorController,
                       label: "الدكتور المشرف",
                       hint: "اسم الدكتور المشرف",
@@ -231,6 +237,12 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
                     ),
                     SizedBox(height: 15.h),
                     ProjectUploadBuildField(
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'أسماء أعضاء الفريق مطلوبة';
+                        }
+                        return null;
+                      },
                       controller: _studentsController,
                       label: "أعضاء الفريق",
                       hint: "الأسماء (افصل بينهم بفاصلة ,)",
@@ -252,7 +264,7 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBody> {
                 // 5. زر الإرسال
                 ProjectUploadBuildSubmitButtom(
                   isLoading: widget.isLoading,
-                  onPressed: _submitProposal,
+                  onPressed: widget.isLoading ? null : _submitProposal,
                 ),
 
                 // مساحة إضافية في الأسفل لضمان راحة التمرير عند ظهور الكيبورد

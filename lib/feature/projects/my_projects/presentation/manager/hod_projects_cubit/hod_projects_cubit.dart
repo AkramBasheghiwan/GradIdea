@@ -26,7 +26,7 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
     );
   }
 
-  Future<void> acceptProposal(int projectId) async {
+  Future<void> acceptProposal(String projectId) async {
     emit(HodProjectsLoading());
     final result = await repository.updateProjectStatus(projectId);
 
@@ -36,7 +36,7 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
     });
   }
 
-  Future<void> rejectProposal(int id, String reason) async {
+  Future<void> rejectProposal(String id, String reason) async {
     emit(HodProjectsLoading());
     final result = await repository.updateProjectsStatusReject(
       id: id,

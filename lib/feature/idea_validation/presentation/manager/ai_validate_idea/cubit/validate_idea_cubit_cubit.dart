@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../domain/repository/idea_validation_repo.dart';
 
 class IdeaValidationCubit extends Cubit<IdeaValidationState> {
-  final IdeaValidationRepositoryImp repository;
+  final IdeaValidationRepository repository;
 
   IdeaValidationCubit({required this.repository})
     : super(IdeaValidationInitial());

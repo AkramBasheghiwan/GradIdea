@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/app_role.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/auth_cubit/auth_cubit.dart';
@@ -53,15 +56,33 @@ class MapperBlocConsummer extends StatelessWidget {
       listener: (BuildContext context, AuthState state) {
         if (state is AuthAuthenticated) {
           final UserEntity user = state.user;
+          dropAllRoleScopes();
           log(state.user.role);
+          CacheHelper.saveData(key: AppConstatnce.getRole, value: user.role);
+          CacheHelper.saveData(key: AppConstatnce.getUid, value: user.uid);
           if (user.role == AppRoles.user) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.userView);
+            initStudentScope();
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(AppRoutes.dashboardStudent);
           } else if (user.role == AppRoles.headOfDepartment) {
+            initHeadOfDepartScope();
+
             Navigator.of(
               context,
             ).pushReplacementNamed(AppRoutes.dashboardAdmin);
           } else if (user.role == AppRoles.admin) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.userView);
+            initStudentScope();
+
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(AppRoutes.dashboardStudent);
+          } else if (user.role == AppRoles.supervisor) {
+            initSupervisorScope();
+
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(AppRoutes.supervisorHome);
           } else if (user.role == AppRoles.company) {
             Navigator.of(context).pushReplacementNamed('/company');
           }

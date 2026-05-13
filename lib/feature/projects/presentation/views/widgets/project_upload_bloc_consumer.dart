@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
@@ -9,7 +10,6 @@ import 'package:graduation_management_idea_system/feature/projects/presentation/
 //import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/projects_upload_view_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProjectUploadBlocConsumer extends StatelessWidget {
   const ProjectUploadBlocConsumer({super.key});
@@ -41,29 +41,31 @@ class ProjectUploadBlocConsumer extends StatelessWidget {
           ),
         ),
       ),
-      body: BlocConsumer<UploadProjectCubit, UploadProjectState>(
-        listener: (context, state) {
-          if (state.status == UploadProjectStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('تم رفع المشروع بنجاح! 🎉')),
-            );
-            Navigator.pop(context); // للعودة للصفحة السابقة بعد النجاح
-          } else if (state.status == UploadProjectStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: Colors.red,
-              ),
-            );
-            log(state.errorMessage!);
-          }
-        },
+      body: SafeArea(
+        child: BlocConsumer<UploadProjectCubit, UploadProjectState>(
+          listener: (context, state) {
+            if (state.status == UploadProjectStatus.success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم رفع المشروع بنجاح! 🎉')),
+              );
+              Navigator.pop(context); // للعودة للصفحة السابقة بعد النجاح
+            } else if (state.status == UploadProjectStatus.error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              log(state.errorMessage!);
+            }
+          },
 
-        builder: (context, state) {
-          return ProjectUploadViewBodys(
-            isLoading: state.status == UploadProjectStatus.loading,
-          );
-        },
+          builder: (context, state) {
+            return ProjectUploadViewBodys(
+              isLoading: state.status == UploadProjectStatus.loading,
+            );
+          },
+        ),
       ),
     );
   }

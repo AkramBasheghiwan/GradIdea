@@ -36,7 +36,7 @@ class VerifyEmailBlocListner extends StatelessWidget {
           );
         }
       },
-      child: const VerifySignUpOtpScreen(email: ,),
+      child: const VerifySignUpOtpScreen(email: ''),
     );
   }
 }

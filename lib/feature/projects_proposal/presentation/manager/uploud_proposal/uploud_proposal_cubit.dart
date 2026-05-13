@@ -101,13 +101,14 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
   }
 
   Future<void> updateProposal({
-    required int id,
+    required String id,
     required String name,
     required String description,
     required String department,
     required int year,
     required List<String> students,
     required String supervisor,
+    required String supervisorId,
   }) async {
     emit(state.copyWith(status: UploadProposalStatus.loading));
 
@@ -121,7 +122,7 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
         students: students,
         supervisor: supervisor,
         projectFile: state.selectedFile,
-        idSupervisor: '',
+        idSupervisor: supervisorId,
         idLeader: '', // قد يكون null وهذا طبيعي في التعديل
       ),
     );

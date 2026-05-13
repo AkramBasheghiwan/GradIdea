@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomFloatingNavBar extends StatelessWidget {
+  final Color? color;
   final List<Widget> childern;
-  const CustomFloatingNavBar({super.key, required this.childern});
+  const CustomFloatingNavBar({super.key, required this.childern, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class CustomFloatingNavBar extends StatelessWidget {
       margin: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 24.h),
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColor.white,
+        color: color ?? AppColor.white,
         borderRadius: BorderRadius.circular(40.r),
         boxShadow: <BoxShadow>[
           BoxShadow(

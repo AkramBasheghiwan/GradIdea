@@ -10,10 +10,10 @@ abstract class ProjectProposalRemoteDataSource {
 
   Future<void> uploadProjectProposal(ProjectProposalsModel proposalData);
   Future<void> updateProposal(ProjectProposalsModel proposalData);
-  Future<void> deleteProjectProposal(int id);
+  Future<void> deleteProjectProposal(String id);
 
   Future<void> updateProposalStatus({
-    required int id,
+    required String id,
     required String status,
     String? rejectionReason,
   });
@@ -120,7 +120,7 @@ class ProjectProposalRemoteDataSourceImpl
   }
 
   @override
-  Future<void> deleteProjectProposal(int id) async {
+  Future<void> deleteProjectProposal(String id) async {
     try {
       await _supabase.from(table).delete().eq('id', id);
     } on PostgrestException catch (e) {
@@ -130,7 +130,7 @@ class ProjectProposalRemoteDataSourceImpl
 
   @override
   Future<void> updateProposalStatus({
-    required int id,
+    required String id,
     required String status,
     String? rejectionReason,
   }) async {
