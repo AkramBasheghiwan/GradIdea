@@ -50,7 +50,7 @@ class AuthCubit extends Cubit<AuthState> {
       (Failure failure) => emit(
         AuthError(failure.message),
       ), // تحديد النوع هنا يحل مشكلة الـ message
-      (_) => emit(AuthUnauthenticated()),
+      (_) => emit(AuthSignOut()),
     );
   }
 }

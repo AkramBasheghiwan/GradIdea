@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CustomBuildCardStatusPendding extends StatefulWidget {
   const CustomBuildCardStatusPendding({super.key, required this.project});
 
-  final dynamic project;
+  final ProjectEntity project;
 
   @override
   State<CustomBuildCardStatusPendding> createState() =>
@@ -100,8 +103,8 @@ class _CustomBuildCardStatusPenddingState
         children: [
           Positioned(
             right: 0,
-            top: 0,
-            bottom: 0,
+            top: 16.h,
+            bottom: 16.h,
             child: Container(
               width: 5.w,
               decoration: BoxDecoration(
@@ -124,14 +127,7 @@ class _CustomBuildCardStatusPenddingState
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          widget.project.name,
-                          style: AppTextStyle.bold(18),
-                          maxLines: _isExpanded ? null : 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      const Expanded(child: Text('')),
 
                       SizedBox(width: 12.w),
 
@@ -164,7 +160,12 @@ class _CustomBuildCardStatusPenddingState
                       ),
                     ],
                   ),
-
+                  Text(
+                    widget.project.name,
+                    style: AppTextStyle.bold(18),
+                    maxLines: _isExpanded ? null : 2,
+                    overflow: _isExpanded ? null : TextOverflow.ellipsis,
+                  ),
                   SizedBox(height: 16.h),
 
                   Container(
@@ -177,7 +178,7 @@ class _CustomBuildCardStatusPenddingState
                       widget.project.description,
                       style: AppTextStyle.medium(13, color: AppColor.grey),
                       maxLines: _isExpanded ? null : 2,
-                      overflow: TextOverflow.ellipsis,
+                      overflow: _isExpanded ? null : TextOverflow.ellipsis,
                     ),
                   ),
 
@@ -203,17 +204,24 @@ class _CustomBuildCardStatusPenddingState
                               ),
 
                               _buildInfoRow(
-                                Icons.calendar_month,
+                                Iconsax.calendar, // 📅
                                 "سنة التخرج:",
                                 widget.project.year.toString(),
                               ),
 
                               if (widget.project.fileUrl != null &&
                                   widget.project.fileUrl!.isNotEmpty)
-                                _buildInfoRow(
-                                  Icons.attach_file,
-                                  "الملف:",
-                                  "عرض الملف",
+                                InkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.pdfviewer,
+                                    arguments: widget.project.fileUrl,
+                                  ),
+                                  child: _buildInfoRow(
+                                    Iconsax.document_text_1, // 📎
+                                    "الملف:",
+                                    "عرض الملف",
+                                  ),
                                 ),
 
                               SizedBox(height: 8.h),

@@ -1,13 +1,14 @@
-import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/core/utils/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_dimens.dart';
+
 class CustomBulidTabBar extends StatelessWidget {
   final List<Tab> tap;
-  const CustomBulidTabBar({required this.tap, super.key});
-
+  const CustomBulidTabBar({super.key, required this.tap, this.controller});
+  final TabController? controller;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -20,6 +21,7 @@ class CustomBulidTabBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimens.r30.r),
         ),
         child: TabBar(
+          controller: controller,
           tabAlignment: TabAlignment.start,
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(

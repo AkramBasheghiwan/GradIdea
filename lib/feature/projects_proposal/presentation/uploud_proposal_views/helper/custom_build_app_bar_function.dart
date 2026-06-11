@@ -20,7 +20,7 @@ AppBar customBuildAppBar({
       duration: const Duration(milliseconds: 300),
       child: Text(
         projects == null ? AppStrings.uploadTitle : "تعديل مقترح المشروع",
-        key: ValueKey(projects == null), // لتفعيل حركة الانتقال
+        key: ValueKey(projects == null),
         style: AppTextStyle.titleLarge18NormalStyle.copyWith(fontSize: 20.sp),
       ),
     ),

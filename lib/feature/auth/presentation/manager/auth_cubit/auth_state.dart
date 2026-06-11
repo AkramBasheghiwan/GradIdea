@@ -28,6 +28,8 @@ class AuthError extends AuthState {
   List<Object> get props => <Object>[message];
 }
 
+class AuthSignOut extends AuthState {}
+
 class AuthMessageSuccess extends AuthState {
   final String message;
   const AuthMessageSuccess(this.message);

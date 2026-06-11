@@ -7,7 +7,6 @@ import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/domain/entities/simialar_project_entity.dart';
-
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/manager/ai_validate_idea/cubit/validate_idea_cubit_cubit.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/manager/ai_validate_idea/cubit/validate_idea_state.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/ai_suggestions_card.dart';
@@ -81,18 +80,18 @@ class _IdaeValidationViewState extends State<IdaeValidationViewBody> {
 
                   SizedBox(height: 20.h),
 
-                  if (!state.result.isUnique)
-                    AiSuggestionsCard(
-                      isLoading: state.isAiLoading,
-                      suggestions: state.aiSuggestions,
-                      onGenerate: () =>
-                          _generateAiSuggestions(state.result.similarProjects),
-                    ),
+                  SimilarProjectsSection(
+                    projects: state.result.similarProjects,
+                  ),
 
                   SizedBox(height: 20.h),
 
-                  SimilarProjectsSection(
-                    projects: state.result.similarProjects,
+                  // if (!state.result.isUnique)
+                  AiSuggestionsCard(
+                    isLoading: state.isAiLoading,
+                    suggestions: state.aiSuggestions,
+                    onGenerate: () =>
+                        _generateAiSuggestions(state.result.similarProjects),
                   ),
                 ],
 

@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/app_secrets.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/router/app_router.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
@@ -12,11 +14,11 @@ import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 //import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/dashboard_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 //import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
-//import 'package:graduation_management_idea_system/feature/profile_header/presentation/views/edite_profile_view.dart';
-//import 'package:graduation_management_idea_system/feature/profile_header/presentation/views/profile_view.dart';
+//import 'package:graduation_management_idea_system/feature/profile/presentation/views/edite_profile_view.dart';
+//import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
 //import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_detail_view_body.dart';
 //import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/projects_upload_view_body.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/view/splash_view.dart';
 //import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
 //import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
 //import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
@@ -28,10 +30,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await dotenv.load(fileName: ".env");
   await Supabase.initialize(
-    url: 'https://wsbfgktdnhhakeirnmmw.supabase.co',
-    anonKey: 'sb_publishable_XdBL9CgokH2bOCiPeQqgew_BGy5D-e3',
+    url: AppSecrets.supabaseUrl,
+    anonKey: AppSecrets.supabaseAnonKey,
   );
+
   await initBaseScope();
   await CacheHelper.init();
   runApp(const GMIS());
@@ -61,6 +66,7 @@ class GMIS extends StatelessWidget {
             onGenerateRoute: AppRouter.onGenerateRoute,
             title: 'Flutter Demo',
             theme: ThemeData(
+              fontFamily: 'Cairo',
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
 

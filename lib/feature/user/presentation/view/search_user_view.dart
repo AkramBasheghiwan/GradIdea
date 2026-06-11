@@ -11,7 +11,7 @@ class SearchUserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<SearchBloc>(),
-      child: const SearchPage(),
+      child: const SearchUserViewBody(),
     );
   }
 }

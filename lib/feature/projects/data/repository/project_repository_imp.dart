@@ -33,14 +33,6 @@ class ProjectRepositoryImp implements ProjectsRepository {
   }
 
   @override
-  Future<Either<Failure, List<ProjectEntity>>> findSimilarProjects(
-    String description,
-  ) {
-    // TODO: implement findSimilarProjects
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Either<Failure, List<ProjectEntity>>> searchProjects({
     required String query,
     required int page,

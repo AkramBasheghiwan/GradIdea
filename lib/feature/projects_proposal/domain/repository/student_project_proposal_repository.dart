@@ -8,5 +8,5 @@ abstract class StudentProjectProposalRepository {
   );
 
   Future<Either<Failure, List<ProjectProposals>>> getMyProposals(String status);
-  Future<Either<Failure, Unit>> updateProposal(ProjectProposals project);
+  // Future<Either<Failure, Unit>> updateProposal(ProjectProposals project);
 }

@@ -51,9 +51,9 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
   }
 
   // 5. حذف مقترح مشروع
-  Future<void> deleteProposal(String id) async {
+  Future<void> deleteProposal(String id, String fileUrl) async {
     emit(ProjectProposalLoading());
-    final result = await repository.deleteProjectProposal(id);
+    final result = await repository.deleteProjectProposal(id, fileUrl);
 
     result.fold((failure) => emit(ProjectProposalError(failure.message)), (_) {
       emit(const ProjectProposalActionSuccess("تم حذف المقترح بنجاح"));

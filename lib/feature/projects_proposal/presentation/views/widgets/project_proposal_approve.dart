@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_approved.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervisor_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervior_proposal_state.dart';
@@ -69,7 +69,7 @@ class _SupervisorProjectProposalApproveState
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return CustomBuildCardProjectsApproved(
+                return CustomBuildCardProposalApproved(
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -77,7 +77,7 @@ class _SupervisorProjectProposalApproveState
                       arguments: proposal,
                     );
                   },
-                  project: proposal,
+                  proposal: proposal,
                 );
               },
             ),

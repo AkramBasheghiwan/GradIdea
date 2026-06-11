@@ -1,22 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:iconsax/iconsax.dart';
-
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
-
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/uploud_project_form_controller.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/uploud_section_card.dart';
-
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/custom_build_select_year.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_field.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_file_area.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_select_major.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/project_upload_build_submit_buttom.dart';
-
 import '../../manager/upload_project_cubit/upload_project_cubit.dart';
 
 class ProjectUploadViewBodys extends StatefulWidget {
@@ -54,23 +52,26 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
     if (!controller.formKey.currentState!.validate()) return;
 
     final cubit = context.read<UploadProjectCubit>();
+    final File? file = cubit.state.selectedFile;
 
     if (isEditing) {
       cubit.updateProject(
+        fileUrl: widget.projects!.fileUrl,
         id: widget.projects!.id!,
         name: controller.nameController.text,
         description: controller.descController.text,
         department: controller.selectedDepartment ?? '',
-        year: int.parse(controller.yearController.text),
+        year: controller.yearController.text,
         students: controller.studentsList,
         supervisor: controller.supervisorController.text,
+        newFile: file,
       );
     } else {
       cubit.submitProject(
         name: controller.nameController.text,
         description: controller.descController.text,
         department: controller.selectedDepartment ?? '',
-        year: int.parse(controller.yearController.text),
+        year: controller.yearController.text,
         students: controller.studentsList,
         supervisor: controller.supervisorController.text,
       );

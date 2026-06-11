@@ -1,4 +1,4 @@
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/project_group.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/project_group.dart';
 
 class ProjectGroupModel extends ProjectGroupEntity {
   const ProjectGroupModel({

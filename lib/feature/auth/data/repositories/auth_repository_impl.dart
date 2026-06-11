@@ -147,7 +147,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(isCheck);
     } else {
-      return Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
     }
   }
 }

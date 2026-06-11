@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graduation_management_idea_system/core/widgets/Custom_build_decision_card.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_decesion.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervisor_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervior_proposal_state.dart';
@@ -61,8 +61,8 @@ class _SupervisorProjectProposalsViewState
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return CustomBuildDecisionCard(
-                  project: proposal,
+                return CustomBuildCardProposalDecesion(
+                  proposals: proposal,
 
                   onAccept: () {
                     context.read<ProjectProposalCubit>().acceptProposal(
@@ -82,7 +82,6 @@ class _SupervisorProjectProposalsViewState
           );
         }
 
-        // في حالة وجود خطأ في الصفحة الرئيسية
         if (state is ProjectProposalError) {
           return CustomBuildProjectErrorCard(
             message: state.message,

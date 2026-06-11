@@ -9,23 +9,23 @@ class ProjectArchieveInitial extends ProjectsArchieveState {}
 class ProjectArchieveLoading extends ProjectsArchieveState {}
 
 class ProjectArchieveLoaded extends ProjectsArchieveState {
-  final List<ProjectEntity> users;
+  final List<ProjectEntity> projects;
   final int page;
   final bool hasReachedMax;
 
   ProjectArchieveLoaded({
-    required this.users,
+    required this.projects,
     required this.page,
     required this.hasReachedMax,
   });
 
   ProjectArchieveLoaded copyWith({
-    List<ProjectEntity>? users,
+    List<ProjectEntity>? projects,
     int? page,
     bool? hasReachedMax,
   }) {
     return ProjectArchieveLoaded(
-      users: users ?? this.users,
+      projects: projects ?? this.projects,
       page: page ?? this.page,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );

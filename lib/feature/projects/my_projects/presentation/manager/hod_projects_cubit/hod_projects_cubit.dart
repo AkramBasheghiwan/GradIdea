@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
+import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/repository/uploud_project.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/manager/hod_projects_cubit/hod_projects_state.dart';
 
@@ -26,17 +27,22 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
     );
   }
 
-  Future<void> acceptProposal(String projectId) async {
+  Future<void> acceptProject(String projectId) async {
     emit(HodProjectsLoading());
     final result = await repository.updateProjectStatus(projectId);
-
+    if (status is HodProjectsLoaded) {
+      final HodProjectsLoaded currentState = state as HodProjectsLoaded;
+      final List<ProjectEntity> updatedList = currentState.projects
+          .where((ProjectEntity project) => project.id != projectId)
+          .toList();
+      emit(HodProjectsLoaded(updatedList));
+    }
     result.fold((failure) => emit(HodProjectsError(failure.message)), (_) {
       emit(const HodProjectsActionSuccess("تم قبول المشروع بنجاح ✅"));
-      fetchAllProjectsByDepartment();
     });
   }
 
-  Future<void> rejectProposal(String id, String reason) async {
+  Future<void> rejectProject(String id, String reason) async {
     emit(HodProjectsLoading());
     final result = await repository.updateProjectsStatusReject(
       id: id,
@@ -48,18 +54,33 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
       emit(
         const HodProjectsActionSuccess("تم رفض المقترح وإرسال السبب للطلاب ❌"),
       );
-      fetchAllProjectsByDepartment();
+      if (state is HodProjectsLoaded) {
+        final HodProjectsLoaded currentState = state as HodProjectsLoaded;
+        final List<ProjectEntity> updatedList = currentState.projects
+            .where((ProjectEntity project) => project.id != id)
+            .toList();
+        emit(HodProjectsLoaded(updatedList));
+      }
+      // fetchAllProjectsByDepartment();
     });
   }
 
   // 5. حذف مقترح مشروع
-  Future<void> deleteProposal(int id) async {
+  Future<void> deleteProposal(int id, String fileUrl) async {
     emit(HodProjectsLoading());
-    final result = await repository.deleteProject(id.toString());
+    final result = await repository.deleteProject(id.toString(), fileUrl);
 
     result.fold((failure) => emit(HodProjectsError(failure.message)), (_) {
       emit(const HodProjectsActionSuccess("تم حذف المقترح بنجاح"));
-      fetchAllProjectsByDepartment();
+
+      if (state is HodProjectsLoaded) {
+        final HodProjectsLoaded currentState = state as HodProjectsLoaded;
+        final List<ProjectEntity> updatedList = currentState.projects
+            .where((ProjectEntity project) => project.id != id)
+            .toList();
+        emit(HodProjectsLoaded(updatedList));
+      }
+      // fetchAllProjectsByDepartment();
     });
   }
 }

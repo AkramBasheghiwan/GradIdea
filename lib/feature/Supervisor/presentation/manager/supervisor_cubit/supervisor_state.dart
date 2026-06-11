@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/project_group.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/project_group.dart';
 
 abstract class SupervisorProposalsState extends Equatable {
   const SupervisorProposalsState();

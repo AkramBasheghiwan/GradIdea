@@ -4,13 +4,11 @@ import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_approved.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_project_card_skeleton.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
-
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_search/proposal_bloc.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_search/proposal_event.dart';
-
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_search/proposal_state.dart';
 
 class SearchProposalViewBody extends StatefulWidget {
@@ -327,7 +325,7 @@ class _SearchProposalViewBodyState extends State<SearchProposalViewBody> {
                 );
               }
               final proposal = state.projects[index];
-              return CustomBuildCardProjectsApproved(
+              return CustomBuildCardProposalApproved(
                 onTap: () {
                   Navigator.pushNamed(
                     context,
@@ -335,7 +333,7 @@ class _SearchProposalViewBodyState extends State<SearchProposalViewBody> {
                     arguments: proposal,
                   );
                 },
-                project: proposal,
+                proposal: proposal,
               );
             },
           );

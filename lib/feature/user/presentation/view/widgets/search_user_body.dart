@@ -5,14 +5,14 @@ import 'package:graduation_management_idea_system/feature/auth/Domain/entities/u
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_bloc.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_state_event.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchUserViewBody extends StatefulWidget {
+  const SearchUserViewBody({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _SearchUserViewBodyState createState() => _SearchUserViewBodyState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchUserViewBodyState extends State<SearchUserViewBody> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
   late SearchBloc _searchBloc;
@@ -48,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'بحث المستخدمين',
+          'بحث عن المستخدمين',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).canvasColor,

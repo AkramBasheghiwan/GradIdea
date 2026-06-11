@@ -9,8 +9,7 @@ import 'package:graduation_management_idea_system/feature/user/presentation/mana
 
 void showUserActionsBottomSheet(BuildContext context, UserEntity user) {
   final UsersCubit cubit = context.read<UsersCubit>();
-  final String targetUserRole =
-      user.role; // نأخذ دور المستخدم المستهدف لترقيته أو تنزيله
+  final String targetUserRole = user.role;
 
   showModalBottomSheet(
     context: context,
@@ -20,7 +19,7 @@ void showUserActionsBottomSheet(BuildContext context, UserEntity user) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF3A3A3C), // لون الخلفية الداكن
+          color: const Color(0xFF3A3A3C),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30.r),
             topRight: Radius.circular(30.r),

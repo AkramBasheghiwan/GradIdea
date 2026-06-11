@@ -1,7 +1,7 @@
-import 'package:graduation_management_idea_system/core/utils/app_role.dart';
-import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:graduation_management_idea_system/core/utils/app_role.dart';
+import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
@@ -42,7 +42,7 @@ class UserModel extends UserEntity {
       role: map['role'] ?? AppRoles.user,
       specialization: map['specialization'],
       phone: map['phone'],
-      companyName: map['company_name'],
+      companyName: map['external_name'],
     );
   }
 
@@ -60,29 +60,58 @@ class UserModel extends UserEntity {
       companyName: data['companyName'],
     );
   }
-  // factory UserModel.fromSupabaseMap(Map<String, dynamic> map) {
-  //   return UserModel(
-  //     uid: map['id'], // في Supabase، المعرف غالباً ما يكون 'id'
-  //     email: map['email'] ?? '',
-  //     name: map['name'] ?? '',
-  //     isEmailVerified: map['email_confirmed_at'] != null,
-  //     role: map['role'] ?? AppRoles.user,
-  //     specialization: map['specialization'],
-  //     phone: map['phone'],
-  //     companyName: map['company_name'],
-  //     // أضف أي حقول أخرى
-  //   );
-  // }
-  Map<String, dynamic> toDocument() {
+  factory UserModel.toFromEntittToModel(UserEntity user, bool isVerified) {
+    return UserModel(
+      isEmailVerified: isVerified,
+      uid: user.uid,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      specialization: user.specialization,
+      companyName: user.companyName,
+    );
+  }
+  factory UserModel.fromEntity(UserEntity user) {
+    return UserModel(
+      isEmailVerified: user.isEmailVerified,
+      uid: user.uid,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      specialization: user.specialization,
+      companyName: user.companyName,
+    );
+  }
+  UserModel copyWith({
+    String? name,
+    String? specialization,
+    String? phone,
+    String? companyName,
+  }) {
+    return UserModel(
+      isEmailVerified: isEmailVerified,
+      uid: uid,
+      name: name ?? this.name,
+      email: email,
+      role: role,
+      specialization: specialization ?? this.specialization,
+      phone: phone ?? this.phone,
+      companyName: companyName ?? this.companyName,
+    );
+  }
+
+  Map<String, dynamic> toDocument(bool isVerified) {
     return {
-      'isEmailVerified': isEmailVerified,
+      'is_email_verified': isVerified,
       'name': name,
       'email': email,
       'role': role,
       'specialization': specialization,
       'phone': phone,
-      'companyName': companyName,
-      'createdAt': FieldValue.serverTimestamp(),
+      'external_name': companyName,
+      'created_at': DateTime.now().toIso8601String(),
     };
   }
 }

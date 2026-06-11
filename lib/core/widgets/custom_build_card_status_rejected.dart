@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 
 class CustomBuildCardStatusRejected extends StatelessWidget {
   const CustomBuildCardStatusRejected({
@@ -11,7 +12,7 @@ class CustomBuildCardStatusRejected extends StatelessWidget {
   });
 
   final VoidCallback onTap;
-  final dynamic project;
+  final ProjectEntity project;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class CustomBuildCardStatusRejected extends StatelessWidget {
                       Text(
                         project.name,
                         style: AppTextStyle.bold(17),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
 

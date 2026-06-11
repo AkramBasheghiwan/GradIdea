@@ -24,7 +24,7 @@ class HeroCard extends StatelessWidget {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppColor.primaryColor, Color(0xff655BFF)],
+                    colors: [AppColor.primaryColor, AppColor.accentBlue],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -84,7 +84,7 @@ class HeroCard extends StatelessWidget {
                     ),
 
                     Positioned(
-                      top: 70,
+                      top: 50,
                       left: 0,
                       child: Container(
                         width: 86.w,

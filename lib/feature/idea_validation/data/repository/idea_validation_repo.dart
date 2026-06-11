@@ -17,7 +17,7 @@ class IdeaValidationRepoimp implements IdeaValidationRepository {
     try {
       final resulte = await remoteDataSource.getAiEnhancements(
         studentIdea,
-        oldProjects.map((e) => e.title).toList(),
+        oldProjects,
       );
       return Right(resulte);
     } on ServerException catch (e) {

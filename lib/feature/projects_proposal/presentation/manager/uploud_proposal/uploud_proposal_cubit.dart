@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/repository/project_proposal_repository.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/uploud_proposal/uploud_proposal_state.dart';
@@ -52,9 +53,10 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
     required String name,
     required String description,
     required String department,
-    required int year,
+    required String year,
     required List<String> students,
     required String supervisor,
+    required String supervisorId,
   }) async {
     emit(state.copyWith(status: UploadProposalStatus.loading));
 
@@ -77,8 +79,9 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
         students: students,
         supervisor: supervisor,
         projectFile: state.selectedFile,
-        idSupervisor: '',
-        idLeader: '', // نمرر الملف للـ UseCase
+        idSupervisor: supervisorId,
+        status: AppProjectsStatus.pending,
+        // نمرر الملف للـ UseCase
       ),
     );
 
@@ -101,19 +104,23 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
   }
 
   Future<void> updateProposal({
+    String? fileUrl,
     required String id,
     required String name,
     required String description,
     required String department,
-    required int year,
+    required String year,
     required List<String> students,
     required String supervisor,
     required String supervisorId,
+
+    File? newfle,
   }) async {
     emit(state.copyWith(status: UploadProposalStatus.loading));
 
     final result = await repository.updateProposal(
       ProjectProposals(
+        fileUrl: fileUrl,
         id: id,
         name: name,
         description: description,
@@ -123,8 +130,8 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
         supervisor: supervisor,
         projectFile: state.selectedFile,
         idSupervisor: supervisorId,
-        idLeader: '', // قد يكون null وهذا طبيعي في التعديل
       ),
+      newfle,
     );
 
     result.fold(
@@ -137,6 +144,24 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
       (success) {
         emit(state.copyWith(status: UploadProposalStatus.success));
         clearSelectedFile();
+      },
+    );
+  }
+
+  Future<void> deleteProposal(String proposalId, String fileUrl) async {
+    emit(state.copyWith(status: UploadProposalStatus.loading));
+
+    final resulte = await repository.deleteProjectProposal(proposalId, fileUrl);
+
+    resulte.fold(
+      (failure) => emit(
+        state.copyWith(
+          status: UploadProposalStatus.error,
+          errorMessage: failure.message,
+        ),
+      ),
+      (success) {
+        emit(state.copyWith(status: UploadProposalStatus.success));
       },
     );
   }

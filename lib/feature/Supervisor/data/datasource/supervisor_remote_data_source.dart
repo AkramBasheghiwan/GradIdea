@@ -1,7 +1,7 @@
 import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/data/model/project_group_model.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/data/model/supervisor_detail.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/data/model/project_group_model.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/data/model/supervisor_detail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 

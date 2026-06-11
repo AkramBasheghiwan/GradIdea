@@ -86,7 +86,7 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
         password: password,
         data: {
           'name': name,
-          'role': AppRoles.admin,
+          'role': AppRoles.user,
           'specialization': spcialization,
         },
       );
@@ -208,9 +208,6 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
       if (response.user == null) {
         throw const ServerException('فشل تحديث كلمة المرور.');
       }
-
-      // اختياري: يمكنك تسجيل خروج المستخدم بعد تغيير الرمز ليقوم بتسجيل الدخول من جديد
-      // await supabase.auth.signOut();
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);

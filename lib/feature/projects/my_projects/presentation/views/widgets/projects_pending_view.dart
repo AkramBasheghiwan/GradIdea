@@ -69,13 +69,11 @@ class _ProjectsPendingViewState extends State<ProjectsPendingView> {
                   project: project,
 
                   onAccept: () {
-                    context.read<HodProjectsCubit>().acceptProposal(
-                      project.id!,
-                    );
+                    context.read<HodProjectsCubit>().acceptProject(project.id!);
                   },
 
                   onReject: (reason) {
-                    context.read<HodProjectsCubit>().rejectProposal(
+                    context.read<HodProjectsCubit>().rejectProject(
                       project.id!,
                       reason,
                     );

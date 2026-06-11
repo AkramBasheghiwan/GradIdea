@@ -8,7 +8,7 @@ class ProjectEntity extends Equatable {
   final String supervisor;
   final List<String> students;
   final String department;
-  final int year;
+  final String year;
   final File? projectFile;
   final String? fileUrl;
   final String? status;

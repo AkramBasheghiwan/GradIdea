@@ -26,4 +26,88 @@ class AppFileUpload {
       throw ServerException('حدث خطأ غير متوقع أثناء رفع الملف: $e');
     }
   }
+
+  static Future<String> updateFile(
+    File file,
+    String oldFilePath,
+    SupabaseClient supabase,
+  ) async {
+    try {
+      log('==============================');
+      log('🚀 بدء رفع/تحديث الملف');
+
+      // ===============================
+      // 🧹 تجهيز المسارات
+      // ===============================
+      final newFileName =
+          '${DateTime.now().millisecondsSinceEpoch}_project.${file.path.split('.').last}';
+
+      final newPath = newFileName;
+
+      final cleanOldPath = oldFilePath.replaceFirst(
+        supabase.storage.from('archive_files').getPublicUrl(''),
+        '',
+      );
+
+      log('📁 New Path: $newPath');
+      log('📁 Old Path: $cleanOldPath');
+
+      // ===============================
+      // 📤 رفع الملف الجديد أولاً
+      // ===============================
+      log('📤 Uploading new file...');
+
+      await supabase.storage
+          .from('archive_files')
+          .upload(newPath, file, fileOptions: const FileOptions(upsert: false));
+
+      log('✅ تم رفع الملف الجديد');
+
+      // ===============================
+      // 🗑 حذف الملف القديم (بعد نجاح الرفع فقط)
+      // ===============================
+      if (cleanOldPath.isNotEmpty) {
+        try {
+          log('🗑 حذف الملف القديم...');
+
+          await supabase.storage.from('archive_files').remove([cleanOldPath]);
+
+          log('✅ تم حذف الملف القديم');
+        } catch (e) {
+          log('⚠️ فشل حذف الملف القديم (غير مؤثر): $e');
+        }
+      }
+
+      // ===============================
+      // 🔗 رابط الملف الجديد
+      // ===============================
+      final url = supabase.storage.from('archive_files').getPublicUrl(newPath);
+
+      log('🔗 Public URL: $url');
+      log('==============================');
+
+      return url;
+    } on StorageException catch (e) {
+      log('❌ StorageException: ${e.message}');
+      throw ServerException('فشل رفع الملف: ${e.message}');
+    } on SocketException {
+      throw const ServerException('لا يوجد اتصال بالإنترنت.');
+    } catch (e) {
+      log('💥 Unexpected Error: $e');
+      throw ServerException('خطأ غير متوقع: $e');
+    }
+  }
+
+  static String extractPathFromUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final fullPath = uri.pathSegments
+          .skipWhile((e) => e != 'object')
+          .skip(2)
+          .join('/');
+      return fullPath.replaceFirst('archive_files/', '');
+    } catch (e) {
+      throw const ServerException('فشل استخراج مسار الملف');
+    }
+  }
 }

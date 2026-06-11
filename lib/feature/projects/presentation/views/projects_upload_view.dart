@@ -14,7 +14,7 @@ class ProjectsUploadView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<UploadProjectCubit>(
       create: (_) => UploadProjectCubit(repository: sl()),
-      child: const ProjectUploadBlocConsumer(),
+      child: ProjectUploadBlocConsumer(projects: projects),
     );
   }
 }

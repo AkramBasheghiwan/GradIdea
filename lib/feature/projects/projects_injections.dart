@@ -26,5 +26,7 @@ Future<void> initProjectsinjectionScope(GetIt scope) async {
   scope.registerFactory<ProjectSearchBloc>(
     () => ProjectSearchBloc(scope<ProjectsRepository>()),
   );
-  scope.registerFactory<UploadProjectCubit>(() => scope());
+  scope.registerFactory<UploadProjectCubit>(
+    () => UploadProjectCubit(repository: scope()),
+  );
 }

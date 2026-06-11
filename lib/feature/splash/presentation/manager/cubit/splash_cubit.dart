@@ -5,7 +5,7 @@ import 'package:graduation_management_idea_system/core/error/failure.dart';
 import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_repository.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/manager/cubit/splash_state.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/manager/cubit/splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
   final AuthRepository authRepository;

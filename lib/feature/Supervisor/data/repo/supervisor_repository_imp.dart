@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/data/datasource/supervisor_remote_data_source.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/project_group.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/supervisor_detail_entity.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/repo/supervisor_repository.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/data/datasource/supervisor_remote_data_source.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/project_group.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/supervisor_detail_entity.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/repo/supervisor_repository.dart';
 
 class SupervisorRepositoryImpl implements SupervisorRepository {
   final SupervisorRemoteDataSource remoteDataSource;

@@ -93,7 +93,7 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
     required String name,
     required String description,
     required String department,
-    required int year,
+    required String year,
     required List<String> students,
     required String supervisor,
   }) async {
@@ -140,14 +140,34 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
     // ==========================================
   }
 
+  Future<void> deleteProjects(String proposalId, String fileUrl) async {
+    emit(state.copyWith(status: UploadProjectStatus.loading));
+
+    final resulte = await repository.deleteProject(proposalId, fileUrl);
+
+    resulte.fold(
+      (failure) => emit(
+        state.copyWith(
+          status: UploadProjectStatus.error,
+          errorMessage: failure.message,
+        ),
+      ),
+      (success) {
+        emit(state.copyWith(status: UploadProjectStatus.success));
+      },
+    );
+  }
+
   Future<void> updateProject({
     required String id,
     required String name,
     required String description,
     required String department,
-    required int year,
+    required String year,
     required List<String> students,
     required String supervisor,
+    String? fileUrl,
+    File? newFile,
   }) async {
     emit(state.copyWith(status: UploadProjectStatus.loading));
 
@@ -160,17 +180,20 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
         year: year,
         students: students,
         supervisor: supervisor,
-        projectFile: state.selectedFile, // قد يكون null وهذا طبيعي في التعديل
+        fileUrl: fileUrl,
       ),
+      newFile: newFile,
     );
 
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: UploadProjectStatus.error,
-          errorMessage: failure.message,
-        ),
-      ),
+      (failure) {
+        emit(
+          state.copyWith(
+            status: UploadProjectStatus.error,
+            errorMessage: failure.message,
+          ),
+        );
+      },
       (success) {
         emit(state.copyWith(status: UploadProjectStatus.success));
         clearSelectedFile();

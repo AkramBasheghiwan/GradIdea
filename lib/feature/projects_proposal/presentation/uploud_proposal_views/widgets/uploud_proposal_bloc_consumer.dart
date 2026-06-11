@@ -19,16 +19,17 @@ class UploudProposalBlocConsumer extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: customBuildAppBar(projects: projects, context: context),
-      body: BlocConsumer<UploadProposalCubit, UploadProposalState>(
+      body: BlocListener<UploadProposalCubit, UploadProposalState>(
         listener: (context, state) {
           if (state.status == UploadProposalStatus.success) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             AppSnackBar.show(
               context: context,
               message: 'تم رفع المقترح بنجاح! 🎉',
               type: SnackBarType.success,
             );
-            Navigator.pop(context); // للعودة للصفحة السابقة بعد النجاح
-          } else if (state.status == UploadProposalStatus.error) {
+          }
+          if (state.status == UploadProposalStatus.error) {
             AppSnackBar.show(
               context: context,
               message: state.errorMessage!,
@@ -38,12 +39,13 @@ class UploudProposalBlocConsumer extends StatelessWidget {
             log(state.errorMessage!);
           }
         },
-        builder: (context, state) {
-          return UploudProposalViewBody(
-            isLoading: state.status == UploadProposalStatus.loading,
-            projects: projects,
-          );
-        },
+        child: UploudProposalViewBody(isLoading: false, projects: projects),
+        // builder: (context, state) {
+        //   return UploudProposalViewBody(
+        //     isLoading: state.status == UploadProposalStatus.loading,
+        //     projects: projects,
+        //   );
+        // },
       ),
     );
   }

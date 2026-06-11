@@ -70,7 +70,7 @@ class _ProjectsArchiveScreenState extends State<ProjectsArchiveScreen> {
           }
           // ج. حالة نجاح جلب البيانات (الصفحة الأولى أو أي صفحة بعدها)
           else if (state is ProjectArchieveLoaded) {
-            final projects = state.users;
+            final projects = state.projects;
             final hasReachedMax = state.hasReachedMax;
 
             if (projects.isEmpty) {

@@ -105,7 +105,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await firestore
           .collection(userCollection)
           .doc(user.uid)
-          .set(userModel.toDocument());
+          .set(userModel.toDocument(true));
 
       return userModel;
     } on FirebaseAuthException catch (e) {
@@ -140,7 +140,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await firestore
           .collection(userCollection)
           .doc(user.uid)
-          .set(newModel.toDocument());
+          .set(newModel.toDocument(true));
 
       return newModel;
     } on FirebaseAuthException catch (e) {

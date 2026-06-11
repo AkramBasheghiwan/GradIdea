@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_status_rejected.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_status_rejected.dart';
+
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervisor_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervior_proposal_state.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
@@ -38,7 +39,7 @@ class _SupervisorProjectProposalRejectedState
             return Center(
               child: Text(
                 'لا توجد طلبات مرفوضة حالياً.',
-                style: AppTextStyle.bold(24, color: AppColor.primaryColor),
+                style: AppTextStyle.bold(18, color: AppColor.grey),
               ),
             );
           }
@@ -53,7 +54,7 @@ class _SupervisorProjectProposalRejectedState
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return CustomBuildCardStatusRejected(
+                return CustomBuildCardProposalStatusRejected(
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -61,7 +62,7 @@ class _SupervisorProjectProposalRejectedState
                       arguments: proposal,
                     );
                   },
-                  project: proposal,
+                  proposal: proposal,
                 );
               },
             ),

@@ -1,104 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/app_role.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
+import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/uploud_proposal/uploud_proposal_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_strings.dart';
 import '../../../../../core/utils/app_text_style.dart';
 
 class ProposalDetailsViewBody extends StatelessWidget {
-  const ProposalDetailsViewBody({super.key, required this.projects});
-
-  final ProjectProposals projects;
+  const ProposalDetailsViewBody({super.key, required this.proposals});
+  final ProjectProposals proposals;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        /// background glow
-        Positioned(
-          top: -120.h,
-          right: -60.w,
-          child: Container(
-            width: 280.w,
-            height: 280.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColor.primaryColor.withValues(alpha: .08),
-            ),
-          ),
-        ),
-
-        Positioned(
-          top: 140.h,
-          left: -70.w,
-          child: Container(
-            width: 220.w,
-            height: 220.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColor.secondaryColor.withValues(alpha: .08),
-            ),
-          ),
-        ),
-
-        CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            _buildSliverHeader(context),
-
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 26.h, 20.w, 140.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDescriptionCard(),
-                    SizedBox(height: 24.h),
-
-                    _buildSupervisorCard(),
-                    SizedBox(height: 24.h),
-
-                    _buildTeamCard(),
-                    SizedBox(height: 24.h),
-
-                    _buildAttachmentCard(),
-                  ],
-                ),
+    return Scaffold(
+      backgroundColor: AppColor.background,
+      body: Stack(
+        children: [
+          /// background glow
+          Positioned(
+            top: -120.h,
+            right: -60.w,
+            child: Container(
+              width: 280.w,
+              height: 280.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.primaryColor.withValues(alpha: .08),
               ),
             ),
-          ],
-        ),
+          ),
 
-        Positioned(
-          left: 20.w,
-          right: 20.w,
-          bottom: 24.h,
-          child: _buildBottomActions(context),
-        ),
-      ],
+          Positioned(
+            top: 140.h,
+            left: -70.w,
+            child: Container(
+              width: 220.w,
+              height: 220.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColor.secondaryColor.withValues(alpha: .08),
+              ),
+            ),
+          ),
+
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              _buildSliverHeader(context),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 26.h, 20.w, 140.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDescriptionCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildSupervisorCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildTeamCard(),
+                      SizedBox(height: 24.h),
+
+                      _buildAttachmentCard(context),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Positioned(
+          //   left: 20.w,
+          //   right: 20.w,
+          //   bottom: 24.h,
+          //   child: _buildBottomActions(context),
+          // ),
+        ],
+      ),
     );
   }
 
   /// HEADER
   Widget _buildSliverHeader(BuildContext context) {
     final role = CacheHelper.getData(key: AppConstatnce.getRole);
-    final canManage = role == AppRoles.admin || AppRoles.headOfDepartment,
+    final canManage =
+        role == AppRoles.admin ||
+        role == AppRoles.headOfDepartment ||
+        role == AppRoles.supervisor;
 
     return SliverAppBar(
       expandedHeight: 320.h,
       pinned: true,
       elevation: 0,
       backgroundColor: AppColor.background,
-
       leading: Padding(
         padding: EdgeInsets.all(8.r),
         child: _appBarButton(
-          icon: Iconsax.arrow_right,
+          icon: Icons.arrow_back_ios,
           onTap: () => Navigator.pop(context),
         ),
       ),
@@ -110,7 +118,11 @@ class ProposalDetailsViewBody extends StatelessWidget {
             child: _appBarButton(
               icon: Iconsax.edit_2,
               onTap: () {
-                // Edit Project
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.uploudProposal,
+                  arguments: proposals,
+                );
               },
             ),
           ),
@@ -125,7 +137,20 @@ class ProposalDetailsViewBody extends StatelessWidget {
             child: _appBarButton(
               icon: Iconsax.trash,
               onTap: () {
-                // Delete Project
+                ShowDialogFunction.showAppDialog(
+                  context: context,
+                  title: "تأكيد الحذف",
+                  description: "هل أنت متأكد أنك تريد حذف هذا المقترح؟",
+                  confirmText: "حذف",
+                  icon: Iconsax.trash,
+                  confirmColor: Colors.red,
+                  onConfirm: () {
+                    context.read<UploadProposalCubit>().deleteProposal(
+                      proposals.id.toString(),
+                      proposals.fileUrl!,
+                    );
+                  },
+                );
               },
             ),
           ),
@@ -152,7 +177,6 @@ class ProposalDetailsViewBody extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 55.h),
-
                   Container(
                     width: 76.w,
                     height: 76.w,
@@ -166,11 +190,10 @@ class ProposalDetailsViewBody extends StatelessWidget {
                       size: 34.sp,
                     ),
                   ).animate().scale(duration: 450.ms),
-
                   SizedBox(height: 22.h),
 
                   Text(
-                    projects.name,
+                    proposals.name,
                     style: AppTextStyle.bold(24, color: Colors.white),
                   ).animate().fade().slideY(begin: .2),
 
@@ -180,13 +203,13 @@ class ProposalDetailsViewBody extends StatelessWidget {
                     spacing: 10.w,
                     runSpacing: 10.h,
                     children: [
-                      _heroChip(Iconsax.teacher, projects.department),
+                      _heroChip(Iconsax.teacher, proposals.department),
 
-                      _heroChip(Iconsax.calendar, projects.year.toString()),
+                      _heroChip(Iconsax.calendar, proposals.year.toString()),
 
                       _heroChip(
                         Iconsax.profile_2user,
-                        "${projects.students.length ?? 0} أعضاء",
+                        "${proposals.students.length ?? 0} أعضاء",
                       ),
                     ],
                   ).animate().fade(delay: 200.ms),
@@ -198,35 +221,28 @@ class ProposalDetailsViewBody extends StatelessWidget {
       ),
     );
   }
-Widget _appBarButton({
-  required IconData icon,
-  required VoidCallback onTap,
-}) {
-  return Container(
-    width: 44.w,
-    height: 44.w,
-    margin: EdgeInsets.symmetric(horizontal: 4.w),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .18),
-      borderRadius: BorderRadius.circular(16.r),
-      border: Border.all(
-        color: Colors.white.withValues(alpha: .12),
-      ),
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
+
+  Widget _appBarButton({required IconData icon, required VoidCallback onTap}) {
+    return Container(
+      width: 44.w,
+      height: 44.w,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .18),
         borderRadius: BorderRadius.circular(16.r),
-        onTap: onTap,
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 20.sp,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: onTap,
+          child: Icon(icon, color: Colors.white, size: 20.sp),
         ),
       ),
-    ),
-  ).animate().fade().scale();
-}
+    ).animate().fade().scale();
+  }
+
   Widget _heroChip(IconData icon, String title) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
@@ -294,7 +310,7 @@ Widget _appBarButton({
         children: [
           _sectionTitle(AppStrings.aboutProject, Iconsax.document_text),
           Text(
-            projects.description ?? "لا يوجد وصف للمشروع.",
+            proposals.description ?? "لا يوجد وصف للمشروع.",
             style: AppTextStyle.medium(
               14,
               color: AppColor.grey,
@@ -334,7 +350,7 @@ Widget _appBarButton({
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      projects.supervisor ?? "غير محدد",
+                      proposals.supervisor ?? "غير محدد",
                       style: AppTextStyle.bold(16),
                     ),
                     SizedBox(height: 4.h),
@@ -354,7 +370,7 @@ Widget _appBarButton({
 
   /// TEAM
   Widget _buildTeamCard() {
-    final students = projects.students ?? [];
+    final students = proposals.students ?? [];
 
     return _cardShell(
       child: Column(
@@ -408,43 +424,48 @@ Widget _appBarButton({
   }
 
   /// FILE
-  Widget _buildAttachmentCard() {
-    final hasFile = projects.fileUrl != null;
+  Widget _buildAttachmentCard(BuildContext context) {
+    final hasFile = proposals.fileUrl != null;
     // && projects.fileUrl.isNotEmpty;
 
     return _cardShell(
-      child: Row(
-        children: [
-          Container(
-            width: 58.w,
-            height: 58.w,
-            decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: .08),
-              borderRadius: BorderRadius.circular(18.r),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, AppRoutes.pdfviewer);
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 58.w,
+              height: 58.w,
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: .08),
+                borderRadius: BorderRadius.circular(18.r),
+              ),
+              child: Icon(
+                Iconsax.document_download,
+                color: Colors.red,
+                size: 28.sp,
+              ),
             ),
-            child: Icon(
-              Iconsax.document_download,
-              color: Colors.red,
-              size: 28.sp,
-            ),
-          ),
 
-          SizedBox(width: 14.w),
+            SizedBox(width: 14.w),
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("ملف المشروع", style: AppTextStyle.bold(15)),
-                SizedBox(height: 4.h),
-                Text(
-                  hasFile ? "ملف جاهز للعرض والتنزيل" : "لا يوجد ملف مرفق",
-                  style: AppTextStyle.medium(12, color: AppColor.grey),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("ملف المشروع", style: AppTextStyle.bold(15)),
+                  SizedBox(height: 4.h),
+                  Text(
+                    hasFile ? "ملف جاهز للعرض والتنزيل" : "لا يوجد ملف مرفق",
+                    style: AppTextStyle.medium(12, color: AppColor.grey),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate().fade(delay: 400.ms).slideY(begin: .1);
   }
@@ -496,7 +517,7 @@ Widget _appBarButton({
                 borderRadius: BorderRadius.circular(18.r),
               ),
               child: Icon(
-                Icons.play_arrow_rounded,
+                Iconsax.document_text,
                 color: AppColor.secondaryColor,
                 size: 30.sp,
               ),

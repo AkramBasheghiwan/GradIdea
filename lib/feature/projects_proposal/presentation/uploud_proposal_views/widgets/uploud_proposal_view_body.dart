@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/custom_build_select_year.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/uploud_proposal/uploud_proposal_state.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
@@ -103,26 +106,29 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
     }
 
     final cubit = context.read<UploadProposalCubit>();
-
+    File? file = cubit.state.selectedFile;
     if (isEditing) {
       cubit.updateProposal(
+        fileUrl: widget.projects!.fileUrl,
         id: widget.projects!.id!,
         supervisorId: _selectedSupervisorId!,
         name: _nameController.text.trim(),
         description: _descController.text.trim(),
         department: _selectedDept ?? '',
-        year: int.tryParse(_yearController.text) ?? DateTime.now().year,
+        year: _yearController.text,
         students: studentsList,
         supervisor: _supervisorController.text.trim(),
+        newfle: file,
       );
     } else {
       cubit.submitProposal(
         name: _nameController.text.trim(),
         description: _descController.text.trim(),
         department: _selectedDept ?? '',
-        year: int.tryParse(_yearController.text) ?? DateTime.now().year,
+        year: _yearController.text,
         students: studentsList,
         supervisor: _supervisorController.text.trim(),
+        supervisorId: _selectedSupervisorId!,
       );
     }
   }
@@ -154,9 +160,13 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
                 _buildFilesSection(),
                 SizedBox(height: 28.h),
 
-                ProjectUploadBuildSubmitButtom(
-                  isLoading: widget.isLoading,
-                  onPressed: widget.isLoading ? null : _submitProposal,
+                BlocBuilder<UploadProposalCubit, UploadProposalState>(
+                  builder: (context, state) {
+                    return ProjectUploadBuildSubmitButtom(
+                      isLoading: state.status == UploadProposalStatus.loading,
+                      onPressed: widget.isLoading ? null : _submitProposal,
+                    );
+                  },
                 ),
 
                 SizedBox(height: 40.h),

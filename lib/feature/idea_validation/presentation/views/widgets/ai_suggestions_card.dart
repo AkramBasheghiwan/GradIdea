@@ -37,6 +37,7 @@ class AiSuggestionsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// HEADER
           Row(
             children: [
               Container(
@@ -48,9 +49,7 @@ class AiSuggestionsCard extends StatelessWidget {
                 ),
                 child: Icon(Iconsax.cpu, color: Colors.white, size: 24.sp),
               ),
-
               SizedBox(width: 12.w),
-
               Expanded(
                 child: Text(
                   "اقتراحات الذكاء الاصطناعي",
@@ -62,32 +61,59 @@ class AiSuggestionsCard extends StatelessWidget {
 
           SizedBox(height: 20.h),
 
+          /// CONTENT
           if (isLoading)
-            const Center(child: CircularProgressIndicator(color: Colors.white))
-          else if (suggestions != null)
-            Text(
-              suggestions!,
-              style: AppTextStyle.medium(
-                14,
-                color: Colors.white,
-              ).copyWith(height: 1.8),
+            Column(
+              children: [
+                const CircularProgressIndicator(color: Colors.white),
+                SizedBox(height: 12.h),
+                Text(
+                  "جاري توليد الاقتراحات...",
+                  style: AppTextStyle.medium(12, color: Colors.white),
+                ),
+              ],
+            )
+          else if (suggestions != null && suggestions!.isNotEmpty)
+            Container(
+              padding: EdgeInsets.all(14.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Text(
+                suggestions!,
+                style: AppTextStyle.medium(
+                  14,
+                  color: Colors.white,
+                ).copyWith(height: 1.8),
+              ),
             )
           else
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: onGenerate,
-                icon: const Icon(Iconsax.magicpen),
-                label: const Text("توليد اقتراحات تطوير"),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: AppColor.primaryColor,
-                  backgroundColor: Colors.white,
-                  minimumSize: Size(0, 52.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.r),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "تم اكتشاف تشابه مع مشاريع أخرى",
+                  style: AppTextStyle.medium(12, color: Colors.white70),
+                ),
+                SizedBox(height: 12.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: isLoading ? null : onGenerate,
+                    icon: const Icon(Iconsax.magicpen),
+                    label: const Text("توليد اقتراحات تطوير"),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: AppColor.primaryColor,
+                      backgroundColor: Colors.white,
+                      minimumSize: Size(0, 52.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.r),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
         ],
       ),

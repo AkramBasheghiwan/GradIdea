@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
-import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/widgets/action_card.dart';
-import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/widgets/custom_start_item_card.dart';
+import 'package:graduation_management_idea_system/feature/Admin/presentation/views/widgets/action_card.dart';
+import 'package:graduation_management_idea_system/feature/Admin/presentation/views/widgets/custom_start_item_card.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});

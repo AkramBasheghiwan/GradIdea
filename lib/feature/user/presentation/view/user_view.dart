@@ -20,7 +20,6 @@ class UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
-
       child: Scaffold(
         backgroundColor: AppColor.background,
         appBar: AppBar(
@@ -83,7 +82,6 @@ class UserView extends StatelessWidget {
                 child: TabBarView(
                   children: <Widget>[
                     BlocProvider(
-                      lazy: true,
                       create: (BuildContext context) =>
                           UsersCubit(userRepository: sl(), role: AppRoles.user)
                             ..fetchUsers(),
@@ -106,7 +104,7 @@ class UserView extends StatelessWidget {
                     BlocProvider(
                       create: (BuildContext context) => UsersCubit(
                         userRepository: sl(),
-                        role: AppRoles.company,
+                        role: AppRoles.supervisor,
                       )..fetchUsers(),
                       child: const UsersListViewBlocBuilder(),
                     ),

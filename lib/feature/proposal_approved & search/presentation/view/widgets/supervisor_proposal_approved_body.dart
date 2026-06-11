@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_approved.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_approved/proposal_approve_cubit.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/manager/proposal_approved/proposal_approved_state.dart';
 
@@ -101,8 +101,8 @@ class _ProposalApprovedBodyState extends State<ProposalApprovedBody> {
                 }
 
                 final project = projects[index];
-                return CustomBuildCardProjectsApproved(
-                  project: project,
+                return CustomBuildCardProposalApproved(
+                  proposal: project,
                   onTap: () {
                     Navigator.pushNamed(
                       context,

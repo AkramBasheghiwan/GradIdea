@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 
@@ -69,7 +70,11 @@ class _StudentProjectApprovedState extends State<StudentProjectApproved> {
                 return CustomBuildCardProjectsApproved(
                   project: project,
                   onTap: () {
-                    // Handle card tap, e.g., navigate to project details
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.uploudProject,
+                      arguments: project,
+                    );
                   },
                 );
               },

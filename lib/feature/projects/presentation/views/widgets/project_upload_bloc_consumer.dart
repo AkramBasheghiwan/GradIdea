@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
+import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_state.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/uploud_projects_body.dart';
@@ -12,8 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProjectUploadBlocConsumer extends StatelessWidget {
-  const ProjectUploadBlocConsumer({super.key});
-
+  const ProjectUploadBlocConsumer({super.key, this.projects});
+  final ProjectEntity? projects;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,23 +47,33 @@ class ProjectUploadBlocConsumer extends StatelessWidget {
         child: BlocConsumer<UploadProjectCubit, UploadProjectState>(
           listener: (context, state) {
             if (state.status == UploadProjectStatus.success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم رفع المشروع بنجاح! 🎉')),
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              AppSnackBar.show(
+                context: context,
+                message: 'تم رفع المشروع بنجاح! 🎉',
+                type: SnackBarType.success,
               );
-              Navigator.pop(context); // للعودة للصفحة السابقة بعد النجاح
-            } else if (state.status == UploadProjectStatus.error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.red,
-                ),
+            }
+            if (state.status == UploadProjectStatus.error) {
+              AppSnackBar.show(
+                context: context,
+                message: state.errorMessage!,
+                type: SnackBarType.error,
               );
               log(state.errorMessage!);
+            }
+            if (state.status == UploadProjectStatus.updateSuccess) {
+              AppSnackBar.show(
+                context: context,
+                message: 'تم تحديث المشروع بنجاح! 🎉',
+                type: SnackBarType.success,
+              );
             }
           },
 
           builder: (context, state) {
             return ProjectUploadViewBodys(
+              projects: projects,
               isLoading: state.status == UploadProjectStatus.loading,
             );
           },

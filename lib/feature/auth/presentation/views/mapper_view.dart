@@ -58,6 +58,7 @@ class MapperBlocConsummer extends StatelessWidget {
           final UserEntity user = state.user;
           dropAllRoleScopes();
           log(state.user.role);
+
           CacheHelper.saveData(key: AppConstatnce.getRole, value: user.role);
           CacheHelper.saveData(key: AppConstatnce.getUid, value: user.uid);
           if (user.role == AppRoles.user) {
@@ -68,9 +69,7 @@ class MapperBlocConsummer extends StatelessWidget {
           } else if (user.role == AppRoles.headOfDepartment) {
             initHeadOfDepartScope();
 
-            Navigator.of(
-              context,
-            ).pushReplacementNamed(AppRoutes.dashboardAdmin);
+            Navigator.of(context).pushReplacementNamed(AppRoutes.dashboardHead);
           } else if (user.role == AppRoles.admin) {
             initStudentScope();
 

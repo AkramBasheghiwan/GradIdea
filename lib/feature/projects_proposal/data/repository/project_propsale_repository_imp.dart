@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/data_source/project_proposal_remote_data_source.dart';
@@ -20,7 +18,6 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
   ) async {
     try {
       final result = await remoteDataSource.getProposalToSupervisor(status);
-
       final projectProposal = result.map((json) {
         return ProjectProposalsModel.fromEntity(json);
       }).toList();
@@ -37,10 +34,13 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
 
   // 2. حذف مقترح ومعالجة الأخطاء
   @override
-  Future<Either<Failure, Unit>> deleteProjectProposal(String id) async {
+  Future<Either<Failure, Unit>> deleteProjectProposal(
+    String id,
+    String fileUrl,
+  ) async {
     try {
-      await remoteDataSource.deleteProjectProposal(id);
-      return const Right(unit); // وحدة نجاح
+      await remoteDataSource.deleteProjectProposal(id, fileUrl);
+      return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on SocketException {
@@ -53,11 +53,14 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateProposal(ProjectProposals project) async {
+  Future<Either<Failure, Unit>> updateProposal(
+    ProjectProposals project,
+    File? newfile,
+  ) async {
     try {
       final projectMap = ProjectProposalsModel.fromEntity(project);
 
-      await remoteDataSource.updateProposal(projectMap);
+      await remoteDataSource.updateProposal(projectMap, newfile);
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

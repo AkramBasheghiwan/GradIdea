@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/widgets/build_app_card.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/widgets/build_app_card.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../../../core/utils/app_colors.dart';
@@ -70,23 +70,23 @@ class HorizontalActionCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(child: Text(title, style: AppTextStyle.bold(16))),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.primaryColor.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        chip,
-                        style: AppTextStyle.bold(
-                          11,
-                          color: AppColor.primaryColor.withValues(alpha: 0.85),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: 10.w,
+                    //     vertical: 6.h,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: AppColor.primaryColor.withValues(alpha: 0.18),
+                    //     borderRadius: BorderRadius.circular(20.r),
+                    //   ),
+                    //   child: Text(
+                    //     chip,
+                    //     style: AppTextStyle.bold(
+                    //       11,
+                    //       color: AppColor.primaryColor.withValues(alpha: 0.85),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
 

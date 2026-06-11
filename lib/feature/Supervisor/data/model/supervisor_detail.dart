@@ -1,4 +1,4 @@
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/supervisor_detail_entity.dart'; // تأكد من المسار
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/supervisor_detail_entity.dart'; // تأكد من المسار
 
 class SupervisorDetailsModel extends SupervisorDetailsEntity {
   const SupervisorDetailsModel({

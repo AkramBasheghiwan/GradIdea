@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/presentation/views/widgets/deparment_action_card.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/presentation/views/widgets/department_header.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/presentation/views/widgets/department_hero_card.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/presentation/views/widgets/department_state_gride.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/widgets/deparment_action_card.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/widgets/department_header.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/widgets/department_hero_card.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/widgets/department_state_gride.dart';
 import 'package:iconsax/iconsax.dart';
 
 class DepartmentHomeView extends StatelessWidget {
@@ -20,15 +20,64 @@ class DepartmentHomeView extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
           child: Column(
             children: [
-              const DepartmentHeader(),
+              const CustomBuildHeaderCard(
+                title: "مرحبًا، رئيس القسم",
+                subtitle: "متابعة واعتماد مشاريع التخرج",
+                icon: Iconsax.teacher,
+                actionIcon: Iconsax.notification,
+                gradient: LinearGradient(
+                  colors: [AppColor.primaryColor, AppColor.accentBlue],
+                ),
+              ),
 
               SizedBox(height: 22.h),
 
-              const DepartmentHeroCard(),
+              const CustomBuildHeroCard(
+                title: "قسم تقنية المعلومات",
+                description:
+                    "إدارة المشاريع الأكاديمية ومتابعة المقترحات واعتماد المشاريع الخاصة بالقسم.",
+                badgeText: "لوحة الإدارة",
+                icon: Iconsax.building_3,
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [AppColor.primaryColor, AppColor.secondaryColor],
+                ),
+              ),
 
               SizedBox(height: 24.h),
 
-              const DepartmentStatsGrid(),
+              const CustomBuildStateGrid(
+                items: [
+                  DashboardStatModel(
+                    title: "قيد النظر",
+                    value: "12",
+                    icon: Iconsax.timer_1,
+                    color: Color(0xffF59E0B),
+                  ),
+
+                  DashboardStatModel(
+                    title: "معتمدة",
+                    value: "31",
+                    icon: Iconsax.tick_circle,
+                    color: Color(0xff10B981),
+                  ),
+
+                  DashboardStatModel(
+                    title: "مرفوضة",
+                    value: "4",
+                    icon: Iconsax.close_circle,
+                    color: Color(0xffEF4444),
+                  ),
+
+                  DashboardStatModel(
+                    title: "مقترحات",
+                    value: "18",
+                    icon: Iconsax.message_question,
+                    color: Color(0xff6366F1),
+                  ),
+                ],
+              ),
 
               // SizedBox(height: 24.h),
 

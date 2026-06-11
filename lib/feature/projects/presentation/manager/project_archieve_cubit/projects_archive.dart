@@ -32,7 +32,7 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
         _hasReachedMax = projects.length < 10;
         emit(
           ProjectArchieveLoaded(
-            users: _currentProjects,
+            projects: _currentProjects,
             hasReachedMax: _hasReachedMax,
             page: _currentPage,
           ),
@@ -71,7 +71,7 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
         // إطلاق القائمة المدمجة الجديدة
         emit(
           ProjectArchieveLoaded(
-            users: List.from(_currentProjects),
+            projects: List.from(_currentProjects),
             hasReachedMax: _hasReachedMax,
             page: _currentPage,
           ),

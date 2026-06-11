@@ -1,7 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
+import 'package:graduation_management_idea_system/core/utils/app_role.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
+import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
+
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_strings.dart';
@@ -65,7 +75,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                       _buildTeamCard(),
                       SizedBox(height: 24.h),
 
-                      _buildAttachmentCard(),
+                      _buildAttachmentCard(context),
                     ],
                   ),
                 ),
@@ -73,12 +83,12 @@ class ProjectDetailsViewBody extends StatelessWidget {
             ],
           ),
 
-          Positioned(
-            left: 20.w,
-            right: 20.w,
-            bottom: 24.h,
-            child: _buildBottomActions(context),
-          ),
+          // Positioned(
+          //   left: 20.w,
+          //   right: 20.w,
+          //   bottom: 24.h,
+          //   child: _buildBottomActions(context),
+          // ),
         ],
       ),
     );
@@ -86,6 +96,10 @@ class ProjectDetailsViewBody extends StatelessWidget {
 
   /// HEADER
   Widget _buildSliverHeader(BuildContext context) {
+    final role = CacheHelper.getData(key: AppConstatnce.getRole);
+    final canManage =
+        role == AppRoles.admin || role == AppRoles.headOfDepartment;
+
     return SliverAppBar(
       expandedHeight: 320.h,
       pinned: true,
@@ -93,17 +107,58 @@ class ProjectDetailsViewBody extends StatelessWidget {
       backgroundColor: AppColor.background,
       leading: Padding(
         padding: EdgeInsets.all(8.r),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: .18),
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Iconsax.arrow_right, color: Colors.white),
-          ),
+        child: _appBarButton(
+          icon: Icons.arrow_back_ios,
+          onTap: () => Navigator.pop(context),
         ),
       ),
+
+      actions: [
+        if (canManage) ...[
+          Padding(
+            padding: EdgeInsets.only(top: 8.r, bottom: 8.r),
+            child: _appBarButton(
+              icon: Iconsax.edit_2,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.uploudProject,
+                  arguments: projects,
+                );
+              },
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(
+              top: 8.r,
+              bottom: 8.r,
+              left: 6.w,
+              right: 14.w,
+            ),
+            child: _appBarButton(
+              icon: Iconsax.trash,
+              onTap: () {
+                ShowDialogFunction.showAppDialog(
+                  context: context,
+                  title: "حذف المشروع",
+                  description: "هل أنت متأكد من حذف هذا المشروع؟",
+                  confirmText: "حذف",
+                  icon: Iconsax.trash,
+                  onConfirm: () {
+                    log('جاري حذف المشروع ${projects.id}');
+                    context.read<UploadProjectCubit>().deleteProjects(
+                      projects.id.toString(),
+                      projects.fileUrl!,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ],
+
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
@@ -152,14 +207,10 @@ class ProjectDetailsViewBody extends StatelessWidget {
                     spacing: 10.w,
                     runSpacing: 10.h,
                     children: [
-                      _heroChip(
-                        Iconsax.teacher,
-                        projects.department ?? "غير محدد",
-                      ),
-                      _heroChip(
-                        Iconsax.calendar,
-                        projects.year.toString() ?? "",
-                      ),
+                      _heroChip(Iconsax.teacher, projects.department),
+
+                      _heroChip(Iconsax.calendar, projects.year.toString()),
+
                       _heroChip(
                         Iconsax.profile_2user,
                         "${projects.students.length ?? 0} أعضاء",
@@ -173,6 +224,27 @@ class ProjectDetailsViewBody extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _appBarButton({required IconData icon, required VoidCallback onTap}) {
+    return Container(
+      width: 44.w,
+      height: 44.w,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .18),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: onTap,
+          child: Icon(icon, color: Colors.white, size: 20.sp),
+        ),
+      ),
+    ).animate().fade().scale();
   }
 
   Widget _heroChip(IconData icon, String title) {
@@ -356,43 +428,52 @@ class ProjectDetailsViewBody extends StatelessWidget {
   }
 
   /// FILE
-  Widget _buildAttachmentCard() {
+  Widget _buildAttachmentCard(BuildContext context) {
     final hasFile = projects.fileUrl != null;
     // && projects.fileUrl.isNotEmpty;
 
     return _cardShell(
-      child: Row(
-        children: [
-          Container(
-            width: 58.w,
-            height: 58.w,
-            decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: .08),
-              borderRadius: BorderRadius.circular(18.r),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.pdfviewer,
+            arguments: projects.fileUrl,
+          );
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 58.w,
+              height: 58.w,
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: .08),
+                borderRadius: BorderRadius.circular(18.r),
+              ),
+              child: Icon(
+                Iconsax.document_download,
+                color: Colors.red,
+                size: 28.sp,
+              ),
             ),
-            child: Icon(
-              Iconsax.document_download,
-              color: Colors.red,
-              size: 28.sp,
-            ),
-          ),
 
-          SizedBox(width: 14.w),
+            SizedBox(width: 14.w),
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("ملف المشروع", style: AppTextStyle.bold(15)),
-                SizedBox(height: 4.h),
-                Text(
-                  hasFile ? "ملف جاهز للعرض والتنزيل" : "لا يوجد ملف مرفق",
-                  style: AppTextStyle.medium(12, color: AppColor.grey),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("ملف المشروع", style: AppTextStyle.bold(15)),
+                  SizedBox(height: 4.h),
+                  Text(
+                    hasFile ? "ملف جاهز للعرض والتنزيل" : "لا يوجد ملف مرفق",
+                    style: AppTextStyle.medium(12, color: AppColor.grey),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate().fade(delay: 400.ms).slideY(begin: .1);
   }
@@ -444,7 +525,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18.r),
               ),
               child: Icon(
-                Icons.play_arrow_rounded,
+                Iconsax.document_text,
                 color: AppColor.secondaryColor,
                 size: 30.sp,
               ),

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/widgets/build_dashboard_header.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/widgets/build_horizontial_card.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/widgets/hero_card.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/widgets/build_dashboard_header.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/widgets/build_horizontial_card.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/widgets/hero_card.dart';
 import 'package:iconsax/iconsax.dart';
 
 class StudentHomeView extends StatelessWidget {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
@@ -14,9 +16,15 @@ abstract class ProjectProposalRepository {
     String departmentId,
   );
 
-  Future<Either<Failure, Unit>> deleteProjectProposal(String id);
+  Future<Either<Failure, Unit>> deleteProjectProposal(
+    String id,
+    String fileUrl,
+  );
 
-  Future<Either<Failure, Unit>> updateProposal(ProjectProposals project);
+  Future<Either<Failure, Unit>> updateProposal(
+    ProjectProposals project,
+    File? newfile,
+  );
 
   Future<Either<Failure, Unit>> updateProposalStatus({
     required String id,

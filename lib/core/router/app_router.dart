@@ -2,12 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/student_main_layout.dart';
-import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/main_layout_admin.dart';
+import 'package:graduation_management_idea_system/core/widgets/pdf_viewer_page.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/main_layout_hod_screan.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/student_main_layout.dart';
+import 'package:graduation_management_idea_system/feature/Admin/presentation/views/main_layout_admin.dart';
+import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/idea_validation_views.dart';
+import 'package:graduation_management_idea_system/feature/profile/presentation/views/edite_profile_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/uploud_proposal_views/uploud_proposal_view.dart';
-import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/student_project_proposals_view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/proposal_detail.view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/student_my_proposals_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/forget_email.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/views/forget_password_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/login_view.dart';
@@ -18,15 +24,16 @@ import 'package:graduation_management_idea_system/feature/auth/presentation/view
 //import 'package:graduation_management_idea_system/feature/auth/presentation/views/verify_email_view.dart';
 import 'package:graduation_management_idea_system/feature/onboarding/presentation/view/onboarding_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
-import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/student_projects_view.dart';
+import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/student_get_my_projects_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_archieve_view.dart';
 
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_detail_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
-import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/supervisor_projects_proposal_view.dart';
-import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/supervisor_proposal_approved.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/view/splash_view.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/presentation/views/main_layout_supervisor.dart';
+// import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/hod_projects_proposal_view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/supervisor_review_proposal_view.dart';
+import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/explore_proposal_appeoved.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/view/splash_view.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/presentation/views/main_layout_supervisor.dart';
 
 //import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
@@ -102,7 +109,7 @@ class AppRouter {
         );
       case AppRoutes.exploureProposal:
         return MaterialPageRoute(
-          builder: (BuildContext context) => const SupervisorProposalApproved(),
+          builder: (BuildContext context) => const ExploreProposaleApproved(),
         );
       case AppRoutes.myProject:
         return MaterialPageRoute(
@@ -110,17 +117,18 @@ class AppRouter {
         );
       case AppRoutes.myproposal:
         return MaterialPageRoute(
-          builder: (BuildContext context) =>
-              const StudentProjectProposalsView(),
+          builder: (BuildContext context) => const StudentMyProposalView(),
         );
       case AppRoutes.proposalDetail:
         return MaterialPageRoute(
-          builder: (BuildContext context) => Container(),
+          builder: (BuildContext context) => ProposalDetailView(
+            proposals: settings.arguments as ProjectProposals,
+          ),
         );
       case AppRoutes.reviewProposal:
         return MaterialPageRoute(
           builder: (BuildContext context) =>
-              const SuperVisorProjectsProposalView(),
+              const SupervisorReviewProposalView(),
         );
       case AppRoutes.supervisorHome:
         return MaterialPageRoute(
@@ -130,7 +138,20 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (BuildContext context) => const SearchProjectsView(),
         );
-
+      case AppRoutes.pdfviewer:
+        final String pdfUrl = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (BuildContext context) => PdfViewerPage(pdfUrl: pdfUrl),
+        );
+      case AppRoutes.editeProfile:
+        final UserEntity user = settings.arguments as UserEntity;
+        return MaterialPageRoute(
+          builder: (BuildContext context) => EditProfileView(user: user),
+        );
+      case AppRoutes.dashboardHead:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const MainLayoutHODScreen(),
+        );
       default:
         return MaterialPageRoute(
           builder: (BuildContext context) => Scaffold(

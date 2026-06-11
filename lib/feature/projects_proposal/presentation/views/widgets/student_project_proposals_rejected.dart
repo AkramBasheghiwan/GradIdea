@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
-import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_status_rejected.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_state.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
-import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/expandable_project_proposal_card.dart';
 
 class StudentProjectProposalsRejected extends StatefulWidget {
   const StudentProjectProposalsRejected({super.key});
@@ -35,10 +33,10 @@ class _StudentProjectProposalsRejectedState
 
         if (state is StudentProposalLoaded) {
           if (state.proposals.isEmpty) {
-            return Center(
+            return const Center(
               child: Text(
-                'لا توجد طلبات مرفوضة حالياً.',
-                style: AppTextStyle.bold(24, color: AppColor.primaryColor),
+                'لا توجد طلبات المقترحات  مرفوضة حالياً.',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
             );
           }
@@ -52,8 +50,8 @@ class _StudentProjectProposalsRejectedState
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return ExpandableProjectProposalCard(
-                  project: proposal,
+                return CustomBuildCardProposalStatusRejected(
+                  proposal: proposal,
                   onTap: () {
                     Navigator.pushNamed(
                       context,

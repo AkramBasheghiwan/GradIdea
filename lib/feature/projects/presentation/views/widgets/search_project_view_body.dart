@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
-
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
@@ -9,6 +8,7 @@ import 'package:graduation_management_idea_system/core/widgets/custom_project_ca
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_bloc.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_event.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_status.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ProjectSearchPageBody extends StatefulWidget {
   const ProjectSearchPageBody({super.key});
@@ -52,16 +52,12 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColor.background,
       appBar: AppBar(
-        title: const Text(
-          'مشاريع التخرج',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
+        title: const Text('بحث', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColor.background,
         foregroundColor: AppColor.primaryColor, // استخدام اللون الرئيسي
         elevation: 0,
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -100,6 +96,7 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
                 ),
               ],
             ),
+
             child: TextField(
               controller: _textController,
               onChanged: (val) => _bloc.add(SearchTextChanged(val)),
@@ -107,7 +104,7 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
                 hintText: 'ابحث عن فكرة، اسم مشروع...',
                 hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                 prefixIcon: const Icon(
-                  Icons.search,
+                  Iconsax.search_favorite,
                   color: AppColor.primaryColor,
                 ),
                 filled: true,
@@ -132,6 +129,7 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
             ),
           ),
         ),
+
         const SizedBox(width: 12),
         // زر الفلتر
         Container(
@@ -338,7 +336,11 @@ class _ProjectSearchPageBodyState extends State<ProjectSearchPageBody> {
 
               return CustomBuildCardProjectsApproved(
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.projectDetail);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.projectDetail,
+                    arguments: state.projects[index],
+                  );
                 },
                 project: state.projects[index],
               );

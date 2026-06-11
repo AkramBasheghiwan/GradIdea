@@ -59,8 +59,8 @@
 // }
 
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/data/model/projects_status_model.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDep_Dashboard/domain/head_repo/hod_dash_repository.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/data/model/projects_status_model.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/domain/head_repo/hod_dash_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DashboardRepositoryImp implements HodDashRepository {
@@ -71,12 +71,12 @@ class DashboardRepositoryImp implements HodDashRepository {
   Future<ProjectStatsModel> getStats() async {
     try {
       final res = await client.rpc('get_projects_stats');
-
-      return ProjectStatsModel.fromJson(res);
-    } on ServerException catch (e) {
+      final data = Map<String, dynamic>.from(res);
+      return ProjectStatsModel.fromJson(data);
+    } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
-      throw ServerException('An unexpected error occurred: ${e.toString()}');
+      throw ServerException('Unexpected error: $e');
     }
   }
 }

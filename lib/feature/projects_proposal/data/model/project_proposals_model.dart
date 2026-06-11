@@ -17,7 +17,7 @@ class ProjectProposalsModel extends ProjectProposals {
     super.rejectionReason,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(String leaderId) {
     return {
       'name': name,
       'description': description,
@@ -26,7 +26,7 @@ class ProjectProposalsModel extends ProjectProposals {
       'department': department,
       'year': year,
       'supervisor_id': idSupervisor,
-      'leader_id': idLeader,
+      'leader_id': leaderId,
       if (fileUrl != null) 'fileurl': fileUrl,
       if (status != null) 'status': status,
       if (rejectionReason != null) 'rejection_reason': rejectionReason,
@@ -44,7 +44,7 @@ class ProjectProposalsModel extends ProjectProposals {
           ? List<String>.from(map['students'])
           : [],
       department: map['department'] ?? '',
-      year: map['year']?.toInt() ?? DateTime.now().year,
+      year: map['year'],
       fileUrl: map['fileurl'],
       status: map['status'],
       rejectionReason: map['rejection_reason'] ?? '',
@@ -68,8 +68,8 @@ class ProjectProposalsModel extends ProjectProposals {
       fileUrl: pro.fileUrl,
       status: pro.status,
       rejectionReason: pro.rejectionReason,
-      idSupervisor: '',
-      idLeader: '',
+      idSupervisor: pro.idSupervisor,
+      idLeader: pro.idLeader,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
+import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -80,36 +81,43 @@ class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
   }) async {
     try {
       const limit = 15;
+
       final from = page * limit;
       final to = from + limit - 1;
 
-      var queryBuilder = supabase.from('projects').select();
-      if (query.isNotEmpty) {
-        queryBuilder = queryBuilder.or(
-          'name.ilike.%$query%,description.ilike.%$query%,supervisor.ilike.%$query%',
+      final queryBuilder = supabase
+          .from('projects')
+          .select()
+          .eq('status', AppProjectsStatus.approved);
+
+      if (query.trim().isNotEmpty) {
+        queryBuilder.or(
+          'name.ilike.%$query%,'
+          'description.ilike.%$query%,'
+          'supervisor.ilike.%$query%',
         );
       }
+
       if (department != null && department.isNotEmpty) {
-        queryBuilder = queryBuilder.eq('department', department);
+        queryBuilder.eq('department', department);
       }
 
       if (year != null && year.isNotEmpty) {
-        queryBuilder = queryBuilder.eq('year', year);
+        queryBuilder.eq('year', year);
       }
+
       final response = await queryBuilder
-          .order('created_at', ascending: false) // ترتيب من الأحدث للأقدم
+          .order('created_at', ascending: false)
           .range(from, to);
 
-      return (response as List<dynamic>)
-          .map((e) => ProjectModel.fromMap(e))
-          .toList();
+      return (response as List).map((e) => ProjectModel.fromMap(e)).toList();
     } on SocketException {
       throw const ServerException('لا يوجد اتصال بالإنترنت.');
     } on PostgrestException catch (e) {
-      _handleDatabaseError(e, 'جلب أرشيف المشاريع');
-      throw ServerException(e.message);
+      _handleDatabaseError(e, 'البحث عن المشاريع');
+      rethrow;
     } catch (e) {
-      throw ServerException('حدث خطأ غير متوقع أثناء الجلب: $e');
+      throw ServerException('حدث خطأ غير متوقع: $e');
     }
   }
 } 

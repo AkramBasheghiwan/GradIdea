@@ -23,7 +23,7 @@ class DashboardHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: AppColor.primaryColor.withOpacity(.25),
+                color: AppColor.primaryColor.withValues(alpha: 0.25),
                 blurRadius: 22,
                 offset: const Offset(0, 8),
               ),

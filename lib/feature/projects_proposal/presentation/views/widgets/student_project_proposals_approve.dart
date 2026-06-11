@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_approved.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_state.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
@@ -50,7 +50,7 @@ class _StudentProjectProposalsApproveState
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return CustomBuildCardProjectsApproved(
+                return CustomBuildCardProposalApproved(
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -58,7 +58,7 @@ class _StudentProjectProposalsApproveState
                       arguments: proposal,
                     );
                   },
-                  project: proposal,
+                  proposal: proposal,
                 );
               },
             ),

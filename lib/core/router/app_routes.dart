@@ -24,4 +24,6 @@ class AppRoutes {
   static const String myproposal = '/myproposal';
   static const String exploureProposal = '/exploureproposal';
   static const String reviewProposal = 'revewproposal';
+  static const String pdfviewer = '/pdfViewer';
+  static const String editeProfile = '/editeprofile';
 }

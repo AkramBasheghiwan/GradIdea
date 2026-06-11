@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_management_idea_system/feature/Student_home/presentation/views/student_home_view.dart';
-import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/student_projects_view.dart';
-//import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_archieve_view.dart';
-import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/student_project_proposals_view.dart';
+import 'package:flutter/services.dart';
+import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
+import 'package:graduation_management_idea_system/feature/Student/presentation/views/student_home_view.dart';
+import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
+import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/student_get_my_projects_view.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/student_my_proposals_view.dart';
 import 'package:iconsax/iconsax.dart';
-
 import 'package:graduation_management_idea_system/core/widgets/buid_nav_bar_item.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_floating_nav_bar.dart';
-
-//import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/hod_projects_view.dart';
-//import 'package:graduation_management_idea_system/feature/proposal_approved & search/presentation/view/supervisor_proposal_approved.dart';
 
 class StudentMainLayout extends StatefulWidget {
   const StudentMainLayout({super.key});
@@ -24,8 +23,8 @@ class _StudentMainLayoutState extends State<StudentMainLayout> {
   final List<Widget> _screens = const [
     StudentHomeView(),
     StudentProjectView(),
-    StudentProjectProposalsView(),
-    SizedBox(), // profile لاحقاً
+    StudentMyProposalView(),
+    ProfileView(), // profile لاحقاً
   ];
 
   void onTap(int index) {
@@ -36,47 +35,65 @@ class _StudentMainLayoutState extends State<StudentMainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: CustomFloatingNavBar(
-        childern: [
-          BuildNavBarItem(
-            onTap: onTap,
-            currentIndex: _currentIndex,
-            index: 0,
-            title: "الرئيسية",
-            icon: Iconsax.home_2,
-            activeIcon: Iconsax.home_15,
-          ),
+    return PopScope(
+      canPop: false, // يمنع الخروج التلقائي
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-          BuildNavBarItem(
-            onTap: onTap,
-            currentIndex: _currentIndex,
-            index: 1,
-            title: "مشاريعي",
-            icon: Iconsax.task_square,
-            activeIcon: Iconsax.task5,
-          ),
+        ShowDialogFunction.showAppDialog(
+          context: context,
+          title: "تأكيد الخروج",
+          description: "هل تريد الخروج من التطبيق؟",
+          confirmText: "خروج",
+          icon: Iconsax.logout,
+          confirmColor: AppColor.primaryColor,
+          onConfirm: () {
+            SystemNavigator.pop();
+          },
+        );
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: IndexedStack(index: _currentIndex, children: _screens),
+        bottomNavigationBar: CustomFloatingNavBar(
+          childern: [
+            BuildNavBarItem(
+              onTap: onTap,
+              currentIndex: _currentIndex,
+              index: 0,
+              title: "الرئيسية",
+              icon: Iconsax.home_2,
+              activeIcon: Iconsax.home_15,
+            ),
 
-          BuildNavBarItem(
-            onTap: onTap,
-            currentIndex: _currentIndex,
-            index: 2,
-            title: "مقترحاتي",
-            icon: Iconsax.note_favorite,
-            activeIcon: Iconsax.note_21,
-          ),
+            BuildNavBarItem(
+              onTap: onTap,
+              currentIndex: _currentIndex,
+              index: 1,
+              title: "مشاريعي",
+              icon: Iconsax.task_square,
+              activeIcon: Iconsax.task5,
+            ),
 
-          BuildNavBarItem(
-            onTap: onTap,
-            currentIndex: _currentIndex,
-            index: 3,
-            title: "حسابي",
-            icon: Iconsax.user,
-            activeIcon: Iconsax.profile_circle5,
-          ),
-        ],
+            BuildNavBarItem(
+              onTap: onTap,
+              currentIndex: _currentIndex,
+              index: 2,
+              title: "مقترحاتي",
+              icon: Iconsax.note_favorite,
+              activeIcon: Iconsax.note_21,
+            ),
+
+            BuildNavBarItem(
+              onTap: onTap,
+              currentIndex: _currentIndex,
+              index: 3,
+              title: "حسابي",
+              icon: Iconsax.user,
+              activeIcon: Iconsax.profile_circle5,
+            ),
+          ],
+        ),
       ),
     );
   }

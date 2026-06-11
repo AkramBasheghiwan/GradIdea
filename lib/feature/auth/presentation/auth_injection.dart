@@ -2,10 +2,13 @@
 
 import 'package:get_it/get_it.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_repository.dart';
+// import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_repository.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_supabase_repo.dart';
 import 'package:graduation_management_idea_system/feature/auth/data/datasource/auth_remote_data_source.dart';
+// import 'package:graduation_management_idea_system/feature/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:graduation_management_idea_system/feature/auth/data/datasource/supabase_remote_data_source.dart';
 import 'package:graduation_management_idea_system/feature/auth/data/repositories/auth_repository_impl.dart';
+// import 'package:graduation_management_idea_system/feature/auth/data/repositories/auth_repository_impl.dart';
 import 'package:graduation_management_idea_system/feature/auth/data/repositories/auth_supabase_repository.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/manager/Login_Cubit/login_cubit.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/manager/Login_Cubit/login_cubit.dart';
@@ -21,7 +24,7 @@ import 'package:graduation_management_idea_system/feature/auth/presentation/view
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/verify_email_cubit/verify_email_cubit.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/verify_email_cubit.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/verify_email_cubit.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/manager/cubit/splash_cubit.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/manager/cubit/splash_cubit.dart';
 
 void initAuthInjection(GetIt sl) {
   // ---------------------------------------------------------

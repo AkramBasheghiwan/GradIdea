@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graduation_management_idea_system/core/widgets/custom_build_card_status_pendding.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_card_proposal_status_pending.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/student_proposal_cubit/student_proposal_state.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
@@ -33,7 +33,7 @@ class _PendingProjectsViewState extends State<StudentProjectProposalsPending> {
           if (state.proposals.isEmpty) {
             return const Center(
               child: Text(
-                'لا توجد طلبات قيد الانتظار حالياً.',
+                'لا توجد طلبات المقترحات  قيد الانتظار حالياً.',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
             );
@@ -48,7 +48,7 @@ class _PendingProjectsViewState extends State<StudentProjectProposalsPending> {
               itemBuilder: (context, index) {
                 final proposal = state.proposals[index];
 
-                return CustomBuildCardStatusPendding(project: proposal);
+                return CustomBuildCardProposalStatusPending(proposal: proposal);
               },
             ),
           );

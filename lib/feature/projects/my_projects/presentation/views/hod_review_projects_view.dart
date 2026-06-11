@@ -1,11 +1,15 @@
 // import 'package:flutter/material.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/manager/hod_projects_cubit/hod_projects_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/widgets/projects_pending_view.dart';
 
@@ -14,11 +18,12 @@ class HodReviewProjectsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log(CacheHelper.getData(key: AppConstatnce.getRole));
     return BlocProvider(
       create: (_) => HodProjectsCubit(
-        status: AppProjectsStatus.padding,
+        status: AppProjectsStatus.pending,
         repository: sl(),
-        departmentId: 'IT',
+        departmentId: 'CS',
       ),
       child: Scaffold(
         backgroundColor: AppColor.background,

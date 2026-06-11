@@ -2,7 +2,14 @@ import 'dart:io';
 
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
 
-enum UploadProjectStatus { initial, loading, success, error, scanImage }
+enum UploadProjectStatus {
+  initial,
+  loading,
+  success,
+  error,
+  scanImage,
+  updateSuccess,
+}
 
 class UploadProjectState {
   final UploadProjectStatus status;
@@ -32,7 +39,7 @@ class UploadProjectState {
       errorMessage: errorMessage ?? this.errorMessage,
       selectedFile: clearFile ? null : (selectedFile ?? this.selectedFile),
       fileName: clearFile ? null : (fileName ?? this.fileName),
-      projects: projects ?? projects,
+      projects: projects, // لا نغير المشروع في هذه الحالة
     );
   }
 }

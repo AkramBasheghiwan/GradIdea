@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:graduation_management_idea_system/core/app_secrets.dart';
 import 'package:graduation_management_idea_system/core/services/file_servicrs/file_upload.dart';
 import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
@@ -9,10 +10,9 @@ import 'package:graduation_management_idea_system/feature/projects/data/model/mo
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class UploadProjectRemoteDataSource {
-  Future<List<ProjectModel>> findSimilarProjects(String projectDescription);
   Future<void> uploadProject(ProjectModel project);
-  Future<void> updateProject(ProjectModel project);
-  Future<void> deleteProject(String projectId);
+  Future<void> updateProject(ProjectModel project, {File? newFile});
+  Future<void> deleteProject(String projectId, String fileUrle);
   Future<List<ProjectModel>> fetchMyProjects({required String status});
   Future<List<ProjectModel>> fetchAllProjectsByDepartment({
     required String departmentId,
@@ -20,7 +20,7 @@ abstract class UploadProjectRemoteDataSource {
   });
   Future<void> updateProjectsStatus(String projectId, String newStatus);
   Future<void> updateProjectsStatusReject({
-    required String id,
+    required String projectid,
     required String status,
     String? reason,
   });
@@ -32,7 +32,7 @@ class UploadProjectRemoteDataSourceImpl
   late final GenerativeModel _embeddingModel;
 
   UploadProjectRemoteDataSourceImpl({required this.supabase}) {
-    const apiKey = 'AIzaSyAmqZtjZHYAV4Z3HNVwHn60yVNFbkiPBgk';
+    final apiKey = AppSecrets.geminiApiKey;
     _embeddingModel = GenerativeModel(
       model: 'gemini-embedding-001',
       apiKey: apiKey,
@@ -67,79 +67,100 @@ class UploadProjectRemoteDataSourceImpl
   // ==========================================
   // 1. إضافة مشروع جديد
   // ==========================================
-
   @override
   Future<void> uploadProject(ProjectModel project) async {
     try {
+      log('==============================');
+      log('🚀 بدء رفع المشروع');
+
       String? fileUrl;
+
+      // ===============================
+      // 📁 رفع الملف
+      // ===============================
       if (project.projectFile != null) {
+        log('📤 بدء رفع الملف...');
         fileUrl = await AppFileUpload.uploadFile(
           project.projectFile!,
           supabase,
         );
-        log(" تم رفع الملف: $fileUrl");
+        log("✅ تم رفع الملف: $fileUrl");
+      } else {
+        log("⚠️ لا يوجد ملف مرفق");
       }
 
-      log(" جاري توليد المتجه (Vector)...");
+      // ===============================
+      // 🧠 embedding
+      // ===============================
+      log("🧠 جاري توليد المتجه (Vector)...");
       final vectorArray = await _generateEmbeddingVector(project);
-      log(" تم توليد المتجه بنجاح");
+      log("✅ تم توليد المتجه بنجاح");
 
-      final projectData = project.toMap();
+      // ===============================
+      // 📦 تجهيز البيانات
+      // ===============================
+      final userId = supabase.auth.currentUser?.id;
+      log("👤 User ID: $userId");
+
+      final projectData = project.toMap(userId!);
+
       if (fileUrl != null) {
-        projectData['fileurl'] = fileUrl; // تأكد من مطابقة الاسم
+        projectData['fileurl'] = fileUrl;
       }
+
       projectData['embedding_vector'] = vectorArray;
 
-      log(" جاري إرسال البيانات: $projectData");
-      await supabase.from('projects').insert(projectData);
-      log(" تم حفظ المشروع بنجاح!");
-    } on PostgrestException catch (e) {
-      //  طباعة تفاصيل خطأ قاعدة البيانات
-      log(
-        " خطأ Database (Postgrest): كود=${e.code}, رسالة=${e.message}, تفاصيل=${e.details}",
-      );
-      throw ServerException('خطأ قاعدة البيانات: ${e.message}');
-    } catch (e) {
-      //  طباعة أي خطأ آخر (مثل StorageException لو جاء من AppFileUpload)
-      log(" خطأ عام أثناء الرفع: $e");
-      if (e is ServerException)
-        rethrow; // يرمي الـ ServerException القادم من الدوال المساعدة
-      throw ServerException('حدث خطأ غير متوقع: $e');
+      log("📦 البيانات النهائية:");
+      log(projectData.toString());
+
+      // ===============================
+      // 💾 إدخال البيانات
+      // ===============================
+      log("💾 إرسال البيانات إلى Supabase...");
+
+      final response = await supabase
+          .from('projects')
+          .insert(projectData)
+          .select();
+
+      log("🟢 Insert Response: $response");
+
+      log("🎉 تم حفظ المشروع بنجاح!");
     }
-  }
+    // ===============================
+    // 🌐 Internet Error
+    // ===============================
+    on SocketException catch (e) {
+      log("🌐 SocketException: $e");
+      throw ServerException('لا يوجد اتصال بالإنترنت لرفع المشروع.');
+    }
+    // ===============================
+    // 🔥 Supabase Error (مهم جداً)
+    // ===============================
+    on PostgrestException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ PostgrestException');
+      log('📌 Message: ${e.message}');
+      log('📌 Code: ${e.code}');
+      log('📌 Details: ${e.details}');
+      log('📌 Hint: ${e.hint}');
+      log('📍 StackTrace: $stackTrace');
 
-  // ==========================================
-  // 2. فحص التشابه (معدلة لترجع نتائج للـ UI)
-  // ==========================================
-  @override
-  Future<List<ProjectModel>> findSimilarProjects(
-    String projectDescription,
-  ) async {
-    try {
-      final result = await _embeddingModel.embedContent(
-        Content.text(projectDescription),
-        taskType: TaskType.retrievalQuery,
-        outputDimensionality: 768,
-      );
-      final List<double> queryVector = result.embedding.values;
+      _handleDatabaseError(e, "رفع المشروع");
 
-      final List<dynamic> response = await supabase.rpc(
-        'match_projects',
-        params: {
-          'query_embedding': queryVector,
-          'match_threshold': 0.75,
-          'match_count': 5,
-        },
-      );
+      throw ServerException('خطأ قاعدة البيانات: ${e.message}');
+    }
+    // ===============================
+    // 💥 أي خطأ آخر
+    // ===============================
+    catch (e, stackTrace) {
+      log('==============================');
+      log("💥 Unexpected Error: $e");
+      log('📍 StackTrace: $stackTrace');
 
-      return response.map((data) => ProjectModel.fromMap(data)).toList();
-    } on SocketException {
-      throw ServerException('لا يوجد اتصال بالإنترنت لإجراء الفحص.');
-    } on PostgrestException catch (e) {
-      _handleDatabaseError(e, 'فحص التشابه');
-      return [];
-    } catch (e) {
-      throw ServerException('حدث خطأ أثناء البحث عن أفكار مشابهة: $e');
+      if (e is ServerException) rethrow;
+
+      throw ServerException('حدث خطأ غير متوقع: $e');
     }
   }
 
@@ -147,36 +168,97 @@ class UploadProjectRemoteDataSourceImpl
   // 3. تحديث مشروع موجود
   // ==========================================
   @override
-  Future<void> updateProject(ProjectModel project) async {
+  Future<void> updateProject(ProjectModel project, {File? newFile}) async {
     try {
       if (project.id == null) {
-        throw ServerException('لا يمكن تحديث مشروع بدون معرف (ID)');
+        throw ServerException('ID مفقود');
       }
 
-      final vectorArray = await _generateEmbeddingVector(project);
-      final projectData = project.toMap();
-      projectData['embedding_vector'] = vectorArray;
+      String? fileUrl;
 
-      await supabase.from(table).update(projectData).eq('id', project.id!);
+      // ===============================
+      // 📁 معالجة الملف
+      // ===============================
+      if (newFile != null) {
+        String filePath;
+
+        if (project.fileUrl != null) {
+          filePath = AppFileUpload.extractPathFromUrl(project.fileUrl!);
+          log(' استخدام ملف موجود: $filePath');
+        } else {
+          filePath =
+              'archive_files/${DateTime.now().millisecondsSinceEpoch}_project.pdf';
+          log(' ملف جديد لأول مرة: $filePath');
+        }
+
+        fileUrl = await AppFileUpload.updateFile(newFile, filePath, supabase);
+      }
+
+      // ===============================
+      // 🧠 embedding
+      // ===============================
+      log('🧠 توليد embedding...');
+      final vector = await _generateEmbeddingVector(project);
+
+      final data = project.toMap(supabase.auth.currentUser!.id);
+
+      if (fileUrl != null) {
+        data['fileurl'] = fileUrl;
+      }
+      data['reasion_rejection'] = null;
+      data['embedding_vector'] = vector;
+
+      log('💾 تحديث قاعدة البيانات...');
+
+      await supabase.from(table).update(data).eq('id', project.id!);
+
+      log('🎉 تم التحديث بنجاح');
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت لحذف المشروع.');
     } on PostgrestException catch (e) {
+      log(' Supabase error: ${e.message}');
       _handleDatabaseError(e, 'تحديث المشروع');
     } catch (e) {
-      if (e is ServerException) rethrow;
-      throw ServerException('حدث خطأ غير متوقع: $e');
+      log(' Unexpected error: $e');
+      throw ServerException(e.toString());
     }
   }
 
-  // ==========================================
   // 4. حذف وجلب البيانات (نفس كودك مع تعديل الحقل)
   // ==========================================
   @override
-  Future<void> deleteProject(String projectId) async {
+  Future<void> deleteProject(String projectId, String fileUrl) async {
     try {
-      await supabase.from(table).delete().eq('id', projectId);
+      log('Project ID type: ${projectId.runtimeType}');
+      log('Project ID: $projectId');
+      final response = await supabase
+          .from(table)
+          .delete()
+          .eq('id', projectId)
+          .select();
+
+      if (response.isEmpty) {
+        throw ServerException(
+          'قد تم حذف المشروع مسبقاً أو لم يتم العثور عليه.',
+        );
+      }
+
+      log(' Project deleted successfully: $projectId');
+
+      final path = AppFileUpload.extractPathFromUrl(fileUrl);
+
+      await supabase.storage.from('archive_files').remove([path]);
+      log('✅ تم حذف الملف');
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت لحذف المشروع.');
     } on PostgrestException catch (e) {
+      log(' Supabase error: ${e.message}');
       _handleDatabaseError(e, 'حذف المشروع');
     } catch (e) {
-      throw ServerException(e.toString());
+      log(' Unexpected error: $e');
+      throw ServerException(
+        "${e.toString()}حدث خطاء غير متوقع اثناء حذف المشروع",
+      );
     }
   }
 
@@ -193,20 +275,17 @@ class UploadProjectRemoteDataSourceImpl
       );
     }
   }
-  // Future<List<ProjectModel>> fetchMyprojects(String status)async {
-  //   try{
-  //     final result = await supabase.from(table).select().eq('leader_id', )
-  //   }
-  // }
 
   @override
   Future<List<ProjectModel>> fetchMyProjects({required String status}) async {
     try {
+      log(supabase.auth.currentUser!.id);
+      log(status);
       final response = await supabase
           .from(table)
           .select()
           .eq('status', status)
-          .eq('leader_id': userId)
+          .eq('leader_id', supabase.auth.currentUser!.id)
           .order('created_at', ascending: false);
 
       return (response as List)
@@ -273,7 +352,7 @@ class UploadProjectRemoteDataSourceImpl
 
   @override
   Future<void> updateProjectsStatusReject({
-    required String id,
+    required String projectid,
     required String status,
     String? reason,
   }) async {
@@ -281,7 +360,7 @@ class UploadProjectRemoteDataSourceImpl
       final response = await supabase
           .from(table)
           .update({'status': status, 'rejection_reason': reason})
-          .eq('id', id);
+          .eq('id', projectid);
 
       if (response.error != null) {
         throw ServerException(
@@ -297,4 +376,38 @@ class UploadProjectRemoteDataSourceImpl
       throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
     }
   }
+  // ==========================================
+  // 2. فحص التشابه (معدلة لترجع نتائج للـ UI)
+  // ==========================================
+  // @override
+  // Future<List<ProjectModel>> findSimilarProjects(
+  //   String projectDescription,
+  // ) async {
+  //   try {
+  //     final result = await _embeddingModel.embedContent(
+  //       Content.text(projectDescription),
+  //       taskType: TaskType.retrievalQuery,
+  //       outputDimensionality: 768,
+  //     );
+  //     final List<double> queryVector = result.embedding.values;
+
+  //     final List<dynamic> response = await supabase.rpc(
+  //       'match_projects',
+  //       params: {
+  //         'query_embedding': queryVector,
+  //         'match_threshold': 0.75,
+  //         'match_count': 5,
+  //       },
+  //     );
+
+  //     return response.map((data) => ProjectModel.fromMap(data)).toList();
+  //   } on SocketException {
+  //     throw ServerException('لا يوجد اتصال بالإنترنت لإجراء الفحص.');
+  //   } on PostgrestException catch (e) {
+  //     _handleDatabaseError(e, 'فحص التشابه');
+  //     return [];
+  //   } catch (e) {
+  //     throw ServerException('حدث خطأ أثناء البحث عن أفكار مشابهة: $e');
+  //   }
+  // }
 }

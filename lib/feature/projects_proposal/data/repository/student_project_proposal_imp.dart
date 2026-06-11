@@ -14,7 +14,6 @@ class StudentProjectProposalRepositoryImpl
 
   const StudentProjectProposalRepositoryImpl({required this.remoteDataSource});
 
-  // 1. جلب المقترحات الخاصة بالطالب  الي رفع المشروع
   @override
   Future<Either<Failure, List<ProjectProposals>>> getMyProposals(
     String status,
@@ -36,26 +35,26 @@ class StudentProjectProposalRepositoryImpl
     }
   }
 
-  // 2. تحديث مقترح الطالب ومعالجة الأخطاء
-  @override
-  Future<Either<Failure, Unit>> updateProposal(ProjectProposals project) async {
-    try {
-      final projectMap = ProjectProposalsModel.fromEntity(project);
+  // // 2. تحديث مقترح الطالب ومعالجة الأخطاء
+  // @override
+  // Future<Either<Failure, Unit>> updateProposal(ProjectProposals project) async {
+  //   try {
+  //     final projectMap = ProjectProposalsModel.fromEntity(project);
 
-      await remoteDataSource.updateProposal(projectMap);
-      return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on SocketException {
-      return const Left(
-        NetworkFailure("انقطع الاتصال بالإنترنت أثناء التحديث."),
-      );
-    } catch (e) {
-      return const Left(
-        ServerFailure("فشل تحديث المقترح، يرجى المحاولة لاحقاً."),
-      );
-    }
-  }
+  //     await remoteDataSource.updateProposal(projectMap);
+  //     return const Right(unit);
+  //   } on ServerException catch (e) {
+  //     return Left(ServerFailure(e.message));
+  //   } on SocketException {
+  //     return const Left(
+  //       NetworkFailure("انقطع الاتصال بالإنترنت أثناء التحديث."),
+  //     );
+  //   } catch (e) {
+  //     return const Left(
+  //       ServerFailure("فشل تحديث المقترح، يرجى المحاولة لاحقاً."),
+  //     );
+  //   }
+  // }
 
   // 3. رفع مقترح جديد ومعالجة الأخطاء
   @override

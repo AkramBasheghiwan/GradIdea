@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
@@ -33,9 +35,15 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
   // 4. تحديث بيانات مشروع
   // ==========================================
   @override
-  Future<Either<Failure, Unit>> updateProject(ProjectEntity newProject) async {
+  Future<Either<Failure, Unit>> updateProject(
+    ProjectEntity newProject, {
+    File? newFile,
+  }) async {
     try {
-      await remoteDataSource.updateProject(ProjectModel.fromEntity(newProject));
+      await remoteDataSource.updateProject(
+        ProjectModel.fromEntity(newProject),
+        newFile: newFile,
+      );
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -50,9 +58,12 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
   // 5. حذف مشروع من الأرشيف
   // ==========================================
   @override
-  Future<Either<Failure, Unit>> deleteProject(String projectId) async {
+  Future<Either<Failure, Unit>> deleteProject(
+    String projectId,
+    String fileUrl,
+  ) async {
     try {
-      await remoteDataSource.deleteProject(projectId);
+      await remoteDataSource.deleteProject(projectId, fileUrl);
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
@@ -128,7 +139,7 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
   }) async {
     try {
       await remoteDataSource.updateProjectsStatusReject(
-        id: id,
+        projectid: id,
         status: status,
         reason: reason,
       );

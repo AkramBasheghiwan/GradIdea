@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/entities/project_group.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/domain/repo/supervisor_repository.dart';
-import 'package:graduation_management_idea_system/feature/supervisor_home/presentation/manager/supervisor_cubit/supervisor_state.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/entities/project_group.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/domain/repo/supervisor_repository.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/presentation/manager/supervisor_cubit/supervisor_state.dart';
 
 class SupervisorProposalsCubit extends Cubit<SupervisorProposalsState> {
   final SupervisorRepository repository;

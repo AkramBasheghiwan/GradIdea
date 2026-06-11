@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
 import 'package:graduation_management_idea_system/core/utils/app_role.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/manager/cubit/splash_cubit.dart';
-import 'package:graduation_management_idea_system/feature/splash/presentation/view/widgets/splash_view_bods.dart';
-
-import '../../manager/cubit/splash_state.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/manager/cubit/splash_cubit.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/manager/cubit/splash_state.dart';
+import 'package:graduation_management_idea_system/feature/Splash/presentation/view/widgets/splash_view_bods.dart';
 
 class SplashViewBlocListner extends StatelessWidget {
   const SplashViewBlocListner({super.key});

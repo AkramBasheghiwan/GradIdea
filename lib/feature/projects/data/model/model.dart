@@ -15,7 +15,7 @@ class ProjectModel extends ProjectEntity {
     super.rejectionReason,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(String leaderId) {
     return {
       'name': name,
       'description': description,
@@ -23,6 +23,7 @@ class ProjectModel extends ProjectEntity {
       'students': students,
       'department': department,
       'year': year,
+      'leader_id': leaderId,
       if (fileUrl != null) 'fileurl': fileUrl,
       if (status != null) 'status': status,
       if (rejectionReason != null) 'rejection_reason': rejectionReason,
@@ -41,7 +42,7 @@ class ProjectModel extends ProjectEntity {
           ? List<String>.from(map['students'])
           : [],
       department: map['department'] ?? '',
-      year: map['year']?.toInt() ?? DateTime.now().year,
+      year: map['year'] ?? '',
       fileUrl: map['fileurl'],
       status: map['status'],
       rejectionReason: map['rejection_reason'] ?? '',
