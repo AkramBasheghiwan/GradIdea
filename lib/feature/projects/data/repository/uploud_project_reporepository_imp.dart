@@ -173,4 +173,33 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
       );
     }
   }
+
+  @override
+  Stream<Either<Failure, List<ProjectEntity>>> getMyProjects({
+    required String status,
+  }) async* {
+    try {
+      await for (final reviews in remoteDataSource.getMyProjects(
+        status: status,
+      )) {
+        final review = reviews
+            .map(
+              (e) => ProjectEntity(
+                name: e.name,
+                description: e.description,
+                supervisor: e.supervisor,
+                students: e.students,
+                department: e.department,
+                year: e.year,
+              ),
+            )
+            .toList();
+        yield Right(review);
+      }
+    } on ServerException catch (e) {
+      yield Left(ServerFailure(e.message));
+    } catch (e) {
+      yield Left(ServerFailure(e.toString()));
+    }
+  }
 }

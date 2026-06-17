@@ -108,7 +108,11 @@ class _ProposalApprovedBodyState extends State<ProposalApprovedBody> {
                       context,
                       AppRoutes.proposalDetail,
                       arguments: project,
-                    );
+                    ).then((_) {
+                      if (!context.mounted) return;
+
+                      context.read<ProposalApprovedCubit>().fetchFirstPage();
+                    });
                   },
                 );
               },

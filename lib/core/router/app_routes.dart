@@ -29,4 +29,5 @@ class AppRoutes {
   static const String appSetting = "/appSetting";
   static const String privacypolicy = "/privacypolicy";
   static const String notifications = "/notifications";
+  static const String getprojectstate = '/getprojectstate';
 }

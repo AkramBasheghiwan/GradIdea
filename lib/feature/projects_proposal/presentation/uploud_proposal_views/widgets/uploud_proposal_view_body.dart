@@ -50,7 +50,6 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
     super.initState();
 
     _nameController = TextEditingController(text: widget.projects?.name);
-
     _descController = TextEditingController(text: widget.projects?.description);
     _yearController = TextEditingController(
       text: widget.projects?.year.toString() ?? '',

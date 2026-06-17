@@ -73,15 +73,21 @@ class IdeaValidationByApiServiceImpl implements IdeaValidationByApiService {
               ? item.similarityScore
               : highestScore;
 
-          similarProjects.add(item);
+          similarProjects.add(
+            SimilarPaperMatch(
+              externalId: item.externalId,
+              title: item.title,
+              similarityScore: similarityPercentage,
+            ),
+          );
         } else {
           log('❌ تم تجاهله (< 0.75)');
         }
       }
-
+      highestScore = highestScore * 100;
       log('==============================');
       log('🏁 النتيجة النهائية');
-      log('⭐ Highest Score: $highestScore');
+      log('⭐ Highest Score: $highestScore ');
       log('📦 Similar Projects Count: ${similarProjects.length}');
 
       final result = ValidationResponse(

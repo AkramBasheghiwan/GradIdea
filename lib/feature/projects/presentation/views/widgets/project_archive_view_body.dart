@@ -103,11 +103,15 @@ class _ProjectsArchiveScreenState extends State<ProjectsArchiveScreen> {
                 final project = projects[index];
                 return CustomBuildCardProjectsApproved(
                   project: project,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.projectDetail,
-                    arguments: project,
-                  ),
+                  onTap: () =>
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.projectDetail,
+                        arguments: project,
+                      ).then((_) {
+                        if (!context.mounted) return;
+                        context.read<ProjectsArchiveCubit>().fetchFirstPage();
+                      }),
                 );
               },
             );

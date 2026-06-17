@@ -10,6 +10,7 @@ import 'package:graduation_management_idea_system/feature/Student/presentation/v
 import 'package:graduation_management_idea_system/feature/Admin/presentation/views/main_layout_admin.dart';
 import 'package:graduation_management_idea_system/feature/app_setting/presentation/views/app_setting_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
+import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/get_project_detaile_view.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/idea_validation.dart';
 import 'package:graduation_management_idea_system/feature/profile/presentation/views/edite_profile_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
@@ -37,6 +38,7 @@ import 'package:graduation_management_idea_system/feature/projects_proposal/pres
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/explore_proposal_appeoved.dart';
 import 'package:graduation_management_idea_system/feature/Splash/presentation/view/splash_view.dart';
 import 'package:graduation_management_idea_system/feature/Supervisor/presentation/views/main_layout_supervisor.dart';
+import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/search_proposal_view.dart';
 
 //import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
@@ -174,6 +176,14 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => const NotificationsView(),
         );
+      case AppRoutes.searchProposal:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const SearchProposalView(),
+        );
+      // case AppRoutes.getprojectstate:
+      //   return MaterialPageRoute(
+      //     builder: (BuildContext context) => const GetProjectDetaileView(),
+      //   );
       default:
         return MaterialPageRoute(
           builder: (BuildContext context) => Scaffold(

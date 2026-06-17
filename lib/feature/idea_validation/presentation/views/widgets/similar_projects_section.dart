@@ -7,8 +7,8 @@ import 'package:iconsax/iconsax.dart';
 
 class SimilarProjectsSection extends StatelessWidget {
   const SimilarProjectsSection({super.key, required this.projects});
-
   final List<SimilarProjectEntity> projects;
+  // final List<SimilarProjectEntity> projects;
 
   @override
   Widget build(BuildContext context) {

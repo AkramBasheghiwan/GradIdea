@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -33,8 +34,7 @@ class ProjectUploadViewBodys extends StatefulWidget {
 }
 
 class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
-  late final ProjectUploadFormController controller;
-
+  late ProjectUploadFormController controller;
   bool get isEditing => widget.projects != null;
 
   @override
@@ -51,21 +51,32 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
 
   void submit() {
     if (!controller.formKey.currentState!.validate()) return;
+    final studentsList = controller.studentsController.text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
 
+    if (studentsList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('أدخل عضو فريق واحد على الأقل')),
+      );
+      return;
+    }
     final cubit = context.read<UploadProjectCubit>();
     final File? file = cubit.state.selectedFile;
 
     if (isEditing) {
       cubit.updateProject(
-        fileUrl: widget.projects!.fileUrl,
+        fileUrl: widget.projects!.fileUrl!,
         id: widget.projects!.id!,
-        name: controller.nameController.text,
-        description: controller.descController.text,
+        name: controller.nameController.text.trim(),
+        description: controller.descController.text.trim(),
         department: controller.selectedDepartment ?? '',
         year: controller.yearController.text,
-        students: controller.studentsList,
-        supervisor: controller.supervisorController.text,
-        newFile: file,
+        students: studentsList,
+        supervisor: controller.supervisorController.text.trim(),
+        newFile: file, // ممكن null لكن لازم handle داخل cubit
       );
     } else {
       cubit.submitProject(

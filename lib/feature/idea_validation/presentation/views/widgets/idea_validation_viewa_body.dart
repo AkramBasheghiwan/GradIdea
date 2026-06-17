@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:graduation_management_idea_system/feature/idea_validation/presen
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/custom_buttom.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/duplicate_card.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/idea_form_field.dart';
+import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/simailar_project_section_api.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/similarIdea_card.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -91,22 +93,25 @@ class _IdaeValidationViewsState extends State<IdaeValidationViewsBody> {
                 if (state is IdeaValidationSuccess) ...[
                   if (state.result.isNovel) const InnovativeIdeaCard(),
 
-                  if (state.result.isNovel) const InnovativeIdeaCard(),
+                  if (!state.result.isNovel) ...[
+                    if (state.result.highestScore != null &&
+                        state.result.highestScore! >= 75 &&
+                        state.result.highestScore! < 90)
+                      SimilarIdeaCard(similarity: state.result.highestScore!),
 
-                  if (state.result.highestScore != null &&
-                      state.result.highestScore! >= 75 &&
-                      state.result.highestScore! < 90)
-                    SimilarIdeaCard(similarity: state.result.highestScore!),
+                    if (state.result.highestScore != null &&
+                        state.result.highestScore! >= 90)
+                      DuplicateIdeaCard(similarity: state.result.highestScore!),
 
-                  if (state.result.highestScore != null &&
-                      state.result.highestScore! >= 90)
-                    DuplicateIdeaCard(similarity: state.result.highestScore!),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
 
-                  SizedBox(height: 20.h),
+                    SimailarProjectSectionApi(
+                      projects: state.result.similarPapers!,
+                    ),
+                  ],
 
-                  // SimilarProjectsSection(projects: state.result.similarPapers!),
                   if (!state.result.isNovel) ...[
                     SizedBox(height: 20.h),
 

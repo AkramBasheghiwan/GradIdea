@@ -10,6 +10,9 @@ abstract class UploudProjectRepository {
   Future<Either<Failure, List<ProjectEntity>>> fetchMyProjects({
     required String status,
   });
+  Stream<Either<Failure, List<ProjectEntity>>> getMyProjects({
+    required String status,
+  });
   Future<Either<Failure, Unit>> updateProject(
     ProjectEntity newProject, {
     File? newFile,

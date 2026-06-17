@@ -25,7 +25,10 @@ class ExploreProposaleApproved extends StatelessWidget {
           elevation: 0,
           title: Text('استكشف المقترحات ', style: AppTextStyle.bold(22)),
           centerTitle: false,
-          leading: const Icon(Icons.arrow_back_ios_rounded),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
           actions: [
             BuildIconSearchBar(
               onpressed: () {
@@ -91,7 +94,7 @@ class ExploreProposaleApproved extends StatelessWidget {
                       create: (BuildContext context) {
                         final cubit = ProposalApprovedCubit(
                           sl<ProposalApprovedRepository>(),
-                          'IS',
+                          'CS',
                         );
 
                         return cubit;
@@ -104,7 +107,7 @@ class ExploreProposaleApproved extends StatelessWidget {
                       create: (BuildContext context) {
                         final cubit = ProposalApprovedCubit(
                           sl<ProposalApprovedRepository>(),
-                          'CS',
+                          'IS',
                         );
 
                         return cubit;

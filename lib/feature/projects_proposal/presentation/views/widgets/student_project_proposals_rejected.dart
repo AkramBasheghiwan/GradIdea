@@ -57,7 +57,11 @@ class _StudentProjectProposalsRejectedState
                       context,
                       AppRoutes.uploudProposal,
                       arguments: proposal,
-                    );
+                    ).then((_) {
+                      if (!context.mounted) return;
+
+                      context.read<StudentProposalCubit>().fetchMyProposals();
+                    });
                   },
                 );
               },

@@ -16,10 +16,12 @@ abstract class UploadProjectRemoteDataSource {
   Future<void> updateProject(ProjectModel project, {File? newFile});
   Future<void> deleteProject(String projectId, String fileUrle);
   Future<List<ProjectModel>> fetchMyProjects({required String status});
+  Stream<List<ProjectModel>> getMyProjects({required String status});
   Future<List<ProjectModel>> fetchAllProjectsByDepartment({
     required String departmentId,
     required String status,
   });
+  Future<ProjectModel> getprojectDetatil(String projectid);
   Future<void> updateProjectsStatus(String projectId, String newStatus);
   Future<void> updateProjectsStatusReject({
     required String projectid,
@@ -151,16 +153,18 @@ class UploadProjectRemoteDataSourceImpl
       if (project.id == null) {
         throw ServerException('ID مفقود');
       }
-
-      String? fileUrl;
+      String? fileUrl = project.fileUrl;
 
       if (newFile != null) {
-        String filePath;
-        if (project.fileUrl != null) {
+        String? filePath;
+
+        if (project.fileUrl != null && project.fileUrl!.isNotEmpty) {
           filePath = AppFileUpload.extractPathFromUrl(project.fileUrl!);
           log(' استخدام ملف موجود: $filePath');
-
           fileUrl = await AppFileUpload.updateFile(newFile, filePath, supabase);
+        } else {
+          log('لا يوجد ملف قديم، سيتم رفع ملف جديد');
+          fileUrl = await AppFileUpload.uploadFile(newFile, supabase);
         }
       }
 
@@ -181,10 +185,19 @@ class UploadProjectRemoteDataSourceImpl
       log('🎉 تم التحديث بنجاح');
     } on SocketException {
       throw ServerException('لا يوجد اتصال بالإنترنت لحذف المشروع.');
-    } on PostgrestException catch (e) {
-      log(' Supabase error: ${e.message}');
+    } on PostgrestException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ PostgrestException');
+      log('📌 Message: ${e.message}');
+      log('📌 Code: ${e.code}');
+      log('📌 Details: ${e.details}');
+      log('📌 Hint: ${e.hint}');
+      log('📍 StackTrace: $stackTrace');
       _handleDatabaseError(e, 'تحديث المشروع');
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('==============================');
+      log('❌ PostgrestException');
+      log('📍 StackTrace: $stackTrace');
       log(' Unexpected error: $e');
       throw ServerException(e.toString());
     }
@@ -230,6 +243,25 @@ class UploadProjectRemoteDataSourceImpl
     }
   }
 
+  @override
+  Future<ProjectModel> getprojectDetatil(String projectid) async {
+    try {
+      final respose = await supabase
+          .from(table)
+          .select()
+          .eq('id', projectid)
+          .single();
+
+      return ProjectModel.fromMap(respose);
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
+    }
+  }
+
   Never _handleDatabaseError(PostgrestException e, String operation) {
     switch (e.code) {
       case '23505':
@@ -243,6 +275,36 @@ class UploadProjectRemoteDataSourceImpl
 
       default:
         throw ServerException('حدث خطأ أثناء $operation.');
+    }
+  }
+
+  //===========================================================
+  @override
+  Stream<List<ProjectModel>> getMyProjects({required String status}) {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+
+      if (userId == null) {
+        throw ServerException('غير مصرح');
+      }
+
+      final query = supabase
+          .from(table)
+          .stream(primaryKey: ['id'])
+          .eq('leader_id', userId);
+
+      return query.map((data) {
+        return data
+            .where((e) => e['status'] == status)
+            .map((e) => ProjectModel.fromMap(e))
+            .toList();
+      });
+    } on SocketException {
+      throw ServerException('لا يوجد اتصال بالإنترنت.');
+    } on PostgrestException catch (e) {
+      _handleDatabaseError(e, 'جلب المشاريع الخاصة بي');
+    } catch (e) {
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
     }
   }
 

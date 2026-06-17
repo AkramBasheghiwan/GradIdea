@@ -55,9 +55,13 @@ class _StudentProjectRejectedState extends State<StudentProjectRejected> {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      AppRoutes.projectDetail,
+                      AppRoutes.uploudProject,
                       arguments: project,
-                    );
+                    ).then((_) {
+                      if (!context.mounted) return;
+
+                      context.read<StudentProjectCubit>().getMyProjects();
+                    });
                   },
                 );
               },

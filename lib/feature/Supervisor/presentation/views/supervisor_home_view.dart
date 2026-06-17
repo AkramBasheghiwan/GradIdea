@@ -33,7 +33,10 @@ class SupervisorHomeViewBody extends StatelessWidget {
     return BlocBuilder<DashAnalysisCubit, DashAnalysisState>(
       builder: (context, state) {
         if (state is DashAnalysisLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Scaffold(
+            backgroundColor: AppColor.background,
+            body: Center(child: CircularProgressIndicator()),
+          );
         } else if (state is DashAnalysisLoaded) {
           final data = state.data;
           // استخدم البيانات لعرض المعلومات في الواجهة
