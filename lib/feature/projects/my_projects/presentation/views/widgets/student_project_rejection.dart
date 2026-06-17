@@ -36,7 +36,7 @@ class _StudentProjectRejectedState extends State<StudentProjectRejected> {
             return Center(
               child: Text(
                 'لا توجد طلبات مرفوضة حالياً.',
-                style: AppTextStyle.bold(24, color: AppColor.primaryColor),
+                style: AppTextStyle.bold(14, color: AppColor.grey),
               ),
             );
           }

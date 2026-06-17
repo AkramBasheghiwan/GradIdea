@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CustomBuildCardProposalStatusRejected extends StatelessWidget {
   const CustomBuildCardProposalStatusRejected({
@@ -23,7 +24,7 @@ class CustomBuildCardProposalStatusRejected extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 18.h),
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: AppColor.background,
+          color: AppColor.white,
           borderRadius: BorderRadius.circular(28.r),
           boxShadow: [
             BoxShadow(
@@ -48,13 +49,13 @@ class CustomBuildCardProposalStatusRejected extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Icon(
-                    Icons.close_rounded,
+                    Iconsax.close_circle,
                     color: Colors.red,
                     size: 28.sp,
                   ),
                 ),
 
-                SizedBox(width: 14.w),
+                SizedBox(width: 8.w),
 
                 Expanded(
                   child: Column(
@@ -87,20 +88,21 @@ class CustomBuildCardProposalStatusRejected extends StatelessWidget {
                   ),
                 ),
 
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.secondaryContainer.withValues(alpha: .20),
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                  child: Text(
-                    "دفعة ${proposal.year}",
-                    style: AppTextStyle.bold(11, color: AppColor.primaryColor),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 12.w,
+                //     vertical: 6.h,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     color: AppColor.secondaryContainer.withValues(alpha: .20),
+                //     borderRadius: BorderRadius.circular(30.r),
+                //   ),
+                //   child: Text(
+                //     '',
+                //     // "دفعة ${proposal.year}",
+                //     style: AppTextStyle.bold(11, color: AppColor.primaryColor),
+                //   ),
+                // ),
               ],
             ),
 

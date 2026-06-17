@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/feature/app_setting/presentation/manager/setting_cubit/cubit/setting_cubit.dart';
 import 'package:graduation_management_idea_system/feature/app_setting/presentation/manager/setting_cubit/cubit/setting_state.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_text_style.dart';
 
-class AppSettingView extends StatefulWidget {
+class AppSettingView extends StatelessWidget {
   const AppSettingView({super.key});
 
   @override
-  State<AppSettingView> createState() => _AppSettingViewState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<AppSettingCubit>(),
+      child: const AppSettingViewBody(),
+    );
+  }
 }
 
-class _AppSettingViewState extends State<AppSettingView> {
+class AppSettingViewBody extends StatefulWidget {
+  const AppSettingViewBody({super.key});
+
+  @override
+  State<AppSettingViewBody> createState() => _AppSettingViewBodyState();
+}
+
+class _AppSettingViewBodyState extends State<AppSettingViewBody> {
   @override
   void initState() {
     super.initState();
@@ -30,7 +44,7 @@ class _AppSettingViewState extends State<AppSettingView> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        title: Text("App Settings", style: AppTextStyle.bold(22)),
+        title: Text("الاعدادات", style: AppTextStyle.bold(22)),
       ),
       body: BlocConsumer<AppSettingCubit, AppSettingState>(
         listener: (context, state) {
@@ -65,14 +79,13 @@ class _AppSettingViewState extends State<AppSettingView> {
 
                       SizedBox(height: 20.h),
 
-                      Text("Permissions", style: AppTextStyle.bold(18)),
+                      Text("الصلاحيات", style: AppTextStyle.bold(18)),
 
                       SizedBox(height: 14.h),
-
                       _SettingTile(
-                        title: "Upload Projects",
-                        subtitle: "Allow students to upload final projects",
-                        icon: Icons.cloud_upload_outlined,
+                        title: "السماح برفع المشاريع",
+                        subtitle: "تمكين الطلاب من رفع مشاريع التخرج النهائية",
+                        icon: Iconsax.document_upload,
                         value: setting.canUploadProjects,
                         onChanged: (value) {
                           context.read<AppSettingCubit>().update(
@@ -84,9 +97,9 @@ class _AppSettingViewState extends State<AppSettingView> {
                       SizedBox(height: 14.h),
 
                       _SettingTile(
-                        title: "Upload Proposal",
-                        subtitle: "Allow students to upload proposals",
-                        icon: Icons.description_outlined,
+                        title: "السماح برفع المقترحات",
+                        subtitle: "تمكين الطلاب من رفع مقترحات مشاريع التخرج",
+                        icon: Iconsax.note_favorite,
                         value: setting.canUploadProposal,
                         onChanged: (value) {
                           context.read<AppSettingCubit>().update(
@@ -97,7 +110,10 @@ class _AppSettingViewState extends State<AppSettingView> {
 
                       SizedBox(height: 30.h),
 
-                      Text("Danger Zone", style: AppTextStyle.bold(18)),
+                      Text(
+                        "منطقة الإجراءات الحساسة",
+                        style: AppTextStyle.bold(18),
+                      ),
 
                       SizedBox(height: 14.h),
 
@@ -133,7 +149,7 @@ class _HeaderCard extends StatelessWidget {
       padding: EdgeInsets.all(22.w),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xff4F46E5), Color(0xff7C3AED)],
+          colors: [AppColor.primaryColor, AppColor.secondaryColor],
         ),
         borderRadius: BorderRadius.circular(28.r),
         boxShadow: [
@@ -141,7 +157,7 @@ class _HeaderCard extends StatelessWidget {
             blurRadius: 25,
             spreadRadius: 2,
             offset: const Offset(0, 10),
-            color: Colors.deepPurple.withValues(alpha: 0.25),
+            color: AppColor.primaryColor.withValues(alpha: 0.25),
           ),
         ],
       ),
@@ -160,16 +176,32 @@ class _HeaderCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+
               children: [
-                Text("Supervisor Capacity", style: AppTextStyle.bold(16)),
-                SizedBox(height: 8.h),
                 Text(
-                  "$maxGroup Groups",
+                  "الحد الأقصى للمجموعات لكل مشرف",
+                  style: AppTextStyle.bold(16, color: Colors.white),
+                ),
+
+                SizedBox(height: 8.h),
+
+                Text(
+                  "$maxGroup مجموعات",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 26.sp,
+                    fontSize: 17.sp,
+                  ),
+                ),
+
+                SizedBox(height: 4.h),
+
+                Text(
+                  "عدد المجموعات ",
+                  style: AppTextStyle.medium(
+                    13,
+                    color: Colors.white.withValues(alpha: 0.85),
                   ),
                 ),
               ],
@@ -184,51 +216,51 @@ class _HeaderCard extends StatelessWidget {
             onPressed: () {
               _showEditDialog(context, maxGroup);
             },
-            child: const Text("Edit"),
+            child: const Text("تعديل"),
           ),
         ],
       ),
     );
   }
+}
 
-  void _showEditDialog(BuildContext context, int current) {
-    final controller = TextEditingController(text: current.toString());
+void _showEditDialog(BuildContext context, int current) {
+  final controller = TextEditingController(text: current.toString());
 
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22.r),
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.r),
+        ),
+        title: const Text("Edit Max Group"),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(hintText: "Enter max group"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
-          title: const Text("Edit Max Group"),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: "Enter max group"),
+          FilledButton(
+            onPressed: () {
+              final value = int.tryParse(controller.text.trim());
+
+              if (value == null) return;
+
+              context.read<AppSettingCubit>().update(maxGroup: value);
+
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            FilledButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text.trim());
-
-                if (value == null) return;
-
-                context.read<AppSettingCubit>().update(maxGroup: value);
-
-                Navigator.pop(context);
-              },
-              child: const Text("Save"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ],
+      );
+    },
+  );
 }
 
 class _SettingTile extends StatelessWidget {

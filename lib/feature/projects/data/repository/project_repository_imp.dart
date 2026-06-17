@@ -52,4 +52,17 @@ class ProjectRepositoryImp implements ProjectsRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> deleteProject(String id, String fileUrl) async {
+    try {
+      await remoteDataSource.deleteProject(id, fileUrl);
+
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

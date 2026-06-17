@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/error/failure.dart';
 //import 'package:google_generative_ai/google_generative_ai.dart';
 //import 'package:graduation_management_idea_system/core/utils/extract_text_frome_image.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
@@ -187,12 +188,21 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
 
     result.fold(
       (failure) {
-        emit(
-          state.copyWith(
-            status: UploadProjectStatus.error,
-            errorMessage: failure.message,
-          ),
-        );
+        if (failure is UploadDisabledFailure) {
+          emit(
+            state.copyWith(
+              status: UploadProjectStatus.uploadDisabled,
+              errorMessage: failure.message,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: UploadProjectStatus.error,
+              errorMessage: failure.message,
+            ),
+          );
+        }
       },
       (success) {
         emit(state.copyWith(status: UploadProjectStatus.success));

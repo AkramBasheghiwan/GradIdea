@@ -55,7 +55,7 @@ class _StudentProjectProposalsRejectedState
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      AppRoutes.proposalDetail,
+                      AppRoutes.uploudProposal,
                       arguments: proposal,
                     );
                   },

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:graduation_management_idea_system/core/services/api_service/api_service_app_setting.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/data_source/project_proposal_remote_data_source.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/repository/project_propsale_repository_imp.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/repository/student_project_proposal_imp.dart';
@@ -11,12 +12,16 @@ import 'package:graduation_management_idea_system/feature/projects_proposal/pres
 class ProposalInjection {
   static void initPrposalInhection(GetIt scope) {
     // Data Source
+
     scope.registerLazySingleton<ProjectProposalRemoteDataSource>(
       () => ProjectProposalRemoteDataSourceImpl(scope()),
     );
     //  repository
     scope.registerLazySingleton<ProjectProposalRepository>(
-      () => ProjectProposalRepositoryImpl(remoteDataSource: scope()),
+      () => ProjectProposalRepositoryImpl(
+        remoteDataSource: scope(),
+        settingsApiService: scope<AppSettingsApiService>(),
+      ),
     );
     scope.registerLazySingleton<StudentProjectProposalRepository>(
       () => StudentProjectProposalRepositoryImpl(remoteDataSource: scope()),

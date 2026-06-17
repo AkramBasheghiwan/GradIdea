@@ -90,7 +90,7 @@ class ForgetPasswordEmailViewBody extends StatefulWidget {
 
 class _ForgetPasswordEmailViewBodyState
     extends State<ForgetPasswordEmailViewBody> {
-  // final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   // final _emailController = TextEditingController();
   late ForgetPasswordFormController controller;
   @override
@@ -107,11 +107,11 @@ class _ForgetPasswordEmailViewBodyState
   }
 
   void submit() {
-    if (controller.validate) return;
-
-    context.read<ForgotPasswordCubits>().sendCode(
-      controller.emailForgetController.text.trim(),
-    );
+    if (_formKey.currentState!.validate()) {
+      context.read<ForgotPasswordCubits>().sendCode(
+        controller.emailForgetController.text.trim(),
+      );
+    }
   }
 
   @override
@@ -213,7 +213,7 @@ class _ForgetPasswordEmailViewBodyState
               ],
             ),
             child: Form(
-              key: controller.formKey,
+              key: _formKey,
               child: Column(
                 children: [
                   Align(

@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
+import 'package:graduation_management_idea_system/core/services/file_servicrs/file_upload.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,6 +21,7 @@ abstract class ProjectRemoteDataSource {
     String? year,
     required int page,
   });
+  Future<void> deleteProject(String projectId, String fileUrl);
 }
 
 class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
@@ -118,6 +121,40 @@ class ProjectRemoteDataSourceImp implements ProjectRemoteDataSource {
       rethrow;
     } catch (e) {
       throw ServerException('حدث خطأ غير متوقع: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteProject(String projectId, String fileUrl) async {
+    try {
+      final response = await supabase
+          .from('projects')
+          .delete()
+          .eq('id', projectId)
+          .select();
+
+      if (response.isEmpty) {
+        throw const ServerException(
+          'قد تم حذف المشروع مسبقاً أو لم يتم العثور عليه.',
+        );
+      }
+
+      log(' Project deleted successfully: $projectId');
+
+      final path = AppFileUpload.extractPathFromUrl(fileUrl);
+
+      await supabase.storage.from('archive_files').remove([path]);
+      log('✅ تم حذف الملف');
+    } on SocketException {
+      throw const ServerException('لا يوجد اتصال بالإنترنت لحذف المشروع.');
+    } on PostgrestException catch (e) {
+      log(' Supabase error: ${e.message}');
+      _handleDatabaseError(e, 'حذف المشروع');
+    } catch (e) {
+      log(' Unexpected error: $e');
+      throw ServerException(
+        "${e.toString()}حدث خطاء غير متوقع اثناء حذف المشروع",
+      );
     }
   }
 } 

@@ -32,23 +32,64 @@ class SupervisorOnProposalsApprovedView extends StatelessWidget {
 
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// simple description (light header)
-                Text(
-                  "متابعة المشاريع المعتمدة التي تشرف عليها حالياً",
-                  style: AppTextStyle.medium(13, color: AppColor.grey),
+                /// description
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(18.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .04),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 54.w,
+                        height: 54.w,
+                        decoration: BoxDecoration(
+                          color: AppColor.primaryColor.withValues(alpha: .1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.rate_review_outlined,
+                          color: AppColor.primaryColor,
+                          size: 26.sp,
+                        ),
+                      ),
+
+                      SizedBox(width: 14.w),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('المقترحات', style: AppTextStyle.bold(16)),
+                            SizedBox(height: 6.h),
+                            Text(
+                              "متابعه المقترحات التي اشرفت  عليها ",
+                              style: AppTextStyle.medium(
+                                13,
+                                color: AppColor.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
-                SizedBox(height: 18.h),
-
-                /// divider subtle
-                Container(height: 1, color: Colors.grey.withValues(alpha: .08)),
-
-                SizedBox(height: 16.h),
+                SizedBox(height: 22.h),
 
                 /// list
                 const Expanded(child: SupervisorProjectProposalApprove()),
@@ -56,6 +97,13 @@ class SupervisorOnProposalsApprovedView extends StatelessWidget {
             ),
           ),
         ),
+
+        /// list
+
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

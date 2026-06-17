@@ -39,7 +39,6 @@ class CustomBuildCardProposalApproved extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 🔹 Header
             Row(
               children: [
                 Container(
@@ -50,7 +49,7 @@ class CustomBuildCardProposalApproved extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                   child: Icon(
-                    Iconsax.flash_1, // 💡 فكرة
+                    Iconsax.flash_1,
                     color: Colors.white,
                     size: 24.sp,
                   ),

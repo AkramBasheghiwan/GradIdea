@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
+import 'package:graduation_management_idea_system/core/utils/app_role.dart';
+import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/manager/auth_cubit/auth_state.dart';
 import 'package:graduation_management_idea_system/feature/profile/presentation/views/widgets/build_header_profile.dart';
@@ -35,7 +38,6 @@ class ProfileViewBody extends StatelessWidget {
 
                     SizedBox(height: 24.h),
 
-                    /// ✅ FIXED HERE
                     ProfileHeroCard(
                       user: user,
                       onTap: () {
@@ -49,43 +51,60 @@ class ProfileViewBody extends StatelessWidget {
 
                     SizedBox(height: 24.h),
 
-                    const ProfileActionCard(
-                      title: "مشاريعي",
-                      subtitle: "عرض مشاريع التخرج المرفوعة",
-                      icon: Iconsax.folder_open,
-                      count: "12",
-                      color: AppColor.cardPurple,
-                    ),
+                    // const ProfileActionCard(
+                    //   title: "مشاريعي",
+                    //   subtitle: "عرض مشاريع التخرج المرفوعة",
+                    //   icon: Iconsax.folder_open,
+                    //   count: "",
+                    //   color: AppColor.cardPurple,
+                    // ),
 
-                    SizedBox(height: 16.h),
+                    // SizedBox(height: 16.h),
 
-                    const ProfileActionCard(
-                      title: "اقتراحاتي",
-                      subtitle: "الأفكار والمقترحات المقدمة",
-                      icon: Iconsax.lamp_charge,
-                      count: "5",
-                      color: AppColor.cardBlue,
-                    ),
+                    // const ProfileActionCard(
+                    //   title: "اقتراحاتي",
+                    //   subtitle: "الأفكار والمقترحات المقدمة",
+                    //   icon: Iconsax.lamp_charge,
+                    //   count: "",
+                    //   color: AppColor.cardBlue,
+                    // ),
 
-                    SizedBox(height: 22.h),
+                    // SizedBox(height: 22.h),
+                    if (CacheHelper.getData(key: AppConstatnce.getRole) ==
+                        AppRoles.admin) ...[
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.appSetting);
+                        },
+                        child: const BuildListTitleCard(
+                          title: "الإعدادات",
+                          icon: Iconsax.setting_2,
+                        ),
+                      ),
+                    ],
 
-                    const BuildListTitleCard(
-                      title: "الإعدادات",
-                      icon: Iconsax.setting_2,
+                    SizedBox(height: 14.h),
+
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.notifications);
+                      },
+                      child: const BuildListTitleCard(
+                        title: "الإشعارات",
+                        icon: Iconsax.notification,
+                      ),
                     ),
 
                     SizedBox(height: 14.h),
 
-                    const BuildListTitleCard(
-                      title: "الإشعارات",
-                      icon: Iconsax.notification,
-                    ),
-
-                    SizedBox(height: 14.h),
-
-                    const BuildListTitleCard(
-                      title: "الخصوصية والأمان",
-                      icon: Iconsax.shield_tick,
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.privacypolicy);
+                      },
+                      child: const BuildListTitleCard(
+                        title: "الخصوصية والأمان",
+                        icon: Iconsax.shield_tick,
+                      ),
                     ),
 
                     SizedBox(height: 26.h),

@@ -87,20 +87,20 @@ class CustomBuildCardStatusRejected extends StatelessWidget {
                   ),
                 ),
 
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.secondaryContainer.withValues(alpha: .20),
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                  child: Text(
-                    "دفعة ${project.year}",
-                    style: AppTextStyle.bold(11, color: AppColor.primaryColor),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 12.w,
+                //     vertical: 6.h,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     color: AppColor.secondaryContainer.withValues(alpha: .20),
+                //     borderRadius: BorderRadius.circular(30.r),
+                //   ),
+                //   child: Text(
+                //     "دفعة ${project.year}",
+                //     style: AppTextStyle.bold(11, color: AppColor.primaryColor),
+                //   ),
+                // ),
               ],
             ),
 

@@ -25,7 +25,7 @@ class ProposalApprovedRemoteDataSourceImpl
   final SupabaseClient supabase;
 
   ProposalApprovedRemoteDataSourceImpl(this.supabase);
-
+  static const String table = 'project_groups';
   @override
   Future<List<ProjectProposalsModel>> fetchAllProposals({
     required String departmentId,
@@ -38,7 +38,7 @@ class ProposalApprovedRemoteDataSourceImpl
       final int to = from + limit - 1;
 
       final response = await supabase
-          .from('')
+          .from(table)
           .select()
           .eq('department', departmentId)
           .eq('status', status)
@@ -84,7 +84,7 @@ class ProposalApprovedRemoteDataSourceImpl
       final from = page * limit;
       final to = from + limit - 1;
 
-      var queryBuilder = supabase.from('').select();
+      var queryBuilder = supabase.from(table).select();
       if (query.isNotEmpty) {
         queryBuilder = queryBuilder.or(
           'name.ilike.%$query%,description.ilike.%$query%,supervisor.ilike.%$query%',

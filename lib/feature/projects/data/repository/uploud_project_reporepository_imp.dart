@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
+import 'package:graduation_management_idea_system/core/services/api_service/api_service_app_setting.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/data_source/supabase_upload_project_remote_data_sourcr.dart';
 import 'package:graduation_management_idea_system/feature/projects/data/model/model.dart';
@@ -12,7 +14,11 @@ import 'package:graduation_management_idea_system/feature/projects/domain/reposi
 class UploudProjectRepositoryImpl implements UploudProjectRepository {
   final UploadProjectRemoteDataSource remoteDataSource;
 
-  UploudProjectRepositoryImpl({required this.remoteDataSource});
+  final AppSettingsApiService settingsApiService;
+  UploudProjectRepositoryImpl({
+    required this.remoteDataSource,
+    required this.settingsApiService,
+  });
 
   // ==========================================
   // 2. رفع مشروع جديد للأرشيف
@@ -22,6 +28,21 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
     ProjectEntity project,
   ) async {
     try {
+      final canUpload = await settingsApiService.canUploadProject();
+      final hasProject = await settingsApiService.hasProject();
+      log("$canUpload");
+      if (!canUpload) {
+        return left(
+          const UploadDisabledFailure('تم إيقاف رفع المشاريع مؤقتاً'),
+        );
+      }
+      if (!hasProject) {
+        return left(
+          const UploadDisabledFailure(
+            'لايمكنك رفع مشروع اخر لانك كذ رفعت مشروع سابقا',
+          ),
+        );
+      }
       await remoteDataSource.uploadProject(ProjectModel.fromEntity(project));
       return const Right(unit);
     } on ServerException catch (e) {

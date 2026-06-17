@@ -79,7 +79,7 @@ class _StudentMyProposalViewState extends State<StudentMyProposalView>
                         ),
                         SizedBox(width: 8.w),
                         Text(
-                          "12",
+                          "",
                           style: AppTextStyle.bold(
                             14,
                             color: AppColor.primaryColor,

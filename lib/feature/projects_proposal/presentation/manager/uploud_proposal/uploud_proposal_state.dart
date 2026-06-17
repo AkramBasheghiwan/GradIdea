@@ -1,6 +1,13 @@
 import 'dart:io';
 
-enum UploadProposalStatus { initial, loading, success, error }
+enum UploadProposalStatus {
+  initial,
+  loading,
+  success,
+  error,
+  uploadDisabled,
+  updateSucess,
+}
 
 class UploadProposalState {
   final UploadProposalStatus status;

@@ -38,9 +38,8 @@ class ProjectsArchiveView extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// Hero Section
-              _buildHeroSection(),
-
-              SizedBox(height: 24.h),
+              // _buildHeroSection(),
+              // SizedBox(height: 24.h),
 
               /// Tabs
               CustomBulidTabBar(
@@ -92,12 +91,17 @@ class ProjectsArchiveView extends StatelessWidget {
       centerTitle: false,
       surfaceTintColor: Colors.transparent,
       titleSpacing: 20.w,
-      title: Text(
-        "أرشيف المشاريع",
-        style: AppTextStyle.headline24BoldStyle.copyWith(
-          fontSize: 24.sp,
-          color: AppColor.textPrimary,
-        ),
+      title: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text("أرشيف المشاريع", style: AppTextStyle.bold(22)),
+          Text(
+            "تصفح المشاريع السابقة واستلهم أفكاراً جديدة",
+            style: AppTextStyle.medium(12, color: AppColor.grey),
+          ),
+        ],
       ),
       actions: [
         Padding(
@@ -109,6 +113,13 @@ class ProjectsArchiveView extends StatelessWidget {
           ),
         ),
       ],
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: AppColor.textPrimary,
+        ),
+      ),
     );
   }
 

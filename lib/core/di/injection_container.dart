@@ -1,9 +1,15 @@
 // أضف هذا الـ import إذا كان كلاس NetworkInfo موجوداً في ملف منفصل
 // import 'مسار_ملف_network_info_الخاص_بك';
 
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:graduation_management_idea_system/feature/Admin/admin_injection.dart';
+import 'package:graduation_management_idea_system/feature/HeadOfDepartment/head_dep_imjection.dart';
+import 'package:graduation_management_idea_system/feature/Supervisor/presentation/supervisor_injection.dart';
+import 'package:graduation_management_idea_system/feature/app_setting/setting_injection.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/auth_injection.dart'
     as auth;
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/validation_injection.dart';
@@ -55,6 +61,7 @@ void initSupervisorScope() {
       scopeName: 'supervisorScope',
       init: (scope) {
         ProposalInjection.initPrposalInhection(scope);
+        SupervisorInjection.init(scope);
       },
     );
   }
@@ -71,6 +78,8 @@ void initAdminScope() {
         pro.initProjectsinjectionScope(scope);
         ProposalInjection.initPrposalInhection(scope);
         ProposalAndSearchInjection.init(scope);
+        AdminInjection.init(scope);
+        SettingInjection.init(scope);
       },
     );
   }
@@ -88,6 +97,7 @@ void initHeadOfDepartScope() async {
         ProposalInjection.initPrposalInhection(scope);
         ProposalAndSearchInjection.init(scope);
         // hod.initHodInjection(scope);
+        HeadOfDepartmentInjection.init(scope);
       },
     );
   }
@@ -97,8 +107,13 @@ void initHeadOfDepartScope() async {
 // 🧹 دالة مهمة جداً: تنظيف النطاقات عند تسجيل الخروج
 // ==========================================
 Future<void> dropAllRoleScopes() async {
-  if (sl.hasScope('studentScope')) await sl.dropScope('studentScope');
-  if (sl.hasScope('supervisorScope')) await sl.dropScope('supervisorScope');
-  if (sl.hasScope('adminScope')) await sl.dropScope('adminScope');
-  if (sl.hasScope('headOfDepartScope')) await sl.dropScope('headOfDepartScope');
+  try {
+    if (sl.hasScope('studentScope')) await sl.dropScope('studentScope');
+    if (sl.hasScope('supervisorScope')) await sl.dropScope('supervisorScope');
+    if (sl.hasScope('adminScope')) await sl.dropScope('adminScope');
+    if (sl.hasScope('headOfDepartScope'))
+      await sl.dropScope('headOfDepartScope');
+  } catch (e) {
+    log('Error dropping scopes: $e');
+  }
 }

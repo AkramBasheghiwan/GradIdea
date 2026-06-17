@@ -5,6 +5,7 @@ import 'package:graduation_management_idea_system/core/widgets/custom_show_snack
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervisor_proposal_cubit.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/supervisor_proposal_cubite.dart/supervior_proposal_state.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_refershe_indicater.dart';
 
 class SupervisorProjectProposalsView extends StatefulWidget {
   const SupervisorProjectProposalsView({super.key});
@@ -28,6 +29,7 @@ class _SupervisorProjectProposalsViewState
     return BlocConsumer<ProjectProposalCubit, ProjectProposalState>(
       listener: (context, state) {
         if (state is ProjectProposalActionSuccess) {
+          Navigator.pop(context);
           AppSnackBar.show(
             context: context,
             message: state.message,
@@ -43,11 +45,13 @@ class _SupervisorProjectProposalsViewState
 
         if (state is ProjectProposalLoaded) {
           if (state.proposals.isEmpty) {
-            return const Center(
-              child: Text(
-                'لا توجد طلبات قيد الانتظار حالياً.',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
+            return CustomRefersheIndicater(
+              text: 'لا توجد طلبات قيد الانتظار حالياً.',
+              onRefresh: () async {
+                context
+                    .read<ProjectProposalCubit>()
+                    .fetchProposalsToSupervisor();
+              },
             );
           }
 
@@ -63,6 +67,12 @@ class _SupervisorProjectProposalsViewState
 
                 return CustomBuildCardProposalDecesion(
                   proposals: proposal,
+                  onDelete: () {
+                    context.read<ProjectProposalCubit>().deleteProposal(
+                      proposal.id!,
+                      proposal.fileUrl!,
+                    );
+                  },
 
                   onAccept: () {
                     context.read<ProjectProposalCubit>().acceptProposal(
@@ -91,7 +101,12 @@ class _SupervisorProjectProposalsViewState
           );
         }
 
-        return const SizedBox();
+        return CustomRefersheIndicater(
+          text: 'لا توجد طلبات قيد المراجعه حالياً.',
+          onRefresh: () async {
+            context.read<ProjectProposalCubit>().fetchProposalsToSupervisor();
+          },
+        );
       },
     );
   }

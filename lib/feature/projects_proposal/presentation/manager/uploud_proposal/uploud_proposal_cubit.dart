@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/error/failure.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/repository/project_proposal_repository.dart';
@@ -86,12 +87,23 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
     );
 
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: UploadProposalStatus.error,
-          errorMessage: failure.message,
-        ),
-      ),
+      (failure) {
+        if (failure is UploadDisabledFailure) {
+          emit(
+            state.copyWith(
+              status: UploadProposalStatus.uploadDisabled,
+              errorMessage: failure.message,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: UploadProposalStatus.error,
+              errorMessage: failure.message,
+            ),
+          );
+        }
+      },
       (success) {
         emit(state.copyWith(status: UploadProposalStatus.success));
         clearSelectedFile(); // تفريغ الملف بعد النجاح
@@ -142,7 +154,7 @@ class UploadProposalCubit extends Cubit<UploadProposalState> {
         ),
       ),
       (success) {
-        emit(state.copyWith(status: UploadProposalStatus.success));
+        emit(state.copyWith(status: UploadProposalStatus.updateSucess));
         clearSelectedFile();
       },
     );

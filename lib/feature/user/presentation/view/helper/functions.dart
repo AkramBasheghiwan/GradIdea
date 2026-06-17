@@ -52,12 +52,10 @@ void showUserActionsBottomSheet(BuildContext context, UserEntity user) {
               // ==========================================
               // 2. قسم أزرار الإجراءات (Actions)
               // ==========================================
-
-              // إذا كان المستخدم طالباً أو مستخدماً عادياً، تظهر له أزرار الترقية
               if (targetUserRole == AppRoles.user ||
                   targetUserRole == 'student') ...[
                 _buildActionButton(
-                  title: '👑  تعيين كرئيس قسم  👑',
+                  title: '  تعيين كرئيس قسم  ',
                   textColor: Colors.black,
                   backgroundColor: Colors.white,
                   onTap: () async {
@@ -73,7 +71,7 @@ void showUserActionsBottomSheet(BuildContext context, UserEntity user) {
                 ),
                 SizedBox(height: 12.h), // مسافة بين زري الترقية
                 _buildActionButton(
-                  title: '👨‍🏫  تعيين كمشرف أكاديمي  👨‍🏫',
+                  title: '  تعيين كمشرف أكاديمي ',
                   textColor: Colors.black,
                   backgroundColor: AppColor.primaryColor.withValues(
                     alpha: 0.9,
@@ -93,7 +91,7 @@ void showUserActionsBottomSheet(BuildContext context, UserEntity user) {
               if (targetUserRole == AppRoles.headOfDepartment ||
                   targetUserRole == AppRoles.supervisor)
                 _buildActionButton(
-                  title: '👤  تعيين كمستخدم عادي  👤',
+                  title: '  تعيين كمستخدم عادي  ',
                   textColor: Colors.black,
                   backgroundColor: Colors.white,
                   onTap: () async {

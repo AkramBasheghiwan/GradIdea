@@ -9,6 +9,7 @@ enum UploadProjectStatus {
   error,
   scanImage,
   updateSuccess,
+  uploadDisabled,
 }
 
 class UploadProjectState {

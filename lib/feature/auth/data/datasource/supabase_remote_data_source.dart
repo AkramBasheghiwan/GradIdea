@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/utils/app_constatnce.dart';
@@ -54,16 +56,20 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
         throw const ServerException('فشل تسجيل الدخول، لم يتم إرجاع المستخدم.');
       }
 
-      final UserResponse latestResponse = await supabase.auth.getUser();
-      final User? latestUser = latestResponse.user;
+      // final UserResponse latestResponse = await supabase.auth.getUser();
+      // final User? latestUser = latestResponse.user;
 
-      if (latestUser == null) {
-        throw const ServerException(
-          'حدث خطأ غير متوقع في جلب بيانات المستخدم.',
-        );
-      }
+      // if (latestUser == null) {
+      //   throw const ServerException(
+      //     'حدث خطأ غير متوقع في جلب بيانات المستخدم.',
+      //   );
+      // }
 
-      return await _getUserProfile(latestUser);
+      return await _getUserProfile(authResponse.user!);
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -96,6 +102,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
       }
 
       return authResponse.user!.email!;
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -121,7 +131,7 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
           'name': name,
           'role': AppRoles.company,
           'phone': phone,
-          'company_name': companyName,
+          'external_name': companyName,
         },
       );
 
@@ -131,6 +141,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
         );
       }
       return authResponse.user!.email!;
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -157,6 +171,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
     try {
       // هذه الدالة سترسل الرمز المكون من 6 أرقام (إذا ضبطت إعدادات Supabase على ذلك)
       await supabase.auth.resetPasswordForEmail(email);
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -184,6 +202,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
           'فشل التحقق، الرمز غير صحيح أو منتهي الصلاحية.',
         );
       }
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       if (e.message.toLowerCase().contains('token has expired or is invalid')) {
         throw const ServerException('رمز الاستعادة غير صحيح أو انتهت صلاحيته.');
@@ -208,6 +230,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
       if (response.user == null) {
         throw const ServerException('فشل تحديث كلمة المرور.');
       }
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -226,6 +252,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
       } else {
         throw const ServerException("لا يوجد مستخدم مسجل حالياً.");
       }
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } catch (e) {
       if (e is ServerException) rethrow;
       throw ServerException(
@@ -238,7 +268,15 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
   Future<bool> checkEmailverfied() async {
     try {
       final currentUser = supabase.auth.currentUser;
+
       return currentUser?.emailConfirmedAt != null;
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
+    } on AuthException catch (e) {
+      _handleAuthException(e);
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException('حدث خطأ أثناء التحقق من البريد: ${e.toString()}');
     }
@@ -262,6 +300,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
         );
       }
       return await _getUserProfile(response.user!);
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -279,6 +321,10 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
       // نمرر الإيميل كـ Parameter بدلاً من الاعتماد على currentUser
       // لأنه أحياناً في الـ signUp لا يكون الـ currentUser مسجلاً بالكامل حتى يتم التحقق
       await supabase.auth.resend(type: OtpType.signup, email: email);
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on AuthException catch (e) {
       _handleAuthException(e);
       throw ServerException(e.message);
@@ -301,12 +347,22 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
           .single();
 
       return UserModel.fromSupabaseMap(data, user.emailConfirmedAt != null);
+    } on SocketException {
+      throw const ServerException(
+        'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
+      );
     } on PostgrestException catch (e) {
       // التقاط أخطاء قاعدة البيانات (Postgrest)
       if (e.code == 'PGRST116') {
         throw const ServerException(
           'بيانات الملف الشخصي غير موجودة، يرجى التواصل مع الدعم.',
         );
+      } else if (e.code == '42501') {
+        throw const ServerException(
+          'عذراً، ليس لديك صلاحية للوصول إلى بيانات الملف الشخصي.',
+        );
+      } else if (e.code == '23505') {
+        throw const ServerException('هذه البيانات موجودة مسبقاً.');
       }
       throw ServerException('خطأ في جلب بيانات المستخدم: ${e.message}');
     } catch (e) {
@@ -316,7 +372,6 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
     }
   }
 
-  /// مترجم أخطاء Supabase Auth إلى رسائل عربية واضحة (يتم رميها كـ ServerException)
   void _handleAuthException(AuthException e) {
     final message = e.message.toLowerCase();
 
@@ -353,4 +408,16 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
     // إذا لم يكن الخطأ معروفاً، ارمِ رسالة الخطأ الأصلية
     throw ServerException(e.message);
   }
+
+  // Future<T> _excuteWithAuthHandling<T>(Future<T>Function()  action) async {
+  //     try {
+  //       return await action();
+  //     }on AuthException catch (e) {
+  //       _handleAuthException(e);
+  //       throw ServerException(e.message);
+  //     } catch (e) {
+  //       if (e is ServerException) rethrow;
+  //       throw ServerException('حدث خطأ غير متوقع: ${e.toString()}');
+  //     }
+  // }
 }

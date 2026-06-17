@@ -113,20 +113,19 @@ class ProposalDetailsViewBody extends StatelessWidget {
 
       actions: [
         if (canManage) ...[
-          Padding(
-            padding: EdgeInsets.only(top: 8.r, bottom: 8.r),
-            child: _appBarButton(
-              icon: Iconsax.edit_2,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.uploudProposal,
-                  arguments: proposals,
-                );
-              },
-            ),
-          ),
-
+          // Padding(
+          //   padding: EdgeInsets.only(top: 8.r, bottom: 8.r),
+          //   child: _appBarButton(
+          //     icon: Iconsax.edit_2,
+          //     onTap: () {
+          //       Navigator.pushNamed(
+          //         context,
+          //         AppRoutes.uploudProposal,
+          //         arguments: proposals,
+          //       );
+          //     },
+          //   ),
+          // ),
           Padding(
             padding: EdgeInsets.only(
               top: 8.r,
@@ -209,7 +208,7 @@ class ProposalDetailsViewBody extends StatelessWidget {
 
                       _heroChip(
                         Iconsax.profile_2user,
-                        "${proposals.students.length ?? 0} أعضاء",
+                        "${proposals.students.length} أعضاء",
                       ),
                     ],
                   ).animate().fade(delay: 200.ms),
@@ -310,7 +309,7 @@ class ProposalDetailsViewBody extends StatelessWidget {
         children: [
           _sectionTitle(AppStrings.aboutProject, Iconsax.document_text),
           Text(
-            proposals.description ?? "لا يوجد وصف للمشروع.",
+            proposals.description,
             style: AppTextStyle.medium(
               14,
               color: AppColor.grey,
@@ -349,10 +348,7 @@ class ProposalDetailsViewBody extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      proposals.supervisor ?? "غير محدد",
-                      style: AppTextStyle.bold(16),
-                    ),
+                    Text(proposals.supervisor, style: AppTextStyle.bold(16)),
                     SizedBox(height: 4.h),
                     Text(
                       "المشرف الأكاديمي",
@@ -370,7 +366,7 @@ class ProposalDetailsViewBody extends StatelessWidget {
 
   /// TEAM
   Widget _buildTeamCard() {
-    final students = proposals.students ?? [];
+    final students = proposals.students;
 
     return _cardShell(
       child: Column(
@@ -431,7 +427,11 @@ class ProposalDetailsViewBody extends StatelessWidget {
     return _cardShell(
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, AppRoutes.pdfviewer);
+          Navigator.pushNamed(
+            context,
+            AppRoutes.pdfviewer,
+            arguments: proposals.fileUrl,
+          );
         },
         child: Row(
           children: [

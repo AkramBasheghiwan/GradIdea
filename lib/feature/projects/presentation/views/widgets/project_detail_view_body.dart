@@ -11,7 +11,8 @@ import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
 
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/manager/project_archieve_cubit/projects_archive.dart';
+
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_strings.dart';
@@ -147,7 +148,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
                   icon: Iconsax.trash,
                   onConfirm: () {
                     log('جاري حذف المشروع ${projects.id}');
-                    context.read<UploadProjectCubit>().deleteProjects(
+                    context.read<ProjectsArchiveCubit>().deleteProject(
                       projects.id.toString(),
                       projects.fileUrl!,
                     );

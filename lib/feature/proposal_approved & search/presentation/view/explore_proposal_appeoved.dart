@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_icon_search_bar.dart';
@@ -22,12 +23,16 @@ class ExploreProposaleApproved extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppColor.transparent,
           elevation: 0,
-          title: Text(
-            'استكشف المقترحات  الموافق عليها',
-            style: AppTextStyle.headline24BoldStyle,
-          ),
+          title: Text('استكشف المقترحات ', style: AppTextStyle.bold(22)),
           centerTitle: false,
-          actions: [BuildIconSearchBar(onpressed: () {})],
+          leading: const Icon(Icons.arrow_back_ios_rounded),
+          actions: [
+            BuildIconSearchBar(
+              onpressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.searchProposal);
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

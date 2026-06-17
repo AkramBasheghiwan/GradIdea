@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:graduation_management_idea_system/core/di/injection_container.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_supabase_repo.dart';
 //import 'package:graduation_management_idea_system/feature/auth/data/repositories/auth_supabase_repository.dart';
 //import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_repository.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AuthCubit extends Cubit<AuthState> {
   final AuthSupabaseRepo authRepository;
 
-  // حذفنا الـ Object object اللي كان مسبب مشكلة في الـ Injection
   AuthCubit({required this.authRepository}) : super(AuthInitial());
 
   Future<void> checkAuthStatus() async {
@@ -18,7 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
         .getCurrentUser();
 
     result.fold(
-      (Failure failure) => emit(AuthUnauthenticated()), // تحديد النوع Failure
+      (Failure failure) => emit(AuthUnauthenticated()),
       (UserEntity user) =>
           emit(AuthAuthenticated(user)), // تحديد النوع UserEntity
     );
@@ -46,11 +46,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     final result = await authRepository.signOut();
 
-    result.fold(
-      (Failure failure) => emit(
-        AuthError(failure.message),
-      ), // تحديد النوع هنا يحل مشكلة الـ message
-      (_) => emit(AuthSignOut()),
-    );
+    result.fold((Failure failure) => emit(AuthError(failure.message)), (
+      _,
+    ) async {
+      await dropAllRoleScopes();
+      emit(AuthSignOut());
+    });
   }
 }

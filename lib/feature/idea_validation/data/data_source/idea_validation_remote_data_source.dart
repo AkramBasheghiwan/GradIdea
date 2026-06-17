@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:graduation_management_idea_system/core/app_secrets.dart';
+
 import 'package:graduation_management_idea_system/feature/idea_validation/domain/entities/simialar_project_entity.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/domain/entities/validation_result_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

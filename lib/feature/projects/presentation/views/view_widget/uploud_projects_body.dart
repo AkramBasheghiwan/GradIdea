@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/upload_project_build_app_bar.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
@@ -80,214 +81,230 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(20.w),
-      child: Form(
-        key: controller.formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //   ProjectUploadHeader(isEditing: isEditing),
-            SizedBox(height: 20.h),
+    return Scaffold(
+      backgroundColor: AppColor.background,
+      appBar: UploadProjectBuildAppBar.buildAppBar(
+        isEdit: isEditing,
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.w),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //   ProjectUploadHeader(isEditing: isEditing),
 
-            /// Hero Header
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(22.w),
-              decoration: BoxDecoration(
-                gradient: AppColor.primaryGradient,
-                borderRadius: BorderRadius.circular(30.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColor.primaryColor.withValues(alpha: 0.22),
-                    blurRadius: 26,
-                    offset: const Offset(0, 12),
+                /// Hero Header
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(22.w),
+                  decoration: BoxDecoration(
+                    gradient: AppColor.primaryGradient,
+                    borderRadius: BorderRadius.circular(30.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.primaryColor.withValues(alpha: 0.22),
+                        blurRadius: 26,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 62.w,
-                    height: 62.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Iconsax.document_upload,
-                      color: Colors.white,
-                      size: 28.sp,
-                    ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 62.w,
+                        height: 62.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Iconsax.document_upload,
+                          color: Colors.white,
+                          size: 28.sp,
+                        ),
+                      ),
+
+                      SizedBox(width: 14.w),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isEditing
+                                  ? "تحديث مشروع التخرج"
+                                  : "رفع مشروع التخرج",
+                              style: AppTextStyle.bold(19, color: Colors.white),
+                            ),
+
+                            SizedBox(height: 8.h),
+
+                            Text(
+                              "شارك مشروعك الأكاديمي وأضف تفاصيله بشكل واضح ومنظم",
+                              style: AppTextStyle.medium(
+                                12,
+                                color: Colors.white.withValues(alpha: .90),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  SizedBox(width: 14.w),
+                SizedBox(height: 24.h),
 
-                  Expanded(
-                    child: Column(
+                /// تفاصيل المشروع
+                UploadSectionCard(
+                  title: "01 تفاصيل المشروع",
+                  icon: Iconsax.lamp_charge,
+                  children: [
+                    ProjectUploadBuildField(
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'اسم المشروع مطلوب';
+                        }
+                        return null;
+                      },
+                      controller: controller.nameController,
+                      label: AppStrings.projectName,
+                      hint: "اسم المشروع",
+                      icon: Iconsax.text,
+                    ),
+
+                    SizedBox(height: 14.h),
+
+                    ProjectUploadBuildField(
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'وصف المشروع مطلوب';
+                        }
+
+                        if (v.trim().length < 10) {
+                          return 'الوصف قصير جداً';
+                        }
+
+                        return null;
+                      },
+                      controller: controller.descController,
+                      label: AppStrings.projectDesc,
+                      hint: "اكتب وصف المشروع",
+                      icon: Iconsax.document_text,
+                      maxLines: 4,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 18.h),
+
+                /// التصنيف
+                UploadSectionCard(
+                  title: "02 تصنيف المشروع",
+                  icon: Iconsax.category,
+                  children: [
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          isEditing ? "تحديث مشروع التخرج" : "رفع مشروع التخرج",
-                          style: AppTextStyle.bold(19, color: Colors.white),
+                        Expanded(
+                          child: ProjectUploadBuildSelectMajor(
+                            onChanged: (val) {
+                              setState(() {
+                                controller.selectedDepartment = val;
+                              });
+                            },
+
+                            selectedValue: controller.selectedDepartment,
+                          ),
                         ),
 
-                        SizedBox(height: 8.h),
+                        SizedBox(width: 12.w),
 
-                        Text(
-                          "شارك مشروعك الأكاديمي وأضف تفاصيله بشكل واضح ومنظم",
-                          style: AppTextStyle.medium(
-                            12,
-                            color: Colors.white.withValues(alpha: .90),
+                        Expanded(
+                          child: ProjectUploadBuildSelectYear(
+                            selectedValue:
+                                controller.yearController.text.isEmpty
+                                ? null
+                                : controller.yearController.text,
+                            onChanged: (String? value) {
+                              setState(() {
+                                controller.yearController.text = value ?? '';
+                              });
+                            },
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 24.h),
-
-            /// تفاصيل المشروع
-            UploadSectionCard(
-              title: "01 تفاصيل المشروع",
-              icon: Iconsax.lamp_charge,
-              children: [
-                ProjectUploadBuildField(
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'اسم المشروع مطلوب';
-                    }
-                    return null;
-                  },
-                  controller: controller.nameController,
-                  label: AppStrings.projectName,
-                  hint: "اسم المشروع",
-                  icon: Iconsax.text,
+                  ],
                 ),
 
-                SizedBox(height: 14.h),
+                SizedBox(height: 18.h),
 
-                ProjectUploadBuildField(
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'وصف المشروع مطلوب';
-                    }
-
-                    if (v.trim().length < 10) {
-                      return 'الوصف قصير جداً';
-                    }
-
-                    return null;
-                  },
-                  controller: controller.descController,
-                  label: AppStrings.projectDesc,
-                  hint: "اكتب وصف المشروع",
-                  icon: Iconsax.document_text,
-                  maxLines: 4,
-                ),
-              ],
-            ),
-
-            SizedBox(height: 18.h),
-
-            /// التصنيف
-            UploadSectionCard(
-              title: "02 تصنيف المشروع",
-              icon: Iconsax.category,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                /// الفريق
+                UploadSectionCard(
+                  title: "03 فريق العمل",
+                  icon: Iconsax.profile_2user,
                   children: [
-                    Expanded(
-                      child: ProjectUploadBuildSelectMajor(
-                        onChanged: (val) {
-                          setState(() {
-                            controller.selectedDepartment = val;
-                          });
-                        },
-
-                        selectedValue: controller.selectedDepartment,
-                      ),
+                    ProjectUploadBuildField(
+                      controller: controller.supervisorController,
+                      label: "الدكتور المشرف",
+                      hint: "اسم الدكتور المشرف",
+                      icon: Iconsax.teacher,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'اسم الدكتور المشرف مطلوب';
+                        }
+                        return null;
+                      },
                     ),
 
-                    SizedBox(width: 12.w),
+                    SizedBox(height: 14.h),
 
-                    Expanded(
-                      child: ProjectUploadBuildSelectYear(
-                        selectedValue: controller.yearController.text.isEmpty
-                            ? null
-                            : controller.yearController.text,
-                        onChanged: (String? value) {
-                          setState(() {
-                            controller.yearController.text = value ?? '';
-                          });
-                        },
-                      ),
+                    ProjectUploadBuildField(
+                      controller: controller.studentsController,
+                      label: "أعضاء الفريق",
+                      hint: "اسم1, اسم2",
+                      icon: Iconsax.people,
+                      maxLines: 2,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'أسماء أعضاء الفريق مطلوبة';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),
-              ],
-            ),
 
-            SizedBox(height: 18.h),
+                SizedBox(height: 18.h),
 
-            /// الفريق
-            UploadSectionCard(
-              title: "03 فريق العمل",
-              icon: Iconsax.profile_2user,
-              children: [
-                ProjectUploadBuildField(
-                  controller: controller.supervisorController,
-                  label: "الدكتور المشرف",
-                  hint: "اسم الدكتور المشرف",
-                  icon: Iconsax.teacher,
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'اسم الدكتور المشرف مطلوب';
-                    }
-                    return null;
-                  },
+                /// المرفقات
+                const UploadSectionCard(
+                  title: "04 المرفقات",
+                  icon: Iconsax.document_upload,
+                  children: [ProjectFileUploadArea()],
                 ),
 
-                SizedBox(height: 14.h),
+                SizedBox(height: 28.h),
 
-                ProjectUploadBuildField(
-                  controller: controller.studentsController,
-                  label: "أعضاء الفريق",
-                  hint: "اسم1, اسم2",
-                  icon: Iconsax.people,
-                  maxLines: 2,
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'أسماء أعضاء الفريق مطلوبة';
-                    }
-                    return null;
-                  },
+                ProjectUploadBuildSubmitButtom(
+                  isEdit: isEditing,
+                  isLoading: widget.isLoading,
+                  onPressed: widget.isLoading ? null : submit,
+                  buttonUploudText: "رفع المشروع",
+                  buttonEditText: "تحديث المشروع",
                 ),
+
+                SizedBox(height: 40.h),
               ],
             ),
-
-            SizedBox(height: 18.h),
-
-            /// المرفقات
-            const UploadSectionCard(
-              title: "04 المرفقات",
-              icon: Iconsax.document_upload,
-              children: [ProjectFileUploadArea()],
-            ),
-
-            SizedBox(height: 28.h),
-
-            ProjectUploadBuildSubmitButtom(
-              isLoading: widget.isLoading,
-              onPressed: widget.isLoading ? null : submit,
-            ),
-
-            SizedBox(height: 40.h),
-          ],
+          ),
         ),
       ),
     );

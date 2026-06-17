@@ -55,12 +55,8 @@ class _SearchProposalViewBodyState extends State<SearchProposalViewBody> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text(
-          'مشاريع التخرج',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text('البحث عن المقترحات', style: AppTextStyle.bold(22)),
         backgroundColor: Colors.white,
-        foregroundColor: AppColor.primaryColor, // استخدام اللون الرئيسي
         elevation: 0,
         centerTitle: true,
       ),
@@ -271,7 +267,7 @@ class _SearchProposalViewBodyState extends State<SearchProposalViewBody> {
         }
       },
       builder: (context, state) {
-        if (state is ProposalSearchInitial || state is ProposalSearchLoading) {
+        if (state is ProposalSearchLoading) {
           return ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: 6, // عرض 6 بطاقات تحميل
@@ -329,7 +325,7 @@ class _SearchProposalViewBodyState extends State<SearchProposalViewBody> {
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.projectDetail,
+                    AppRoutes.proposalDetail,
                     arguments: proposal,
                   );
                 },

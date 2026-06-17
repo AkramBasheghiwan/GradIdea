@@ -75,7 +75,7 @@ class _ProposalApprovedBodyState extends State<ProposalApprovedBody> {
             if (projects.isEmpty) {
               return const Center(
                 child: Text(
-                  'لا توجد مشاريع معتمدة في هذا القسم بعد 📚',
+                  'لا توجد مشاريع معتمدة في هذا القسم بعد ',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               );

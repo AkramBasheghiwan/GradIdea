@@ -2,12 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
+import 'package:graduation_management_idea_system/core/widgets/notifications_view.dart';
 import 'package:graduation_management_idea_system/core/widgets/pdf_viewer_page.dart';
+import 'package:graduation_management_idea_system/core/widgets/private_policy_view.dart';
 import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/main_layout_hod_screan.dart';
 import 'package:graduation_management_idea_system/feature/Student/presentation/views/student_main_layout.dart';
 import 'package:graduation_management_idea_system/feature/Admin/presentation/views/main_layout_admin.dart';
+import 'package:graduation_management_idea_system/feature/app_setting/presentation/views/app_setting_view.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
-import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/idea_validation_views.dart';
+import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/idea_validation.dart';
 import 'package:graduation_management_idea_system/feature/profile/presentation/views/edite_profile_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/search_projects_view.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
@@ -100,8 +103,11 @@ class AppRouter {
               ProjectsUploadView(projects: project),
         );
       case AppRoutes.uploudProposal:
+        final ProjectProposals? proposals =
+            settings.arguments as ProjectProposals?;
         return MaterialPageRoute(
-          builder: (BuildContext context) => const UploudProposalView(),
+          builder: (BuildContext context) =>
+              UploudProposalView(proposals: proposals),
         );
       case AppRoutes.exploureProjects:
         return MaterialPageRoute(
@@ -151,6 +157,22 @@ class AppRouter {
       case AppRoutes.dashboardHead:
         return MaterialPageRoute(
           builder: (BuildContext context) => const MainLayoutHODScreen(),
+        );
+      case AppRoutes.appSetting:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const AppSettingView(),
+        );
+      case AppRoutes.dashboardAdmin:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const MainLayoutScreen(),
+        );
+      case AppRoutes.privacypolicy:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const PrivacyPolicyView(),
+        );
+      case AppRoutes.notifications:
+        return MaterialPageRoute(
+          builder: (context) => const NotificationsView(),
         );
       default:
         return MaterialPageRoute(

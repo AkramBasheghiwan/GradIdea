@@ -57,7 +57,7 @@ class UserModel extends UserEntity {
       // قراءة آمنة للحقول الاختيارية
       specialization: data['specialization'],
       phone: data['phone'],
-      companyName: data['companyName'],
+      companyName: data['external_name'],
     );
   }
   factory UserModel.toFromEntittToModel(UserEntity user, bool isVerified) {

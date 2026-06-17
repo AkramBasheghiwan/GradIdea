@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
+import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/hod_get_my_projects_view.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -23,11 +24,11 @@ class _MainLayoutHODScreenState extends State<MainLayoutHODScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
-    DepartmentHomeView(),
+    DashboardAnalysisView(),
     HodReviewProjectsView(),
     HodGetMyProjectsView(),
-    // SupervisorProposalApproved(),
-    SizedBox(),
+
+    ProfileView(),
   ];
 
   void onTap(int index) {
@@ -81,10 +82,10 @@ class _MainLayoutHODScreenState extends State<MainLayoutHODScreen> {
             BuildNavBarItem(
               onTap: onTap,
               currentIndex: _currentIndex,
-              index: 1,
+              index: 2,
               title: "مشاريعي",
-              icon: Iconsax.task_square,
-              activeIcon: Iconsax.task5,
+              icon: Iconsax.archive,
+              activeIcon: Iconsax.archive_15,
             ),
 
             // BuildNavBarItem(

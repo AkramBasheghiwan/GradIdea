@@ -23,3 +23,7 @@ class NetworkFailure extends Failure {
 class OfflineFailure extends Failure {
   const OfflineFailure(super.message);
 }
+
+class UploadDisabledFailure extends Failure {
+  const UploadDisabledFailure(super.message);
+}

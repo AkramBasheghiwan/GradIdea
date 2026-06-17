@@ -61,6 +61,10 @@ class MapperBlocConsummer extends StatelessWidget {
 
           CacheHelper.saveData(key: AppConstatnce.getRole, value: user.role);
           CacheHelper.saveData(key: AppConstatnce.getUid, value: user.uid);
+          CacheHelper.saveData(
+            key: AppConstatnce.getDepartment,
+            value: user.specialization,
+          );
           if (user.role == AppRoles.user) {
             initStudentScope();
             Navigator.of(
@@ -71,11 +75,11 @@ class MapperBlocConsummer extends StatelessWidget {
 
             Navigator.of(context).pushReplacementNamed(AppRoutes.dashboardHead);
           } else if (user.role == AppRoles.admin) {
-            initStudentScope();
+            initAdminScope();
 
             Navigator.of(
               context,
-            ).pushReplacementNamed(AppRoutes.dashboardStudent);
+            ).pushReplacementNamed(AppRoutes.dashboardAdmin);
           } else if (user.role == AppRoles.supervisor) {
             initSupervisorScope();
 

@@ -28,18 +28,26 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
   }
 
   Future<void> acceptProject(String projectId) async {
-    emit(HodProjectsLoading());
+    final currentState = state;
+
+    if (currentState is! HodProjectsLoaded) return;
+
+    final updatedList = currentState.projects
+        .where((p) => p.id != projectId)
+        .toList();
+
+    emit(HodProjectsLoaded(updatedList));
+
     final result = await repository.updateProjectStatus(projectId);
-    if (status is HodProjectsLoaded) {
-      final HodProjectsLoaded currentState = state as HodProjectsLoaded;
-      final List<ProjectEntity> updatedList = currentState.projects
-          .where((ProjectEntity project) => project.id != projectId)
-          .toList();
-      emit(HodProjectsLoaded(updatedList));
-    }
-    result.fold((failure) => emit(HodProjectsError(failure.message)), (_) {
-      emit(const HodProjectsActionSuccess("تم قبول المشروع بنجاح ✅"));
-    });
+
+    result.fold(
+      (failure) {
+        emit(HodProjectsError(failure.message));
+      },
+      (_) {
+        emit(const HodProjectsActionSuccess('تم عمليه التحديث بنجاح'));
+      },
+    );
   }
 
   Future<void> rejectProject(String id, String reason) async {
@@ -51,9 +59,6 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
     );
 
     result.fold((failure) => emit(HodProjectsError(failure.message)), (_) {
-      emit(
-        const HodProjectsActionSuccess("تم رفض المقترح وإرسال السبب للطلاب ❌"),
-      );
       if (state is HodProjectsLoaded) {
         final HodProjectsLoaded currentState = state as HodProjectsLoaded;
         final List<ProjectEntity> updatedList = currentState.projects
@@ -61,18 +66,20 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
             .toList();
         emit(HodProjectsLoaded(updatedList));
       }
+      emit(
+        const HodProjectsActionSuccess("تم رفض المقترح وإرسال السبب للطلاب ❌"),
+      );
+
       // fetchAllProjectsByDepartment();
     });
   }
 
   // 5. حذف مقترح مشروع
-  Future<void> deleteProposal(int id, String fileUrl) async {
+  Future<void> deleteProposal(String id, String fileUrl) async {
     emit(HodProjectsLoading());
     final result = await repository.deleteProject(id.toString(), fileUrl);
 
     result.fold((failure) => emit(HodProjectsError(failure.message)), (_) {
-      emit(const HodProjectsActionSuccess("تم حذف المقترح بنجاح"));
-
       if (state is HodProjectsLoaded) {
         final HodProjectsLoaded currentState = state as HodProjectsLoaded;
         final List<ProjectEntity> updatedList = currentState.projects
@@ -80,6 +87,8 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
             .toList();
         emit(HodProjectsLoaded(updatedList));
       }
+
+      emit(const HodProjectsActionSuccess("تم حذف المشروع بنجاح"));
       // fetchAllProjectsByDepartment();
     });
   }

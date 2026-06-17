@@ -72,7 +72,7 @@ class _StudentProjectApprovedState extends State<StudentProjectApproved> {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      AppRoutes.uploudProject,
+                      AppRoutes.projectDetail,
                       arguments: project,
                     );
                   },

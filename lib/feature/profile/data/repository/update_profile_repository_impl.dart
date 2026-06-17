@@ -31,6 +31,7 @@ class UpdateProfileRepositoryImpl implements UpdatePeofileRepository {
       final users = supabase.auth.currentUser;
 
       final isVerified = users?.emailConfirmedAt != null;
+
       final data = confertUser.toDocument(isVerified);
 
       log('📤 Data To Update:');

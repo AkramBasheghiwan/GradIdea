@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graduation_management_idea_system/core/widgets/Custom_build_decision_card.dart';
+import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
+import 'package:graduation_management_idea_system/core/widgets/custom_build_decision_card.dart';
+
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/manager/hod_projects_cubit/hod_projects_cubit.dart';
 
@@ -47,44 +49,55 @@ class _ProjectsPendingViewState extends State<ProjectsPendingView> {
         }
 
         if (state is HodProjectsLoaded) {
-          if (state.projects.isEmpty) {
-            return const Center(
-              child: Text(
-                'لا توجد طلبات قيد الانتظار حالياً.',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-            );
-          }
-
           return RefreshIndicator(
-            onRefresh: () async =>
-                context.read<HodProjectsCubit>().fetchAllProjectsByDepartment(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.projects.length,
-              itemBuilder: (context, index) {
-                final project = state.projects[index];
-
-                return CustomBuildDecisionCard(
-                  project: project,
-
-                  onAccept: () {
-                    context.read<HodProjectsCubit>().acceptProject(project.id!);
-                  },
-
-                  onReject: (reason) {
-                    context.read<HodProjectsCubit>().rejectProject(
-                      project.id!,
-                      reason,
-                    );
-                  },
-                );
-              },
-            ),
+            onRefresh: () async {
+              await context
+                  .read<HodProjectsCubit>()
+                  .fetchAllProjectsByDepartment();
+            },
+            child: state.projects.isEmpty
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [
+                      SizedBox(height: 250),
+                      Center(
+                        child: Text(
+                          'لا توجد طلبات قيد الانتظار حالياً.',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: state.projects.length,
+                    itemBuilder: (context, index) {
+                      final project = state.projects[index];
+                      return CustomBuildDecisionCards(
+                        project: project,
+                        onDelete: () {
+                          context.read<HodProjectsCubit>().deleteProposal(
+                            project.id!,
+                            project.fileUrl!,
+                          );
+                        },
+                        onAccept: () {
+                          context.read<HodProjectsCubit>().acceptProject(
+                            project.id!,
+                          );
+                        },
+                        onReject: (reason) {
+                          context.read<HodProjectsCubit>().rejectProject(
+                            project.id!,
+                            reason,
+                          );
+                        },
+                      );
+                    },
+                  ),
           );
         }
 
-        // في حالة وجود خطأ في الصفحة الرئيسية
         if (state is HodProjectsError) {
           return Center(
             child: CustomBuildProjectErrorCard(
@@ -95,8 +108,33 @@ class _ProjectsPendingViewState extends State<ProjectsPendingView> {
             ),
           );
         }
+        if (state is HodProjectsInitial) {
+          return Center(
+            child: Text(
+              'لايوجد مشاريع قيد المراجعه',
+              style: AppTextStyle.bold(18, color: Colors.grey),
+            ),
+          );
+        }
 
-        return const SizedBox();
+        return RefreshIndicator(
+          onRefresh: () async {
+            await context
+                .read<HodProjectsCubit>()
+                .fetchAllProjectsByDepartment();
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              Center(
+                child: Text(
+                  'لايوجد مشاريع قيد المراجعه',
+                  style: AppTextStyle.bold(18, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

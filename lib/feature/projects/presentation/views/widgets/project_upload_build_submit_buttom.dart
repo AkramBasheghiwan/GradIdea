@@ -1,16 +1,22 @@
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
-import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ProjectUploadBuildSubmitButtom extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
+  final bool isEdit;
+  final String buttonUploudText;
+  final String buttonEditText;
   const ProjectUploadBuildSubmitButtom({
     required this.isLoading,
+    required this.buttonEditText,
     this.onPressed,
+    required this.isEdit,
+    required this.buttonUploudText,
     super.key,
   });
 
@@ -34,10 +40,14 @@ class ProjectUploadBuildSubmitButtom extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.rocket_launch_rounded, color: Colors.white),
+                Icon(
+                  isEdit ? Iconsax.edit_2 : Iconsax.send_1,
+                  color: AppColor.white,
+                  size: 20.sp,
+                ),
                 SizedBox(width: 12.w),
                 Text(
-                  AppStrings.submitProject,
+                  isEdit ? buttonEditText : buttonUploudText,
                   style: AppTextStyle.mainButtonText,
                 ),
               ],

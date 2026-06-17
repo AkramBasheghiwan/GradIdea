@@ -20,3 +20,15 @@ class GeminiException implements Exception {
   final String message;
   const GeminiException(this.message);
 }
+
+class UnauthorizedException implements Exception {
+  final String message;
+
+  const UnauthorizedException(this.message);
+}
+
+class ForbiddenException implements Exception {
+  final String message;
+
+  const ForbiddenException(this.message);
+}

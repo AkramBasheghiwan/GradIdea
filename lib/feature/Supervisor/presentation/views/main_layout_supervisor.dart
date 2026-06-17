@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/widgets/show_dialog_function.dart';
 import 'package:graduation_management_idea_system/feature/Supervisor/presentation/views/supervisor_home_view.dart';
+import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/supervisor_on_proposal_approved.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/supervisor_review_proposal_view.dart';
 import 'package:iconsax/iconsax.dart';
@@ -22,7 +23,7 @@ class _MainLayoutSupervisorState extends State<MainLayoutSupervisor> {
     SupervisorHomeView(),
     SupervisorReviewProposalView(),
     SupervisorOnProposalsApprovedView(),
-    SizedBox(), // profile لاحقاً
+    ProfileView(), // profile لاحقاً
   ];
 
   void onTap(int index) {

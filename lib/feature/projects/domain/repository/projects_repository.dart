@@ -14,4 +14,6 @@ abstract class ProjectsRepository {
     String? department,
     String? year,
   });
+
+  Future<Either<Failure, Unit>> deleteProject(String id, String fileUrl);
 }

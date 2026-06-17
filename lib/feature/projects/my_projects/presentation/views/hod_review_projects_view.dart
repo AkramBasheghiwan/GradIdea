@@ -23,7 +23,7 @@ class HodReviewProjectsView extends StatelessWidget {
       create: (_) => HodProjectsCubit(
         status: AppProjectsStatus.pending,
         repository: sl(),
-        departmentId: 'CS',
+        departmentId: CacheHelper.getData(key: AppConstatnce.getDepartment),
       ),
       child: Scaffold(
         backgroundColor: AppColor.background,

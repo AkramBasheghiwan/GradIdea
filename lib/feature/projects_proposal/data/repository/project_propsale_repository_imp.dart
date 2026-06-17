@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/error/failure.dart';
+import 'package:graduation_management_idea_system/core/services/api_service/api_service_app_setting.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/data_source/project_proposal_remote_data_source.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/model/project_proposals_model.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
@@ -9,8 +11,11 @@ import 'package:graduation_management_idea_system/feature/projects_proposal/doma
 
 class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
   final ProjectProposalRemoteDataSource remoteDataSource;
-
-  ProjectProposalRepositoryImpl({required this.remoteDataSource});
+  final AppSettingsApiService settingsApiService;
+  ProjectProposalRepositoryImpl({
+    required this.remoteDataSource,
+    required this.settingsApiService,
+  });
 
   @override
   Future<Either<Failure, List<ProjectProposals>>> getProposalToSupervisor(
@@ -102,6 +107,20 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     ProjectProposals project,
   ) async {
     try {
+      final canUpload = await settingsApiService.canUploadProposal();
+      final hasProposal = await settingsApiService.hasProposal();
+      if (!canUpload) {
+        return left(
+          const UploadDisabledFailure('تم إيقاف رفع المشاريع مؤقتاً'),
+        );
+      }
+      if (!hasProposal) {
+        return left(
+          const UploadDisabledFailure(
+            'لايمكنك رفع مشروع اخر لانك كذ رفعت مشروع سابقا',
+          ),
+        );
+      }
       await remoteDataSource.uploadProjectProposal(
         ProjectProposalsModel.fromEntity(project),
       );

@@ -20,6 +20,7 @@ class SplashCubit extends Cubit<SplashState> {
           CacheHelper.getData(key: AppConstatnce.isFirstTime) ?? true;
       if (hasSeenOnboarding) {
         emit(NavigateToOnboarding());
+        return;
       }
       final user = await authRepository.getCurrentUser();
       user.fold(

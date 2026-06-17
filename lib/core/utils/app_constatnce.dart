@@ -10,4 +10,5 @@ class AppConstatnce {
 
   static const String getRole = 'role';
   static const String getUid = 'uid';
+  static const String getDepartment = 'department';
 }

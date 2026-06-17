@@ -1,10 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:graduation_management_idea_system/core/error/exceptions.dart';
 import 'package:graduation_management_idea_system/core/services/file_servicrs/file_upload.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
-import 'package:graduation_management_idea_system/core/utils/app_role.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/model/project_proposals_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,7 +17,6 @@ abstract class ProjectProposalRemoteDataSource {
     File? newFile,
   );
   Future<void> deleteProjectProposal(String id, String fileUrl);
-
   Future<void> updateProposalStatus({
     required String id,
     required String status,
@@ -54,6 +51,9 @@ class ProjectProposalRemoteDataSourceImpl
       return (response as List)
           .map((e) => ProjectProposalsModel.fromMap(e))
           .toList();
+    } on SocketException catch (e) {
+      log("🌐 SocketException: $e");
+      throw const ServerException('لايوجد اتصال ب الانترنت ');
     } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (_) {
@@ -102,6 +102,9 @@ class ProjectProposalRemoteDataSourceImpl
       log('🎯 Final Proposals Count: ${proposals.length}');
 
       return proposals;
+    } on SocketException catch (e) {
+      log("🌐 SocketException: $e");
+      throw const ServerException('لايوجد اتصال ب الانترنت ');
     } on PostgrestException catch (e, stackTrace) {
       log('❌ PostgrestException');
       log('Message: ${e.message}');
@@ -147,12 +150,6 @@ class ProjectProposalRemoteDataSourceImpl
   Future<void> uploadProjectProposal(ProjectProposalsModel proposalData) async {
     String? fileurl;
     try {
-      final allowed = await _canUploadProject();
-
-      if (!allowed) {
-        throw const ServerException('لا يمكنك رفع أكثر من مقترح .');
-      }
-
       if (proposalData.projectFile != null) {
         fileurl = await AppFileUpload.uploadFile(
           proposalData.projectFile!,
@@ -205,13 +202,12 @@ class ProjectProposalRemoteDataSourceImpl
         if (proposalData.fileUrl != null) {
           filePath = AppFileUpload.extractPathFromUrl(proposalData.fileUrl!);
           log(' استخدام ملف موجود: $filePath');
-        } else {
-          filePath =
-              'archive_files/${DateTime.now().millisecondsSinceEpoch}_project.pdf';
-          log(' ملف جديد لأول مرة: $filePath');
+          fileUrl = await AppFileUpload.updateFile(
+            newFile,
+            filePath,
+            _supabase,
+          );
         }
-
-        fileUrl = await AppFileUpload.updateFile(newFile, filePath, _supabase);
       }
       final data = proposalData.toMap(_supabase.auth.currentUser!.id);
 
@@ -249,7 +245,7 @@ class ProjectProposalRemoteDataSourceImpl
         throw const ServerException("لايوجد رقم فريد لحذف هذا المقترح");
       }
 
-      log('🚀 Deleting proposal with ID: $id');
+      log(' Deleting proposal with ID: $id');
       final response = await _supabase
           .from(table)
           .delete()
@@ -308,22 +304,5 @@ class ProjectProposalRemoteDataSourceImpl
         'خطأ في قاعدة البيانات ($operationName): ${e.message}',
       );
     }
-  }
-
-  Future<bool> _canUploadProject() async {
-    final response = await _supabase
-        .from('users')
-        .select('has_proposal, role')
-        .eq('id', _supabase.auth.currentUser!.id)
-        .single();
-
-    final hasProposal = response['has_proposal'];
-    final role = response['role'];
-
-    if (role == AppRoles.admin || role == AppRoles.headOfDepartment) {
-      return true;
-    }
-
-    return hasProposal == false;
   }
 }

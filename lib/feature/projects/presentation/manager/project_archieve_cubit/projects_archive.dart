@@ -79,4 +79,24 @@ class ProjectsArchiveCubit extends Cubit<ProjectsArchieveState> {
       },
     );
   }
+
+  Future<void> deleteProject(String id, String fileUrl) async {
+    emit(ProjectArchieveLoading());
+    final result = await repository.deleteProject(id, fileUrl);
+
+    result.fold(
+      (failure) => emit(ProjectArchieveError(message: failure.message)),
+      (_) {
+        _currentProjects.removeWhere((e) => e.id == id);
+
+        emit(
+          ProjectArchieveLoaded(
+            page: _currentPage,
+            projects: List.from(_currentProjects),
+            hasReachedMax: _hasReachedMax,
+          ),
+        );
+      },
+    );
+  }
 }

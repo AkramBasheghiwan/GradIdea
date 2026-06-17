@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/widgets/custom_build_select_year.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/uploud_proposal/uploud_proposal_state.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/uploud_proposal_views/helper/custom_build_app_bar_function.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
@@ -44,7 +45,6 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
   String? _selectedSupervisorId;
 
   bool get isEditing => widget.projects != null;
-
   @override
   void initState() {
     super.initState();
@@ -52,20 +52,19 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
     _nameController = TextEditingController(text: widget.projects?.name);
 
     _descController = TextEditingController(text: widget.projects?.description);
-
     _yearController = TextEditingController(
       text: widget.projects?.year.toString() ?? '',
     );
-
     _studentsController = TextEditingController(
       text: widget.projects?.students.join(', ') ?? '',
     );
-
     _supervisorController = TextEditingController(
       text: widget.projects?.supervisor ?? '',
     );
 
     _selectedDept = widget.projects?.department;
+
+    _selectedSupervisorId = widget.projects?.idSupervisor;
   }
 
   @override
@@ -135,42 +134,55 @@ class _UploudProposalViewBodyState extends State<UploudProposalViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GestureDetector(
-        onTap: FocusScope.of(context).unfocus,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.all(20.w),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _buildHero(),
-                SizedBox(height: 24.h),
+    return Scaffold(
+      backgroundColor: AppColor.background,
+      appBar: UploadProposalBuildAppBar.customBuildAppBar(
+        isEdit: isEditing,
+        context: context,
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: FocusScope.of(context).unfocus,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.all(20.w),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _buildHero(),
+                  SizedBox(height: 24.h),
 
-                _buildProjectDetailsSection(),
-                SizedBox(height: 18.h),
+                  _buildProjectDetailsSection(),
+                  SizedBox(height: 18.h),
 
-                _buildClassificationSection(),
-                SizedBox(height: 18.h),
+                  _buildClassificationSection(),
+                  SizedBox(height: 18.h),
 
-                _buildTeamSection(),
-                SizedBox(height: 18.h),
+                  _buildTeamSection(),
+                  SizedBox(height: 18.h),
 
-                _buildFilesSection(),
-                SizedBox(height: 28.h),
+                  _buildFilesSection(),
+                  SizedBox(height: 28.h),
 
-                BlocBuilder<UploadProposalCubit, UploadProposalState>(
-                  builder: (context, state) {
-                    return ProjectUploadBuildSubmitButtom(
-                      isLoading: state.status == UploadProposalStatus.loading,
-                      onPressed: widget.isLoading ? null : _submitProposal,
-                    );
-                  },
-                ),
+                  BlocBuilder<UploadProposalCubit, UploadProposalState>(
+                    builder: (context, state) {
+                      return ProjectUploadBuildSubmitButtom(
+                        isLoading: state.status == UploadProposalStatus.loading,
+                        onPressed: widget.isLoading ? null : _submitProposal,
+                        isEdit: isEditing,
+                        buttonUploudText: "رفع المقترح",
+                        buttonEditText: "تحديث المقترح",
+                      );
+                    },
+                  ),
 
-                SizedBox(height: 40.h),
-              ],
+                  SizedBox(height: 40.h),
+                ],
+              ),
             ),
           ),
         ),

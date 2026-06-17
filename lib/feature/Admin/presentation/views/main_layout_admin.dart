@@ -1,12 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/widgets/buid_nav_bar_item.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_floating_nav_bar.dart';
-import 'package:flutter/material.dart';
-//import 'package:graduation_management_idea_system/feature/admin_dashboard/presentation/views/dashboard_view.dart';
-import 'package:graduation_management_idea_system/feature/HeadOfDepartment/presentation/views/hod_home_view.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/project_archieve_view.dart';
+import 'package:graduation_management_idea_system/feature/Admin/presentation/views/dashboard_view.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
-import 'package:iconsax/iconsax.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});
@@ -18,14 +17,14 @@ class MainLayoutScreen extends StatefulWidget {
 class _MainLayoutScreenState extends State<MainLayoutScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = <Widget>[
-    const UserView(), // 0
-    const ProjectsUploadView(), // 2
-    const ProjectsArchiveView(), // 3
-    const DepartmentHomeView(),
+  final List<Widget> _screens = const [
+    AdminDashboardHome(),
+    ProjectsUploadView(),
+    UserView(),
+    ProfileView(),
   ];
 
-  onTap(int index) {
+  void onTap(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -35,19 +34,16 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-
       body: IndexedStack(index: _currentIndex, children: _screens),
-
       bottomNavigationBar: CustomFloatingNavBar(
-        color: const Color(0xff0F172A),
         childern: [
           BuildNavBarItem(
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 0,
-            title: "الاداره",
-            icon: Icons.person_pin_outlined,
-            activeIcon: Icons.person_pin_rounded,
+            title: "لوحة التحكم",
+            icon: Iconsax.element_4,
+            activeIcon: Iconsax.home_15,
           ),
 
           BuildNavBarItem(
@@ -55,47 +51,28 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
             currentIndex: _currentIndex,
             index: 1,
             title: "رفع المشروع",
-            icon: Icons.assignment_returned_outlined,
-            activeIcon: Iconsax.document_upload1,
+            icon: Iconsax.document_upload,
+            activeIcon: Iconsax.document_upload5,
           ),
-          // 2: الإعدادات
+
           BuildNavBarItem(
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 2,
-            title: "الإعدادات",
-            icon: Iconsax.setting,
-            activeIcon: Icons.settings_rounded,
+            title: "الاداره",
+            icon: Iconsax.profile_2user4,
+            activeIcon: Iconsax.profile_2user5,
           ),
-          // 3: الملف الشخصي (باستخدام صورة)
+
           BuildNavBarItem(
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 3,
-            title: "الملف الشخصي",
-            isAvatar: true,
-            avatarUrl:
-                "https://i.pravatar.cc/150?u=profile", // رابط صورة تجريبية
+            title: "حسابي",
+            icon: Iconsax.profile_circle,
+            activeIcon: Iconsax.profile_circle5,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const PlaceholderScreen({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Center(
-        child: Text(
-          title,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }
