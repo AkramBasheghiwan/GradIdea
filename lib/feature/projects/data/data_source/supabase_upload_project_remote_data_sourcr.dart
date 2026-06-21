@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:graduation_management_idea_system/core/app_secrets.dart';
 import 'package:graduation_management_idea_system/core/services/api_service/api_service.dart';
@@ -16,7 +18,11 @@ abstract class UploadProjectRemoteDataSource {
   Future<void> updateProject(ProjectModel project, {File? newFile});
   Future<void> deleteProject(String projectId, String fileUrle);
   Future<List<ProjectModel>> fetchMyProjects({required String status});
-  Stream<List<ProjectModel>> getMyProjects({required String status});
+  Stream<List<ProjectModel>> watchMyProjects({required String status});
+  Stream<List<ProjectModel>> watchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  });
   Future<List<ProjectModel>> fetchAllProjectsByDepartment({
     required String departmentId,
     required String status,
@@ -64,16 +70,12 @@ class UploadProjectRemoteDataSourceImpl
       } else {
         log(" لا يوجد ملف مرفق");
       }
-
-      // ===============================
-      // 🧠 embedding
-      // ===============================
+      //empending
       log(" جاري توليد المتجه (Vector)...");
       final vectorArray = await _generateEmbeddingVector(project);
       log(" تم توليد المتجه بنجاح");
       final userId = supabase.auth.currentUser?.id;
       log(" User ID: $userId");
-
       final projectData = project.toMap(userId!);
 
       if (fileUrl != null) {
@@ -101,7 +103,7 @@ class UploadProjectRemoteDataSourceImpl
                 title: resulte.name,
                 abstract: resulte.description,
               ),
-              externalId: int.parse(resulte.id!),
+              externalId: resulte.id!,
               title: resulte.name,
               abstract: resulte.description,
             ),
@@ -177,10 +179,38 @@ class UploadProjectRemoteDataSourceImpl
       }
       data['rejection_reason'] = null;
       data['embedding_vector'] = vector;
-
       log(' تحديث قاعدة البيانات...');
+      final response = await supabase
+          .from(table)
+          .update(data)
+          .eq('id', project.id!)
+          .select()
+          .single();
+      final resulte = ProjectModel.fromMap(response);
 
-      await supabase.from(table).update(data).eq('id', project.id!);
+      final role = CacheHelper.getData(key: AppConstatnce.getRole);
+      if (role == AppRoles.admin || role == AppRoles.headOfDepartment) {
+        try {
+          final keywords = await _keywordFromGemini(
+            title: resulte.name,
+            abstract: resulte.description,
+          );
+          log('تم استخراج الكلمات المفتاحية');
+          log('بدء رفع الورقة إلى API...');
+          final paper = UpdatePaperRequest(
+            title: resulte.name,
+            abstract: resulte.description,
+            keywords: keywords,
+          );
+
+          await apiService.updatePaper(resulte.id!, paper);
+
+          log(' تم رفع الورقة إلى API بنجاح');
+        } catch (e, stackTrace) {
+          log('StackTrace: $stackTrace');
+          throw ServerException('فشل الرفع في api');
+        }
+      }
 
       log('🎉 تم التحديث بنجاح');
     } on SocketException {
@@ -219,11 +249,14 @@ class UploadProjectRemoteDataSourceImpl
       }
 
       log(' Project deleted successfully: $projectId');
-
       final path = AppFileUpload.extractPathFromUrl(fileUrl);
-
       await supabase.storage.from('archive_files').remove([path]);
       log('✅ تم حذف الملف');
+      try {
+        await apiService.deletePaper(projectId);
+      } catch (e) {
+        throw ServerException('لم يتم حذف المشروع  ');
+      }
     } on SocketException {
       throw ServerException('لا يوجد اتصال بالإنترنت لحذف المشروع.');
     } on PostgrestException catch (e, stackTrace) {
@@ -280,7 +313,7 @@ class UploadProjectRemoteDataSourceImpl
 
   //===========================================================
   @override
-  Stream<List<ProjectModel>> getMyProjects({required String status}) {
+  Stream<List<ProjectModel>> watchMyProjects({required String status}) {
     try {
       final userId = supabase.auth.currentUser?.id;
 
@@ -338,6 +371,44 @@ class UploadProjectRemoteDataSourceImpl
   }
 
   @override
+  Stream<List<ProjectModel>> watchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  }) {
+    try {
+      final response = supabase.from(table).stream(primaryKey: ['id']);
+
+      return response.map((data) {
+        if (data.isEmpty) {
+          debugPrint('⚠️ STREAM DATA IS EMPTY');
+        }
+
+        final filtered = data.where((e) {
+          final dept = e['department']?.toString();
+          final st = e['status']?.toString();
+
+          final match = dept == departmentId && st == status;
+
+          debugPrint('➡️ row: dept=$dept | status=$st | match=$match');
+
+          return match;
+        }).toList();
+
+        debugPrint('✅ FILTERED RESULT COUNT: ${filtered.length}');
+        debugPrint('==============================');
+
+        return filtered.map((e) => ProjectModel.fromMap(e)).toList();
+      });
+    } catch (e, stack) {
+      debugPrint('❌ STREAM ERROR OCCURRED');
+      debugPrint('📌 ERROR: $e');
+      debugPrint('📌 STACK: $stack');
+
+      throw ServerException('حدث خطأ غير متوقع أثناء جلب المشاريع: $e');
+    }
+  }
+
+  @override
   Future<List<ProjectModel>> fetchAllProjectsByDepartment({
     required String departmentId,
     required String status,
@@ -375,30 +446,30 @@ class UploadProjectRemoteDataSourceImpl
       final result = ProjectModel.fromMap(response);
       log('انتهت العملية بنجاح');
       log('============================');
-      // try {
-      //   final keywords = await _keywordFromGemini(
-      //     title: result.name,
-      //     abstract: result.description,
-      //   );
+      try {
+        final keywords = await _keywordFromGemini(
+          title: result.name,
+          abstract: result.description,
+        );
 
-      //   log('تم استخراج الكلمات المفتاحية');
-      //   log('Keywords: $keywords');
-      //   log('بدء رفع الورقة إلى API...');
+        log('تم استخراج الكلمات المفتاحية');
+        log('Keywords: $keywords');
+        log('بدء رفع الورقة إلى API...');
 
-      //   final paper = PaperCreate(
-      //     externalId: int.parse(result.id!),
-      //     title: result.name,
-      //     abstract: result.description,
-      //     keywords: keywords,
-      //   );
+        final paper = PaperCreate(
+          externalId: result.id!,
+          title: result.name,
+          abstract: result.description,
+          keywords: keywords,
+        );
 
-      //   await apiService.addPaper(paper);
+        await apiService.addPaper(paper);
 
-      //   log(' تم رفع الورقة إلى API بنجاح');
-      // } catch (e, stackTrace) {
-      //   log('StackTrace: $stackTrace');
-      //   throw ServerException('فشل الرفع في api');
-      // }
+        log(' تم رفع الورقة إلى API بنجاح');
+      } catch (e, stackTrace) {
+        log('StackTrace: $stackTrace');
+        throw ServerException('فشل الرفع في api');
+      }
 
       log('انتهت العملية بنجاح');
       log('============================');
@@ -489,7 +560,7 @@ Requirements:
 - Return ONLY the keywords.
 - Separate keywords using commas.
 - Do not include numbering or explanations.
-- Use English keywords .
+- Use arabic or english keywords .
 
 Title:
 $title

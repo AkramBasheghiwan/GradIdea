@@ -18,7 +18,7 @@ class AppRoutes {
   static const String myProject = 'myproject';
   static const String exploureProjects = 'exploureprojects';
   static const String searchProjects = 'searchprojects';
-  static const String searchProposal = 'searchproposal';
+  static const String searchProposal = '/searchproposal';
   static const String proposalDetail = '/proposalDetail';
   static const String uploudProposal = '/uploudpropsal';
   static const String myproposal = '/myproposal';
@@ -30,4 +30,5 @@ class AppRoutes {
   static const String privacypolicy = "/privacypolicy";
   static const String notifications = "/notifications";
   static const String getprojectstate = '/getprojectstate';
+  static const String searchUser = '/searchuser';
 }

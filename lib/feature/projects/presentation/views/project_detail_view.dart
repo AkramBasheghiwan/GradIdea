@@ -53,26 +53,5 @@ class ProjectDetailBlocLisner extends StatelessWidget {
 
       child: ProjectDetailsViewBody(projects: projects),
     );
-
-    // BlocListener<UploadProjectCubit, UploadProjectState>(
-    //   listener: (context, state) {
-    //     if (state.status == UploadProjectStatus.success) {
-    //       AppSnackBar.show(
-    //         context: context,
-    //         message: 'تم حذف المشروع بنجاح',
-    //         type: SnackBarType.success,
-    //       );
-    //     }
-    //     Navigator.of(context).pop();
-    //     if (state.status == UploadProjectStatus.error) {
-    //       AppSnackBar.show(
-    //         context: context,
-    //         message: 'حدث خطاء اثناء حذف المشروع ',
-    //         type: SnackBarType.error,
-    //       );
-    //     }
-    //   },
-    //   child: ProjectDetailsViewBody(projects: projects),
-    // );
   }
 }

@@ -9,6 +9,7 @@ import 'package:graduation_management_idea_system/feature/projects/domain/reposi
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/project_archieve_cubit/projects_archive.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/search_projects_cubit/search_projects_bloc.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/manager/upload_project_cubit/upload_project_cubit.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/manager/fetch_supersior_cubit/cubit/fetch_supersior_cubit.dart';
 
 Future<void> initProjectsinjectionScope(GetIt scope) async {
   scope.registerLazySingleton<AppSettingsApiService>(
@@ -39,5 +40,9 @@ Future<void> initProjectsinjectionScope(GetIt scope) async {
 
   scope.registerFactory<ProjectsArchiveCubit>(
     () => ProjectsArchiveCubit(scope(), "IT"),
+  );
+
+  scope.registerFactory<FetchSupersiorCubit>(
+    () => FetchSupersiorCubit(scope()),
   );
 }

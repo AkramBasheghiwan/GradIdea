@@ -96,10 +96,11 @@ class ProjectsArchiveView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text("أرشيف المشاريع", style: AppTextStyle.bold(22)),
+          Text("أرشيف المشاريع", style: AppTextStyle.bold(18)),
+
           Text(
             "تصفح المشاريع السابقة واستلهم أفكاراً جديدة",
-            style: AppTextStyle.medium(12, color: AppColor.grey),
+            style: AppTextStyle.medium(11, color: AppColor.grey),
           ),
         ],
       ),

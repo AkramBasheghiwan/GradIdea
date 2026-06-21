@@ -66,27 +66,29 @@ class _VerifySignUpOtpScreenState extends State<VerifySignUpOtpScreen> {
           }
         },
         builder: (context, state) {
-          return Container(
-            width: double.infinity,
-            decoration: _buildBackgroundDecoration(), // نمط المربعات في الخلفية
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: [
-                  SizedBox(height: 80.h),
-                  _buildHeaderIcon(),
-                  SizedBox(height: 40.h),
-                  _buildTextHeader(),
-                  SizedBox(height: 50.h),
-                  _buildOtpInput(),
-                  SizedBox(height: 60.h),
-                  _buildVerifyButton(state),
-                  SizedBox(height: 30.h),
-                  _buildResendSection(context, state),
-                  const Spacer(),
+          return SingleChildScrollView(
+            child: Container(
+              width: double.infinity,
+              decoration:
+                  _buildBackgroundDecoration(), // نمط المربعات في الخلفية
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  children: [
+                    SizedBox(height: 80.h),
+                    _buildHeaderIcon(),
+                    SizedBox(height: 40.h),
+                    _buildTextHeader(),
+                    SizedBox(height: 50.h),
+                    _buildOtpInput(),
+                    SizedBox(height: 60.h),
+                    _buildVerifyButton(state),
+                    SizedBox(height: 30.h),
+                    _buildResendSection(context, state),
 
-                  SizedBox(height: 20.h),
-                ],
+                    SizedBox(height: 40.h),
+                  ],
+                ),
               ),
             ),
           );

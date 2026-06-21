@@ -44,7 +44,7 @@ class FetchSupersiorCubit extends Cubit<FetchSupersiorState> {
               maxGroups: maxGroup,
             );
           })
-          .where((e) => e.currentGroups < e.maxGroups)
+          .where((e) => e.currentGroups! < e.maxGroups!)
           .toList();
 
       emit(FetchSupersiorLoaded(supervsiorAvailable: supervisors));

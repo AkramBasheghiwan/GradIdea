@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -169,16 +170,32 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
   @override
   Future<void> forgetPassword(String email) async {
     try {
-      // هذه الدالة سترسل الرمز المكون من 6 أرقام (إذا ضبطت إعدادات Supabase على ذلك)
       await supabase.auth.resetPasswordForEmail(email);
-    } on SocketException {
+    } on SocketException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ SocketException');
+      log('📌 Error: $e');
+      log('📍 StackTrace: $stackTrace');
+
       throw const ServerException(
         'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
       );
-    } on AuthException catch (e) {
+    } on AuthException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ AuthException');
+      log('📌 Message: ${e.message}');
+      log('📌 StatusCode: ${e.statusCode}');
+      log('📍 StackTrace: $stackTrace');
+
       _handleAuthException(e);
       throw ServerException(e.message);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('==============================');
+      log('❌ Unexpected Exception');
+      log('📌 Error: $e');
+      log('📍 Type: ${e.runtimeType}');
+      log('📍 StackTrace: $stackTrace');
+
       throw ServerException(
         'حدث خطأ أثناء طلب استعادة كلمة المرور: ${e.toString()}',
       );
@@ -191,28 +208,58 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
     required String otp,
   }) async {
     try {
+      log('==============================');
+      log('🔹 بدء التحقق من رمز استعادة كلمة المرور');
+      log('📧 Email: $email');
+      log('🔑 OTP: $otp');
+
       final response = await supabase.auth.verifyOTP(
         email: email,
         token: otp,
-        type: OtpType.recovery, // ⚠️ مهم جداً: النوع هنا recovery
+        type: OtpType.recovery,
       );
 
+      log('✅ تم استدعاء verifyOTP بنجاح');
+      log('📌 Session: ${response.session}');
+      log('📌 User: ${response.user?.id}');
+
       if (response.session == null) {
+        log('❌ Session == null');
         throw const ServerException(
           'فشل التحقق، الرمز غير صحيح أو منتهي الصلاحية.',
         );
       }
-    } on SocketException {
+
+      log('🎉 تم التحقق من الرمز بنجاح');
+    } on SocketException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ SocketException');
+      log('📌 Error: $e');
+      log('📍 StackTrace: $stackTrace');
+
       throw const ServerException(
         'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
       );
-    } on AuthException catch (e) {
+    } on AuthException catch (e, stackTrace) {
+      log('==============================');
+      log('❌ AuthException');
+      log('📌 Message: ${e.message}');
+      log('📌 StatusCode: ${e.statusCode}');
+      log('📍 StackTrace: $stackTrace');
+
       if (e.message.toLowerCase().contains('token has expired or is invalid')) {
         throw const ServerException('رمز الاستعادة غير صحيح أو انتهت صلاحيته.');
       }
+
       _handleAuthException(e);
       throw ServerException(e.message);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('==============================');
+      log('❌ Unexpected Exception');
+      log('📌 Error: $e');
+      log('📌 Type: ${e.runtimeType}');
+      log('📍 StackTrace: $stackTrace');
+
       throw ServerException(
         'حدث خطأ أثناء التحقق من رمز الاستعادة: ${e.toString()}',
       );
@@ -253,7 +300,7 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
         throw const ServerException("لا يوجد مستخدم مسجل حالياً.");
       }
     } on SocketException {
-      throw const ServerException(
+      throw const NetworkException(
         'الخدمة غير متوفرة حالياً، يرجى التحقق من اتصالك بالإنترنت.',
       );
     } catch (e) {
@@ -318,8 +365,6 @@ class SupabaseAuthDataSourceImpl implements AuthSupabaseRemoteDataSource {
   @override
   Future<void> resendVerificationCode(String email) async {
     try {
-      // نمرر الإيميل كـ Parameter بدلاً من الاعتماد على currentUser
-      // لأنه أحياناً في الـ signUp لا يكون الـ currentUser مسجلاً بالكامل حتى يتم التحقق
       await supabase.auth.resend(type: OtpType.signup, email: email);
     } on SocketException {
       throw const ServerException(

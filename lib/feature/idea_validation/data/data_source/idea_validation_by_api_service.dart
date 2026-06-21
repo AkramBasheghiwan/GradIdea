@@ -76,6 +76,7 @@ class IdeaValidationByApiServiceImpl implements IdeaValidationByApiService {
           similarProjects.add(
             SimilarPaperMatch(
               externalId: item.externalId,
+              abstract: item.abstract,
               title: item.title,
               similarityScore: similarityPercentage,
             ),

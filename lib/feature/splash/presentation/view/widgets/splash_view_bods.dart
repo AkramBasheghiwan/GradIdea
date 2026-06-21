@@ -111,7 +111,6 @@ class _SplashViewBodyState extends State<SplashViewBody> {
   }
 
   void _navigateToNextScreen() {
-    
     Future.delayed(const Duration(milliseconds: 4500), () {
       if (mounted) {
         // هنا تضع كود الانتقال الخاص بك (مثال باستخدام GoRouter أو Navigator)
@@ -164,11 +163,9 @@ class _SplashViewBodyState extends State<SplashViewBody> {
                     .then() // بعد الانتهاء ابدأ اللمعة
                     .shimmer(duration: 1500.ms, color: Colors.white30),
 
-                SizedBox(height: 40.h),
-
                 // اسم التطبيق يظهر بتأثير الكتابة أو الصعود
                 Text(
-                      AppStrings.appName,
+                      'GradIdea',
                       style: AppTextStyle.headline32BoldStyle.copyWith(
                         letterSpacing: 1.2,
                       ),
@@ -204,7 +201,6 @@ class _SplashViewBodyState extends State<SplashViewBody> {
             right: 0,
             child: Column(
               children: [
-               
                 SizedBox(
                       width: 100.w,
                       child: LinearProgressIndicator(

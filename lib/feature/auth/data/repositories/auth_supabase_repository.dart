@@ -6,9 +6,11 @@ import 'package:graduation_management_idea_system/core/error/failure.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:graduation_management_idea_system/feature/auth/Domain/repository/auth_supabase_repo.dart';
 import 'package:graduation_management_idea_system/feature/auth/data/datasource/supabase_remote_data_source.dart';
+import 'package:graduation_management_idea_system/network/network_info.dart';
 
 class AuthSupRepositoryImpl implements AuthSupabaseRepo {
   final AuthSupabaseRemoteDataSource remoteDataSource;
+
   // إذا كان لديك NetworkInfo للتحقق من الإنترنت قبل الاتصال، يتم حقنه هنا أيضاً
 
   AuthSupRepositoryImpl({required this.remoteDataSource});
@@ -116,10 +118,16 @@ class AuthSupRepositoryImpl implements AuthSupabaseRepo {
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
+      // if (await networkInfo.isConnected) {
+      //   return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      // }
       final user = await remoteDataSource.getCurrentUser();
+
       return Right(user);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
     }
   }
 

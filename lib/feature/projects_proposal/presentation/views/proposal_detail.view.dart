@@ -38,6 +38,7 @@ class ProposalDetailBlocLisner extends StatelessWidget {
         }
 
         if (state.status == UploadProposalStatus.error) {
+          Navigator.of(context).pop();
           AppSnackBar.show(
             context: context,
             message: 'حدث خطاء اثناء رفع المقترح',

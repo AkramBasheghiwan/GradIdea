@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
+import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_project_card_skeleton.dart';
-import 'package:graduation_management_idea_system/feature/auth/Domain/entities/user_entity.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_bloc.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/manager/search_user_bloc/search_state_event.dart';
+import 'package:graduation_management_idea_system/feature/user/presentation/view/widgets/build_user_card.dart';
 
 class SearchUserViewBody extends StatefulWidget {
   const SearchUserViewBody({super.key});
@@ -46,12 +48,10 @@ class _SearchUserViewBodyState extends State<SearchUserViewBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.background,
       appBar: AppBar(
-        title: const Text(
-          'بحث عن المستخدمين',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Theme.of(context).canvasColor,
+        title: Text('بحث عن المستخدمين', style: AppTextStyle.bold(18)),
+        backgroundColor: AppColor.activeBgColor,
         foregroundColor: Colors.black,
         elevation: 0.5,
       ),
@@ -86,7 +86,7 @@ class _SearchUserViewBodyState extends State<SearchUserViewBody> {
           },
         ),
         filled: true,
-        fillColor: Colors.grey.shade200,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none,
@@ -160,59 +160,12 @@ class _SearchUserViewBodyState extends State<SearchUserViewBody> {
                   child: Center(child: CircularProgressIndicator()),
                 );
               }
-              return UserListItem(user: state.users[index]);
+              return BuildUserCard(index: index, users: state.users[index]);
             },
           );
         }
         return Container(); // حالة غير متوقعة
       },
-    );
-  }
-}
-
-// -------- ودجت عرض عنصر المستخدم --------
-class UserListItem extends StatelessWidget {
-  final UserEntity user;
-  const UserListItem({super.key, required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shadowColor: Colors.black.withValues(alpha: 0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 8.0,
-          horizontal: 12.0,
-        ),
-        leading: CircleAvatar(
-          radius: 28,
-
-          backgroundColor: Colors.grey.shade200,
-        ),
-        title: Text(
-          user.name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Text(
-          user.email,
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 16,
-          color: Colors.grey,
-        ),
-        onTap: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text('تم الضغط على ${user.name}')),
-            );
-        },
-      ),
     );
   }
 }

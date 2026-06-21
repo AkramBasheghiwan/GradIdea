@@ -46,7 +46,15 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
           "تم رفض المقترح وإرسال السبب للطلاب ",
         ),
       );
-      fetchProposalsToSupervisor();
+      if (state is ProjectProposalLoaded) {
+        final currentState = state as ProjectProposalLoaded;
+
+        final newProposal = currentState.proposals
+            .where((pro) => pro.id != id)
+            .toList();
+
+        emit(ProjectProposalLoaded(newProposal));
+      }
     });
   }
 
@@ -57,7 +65,15 @@ class ProjectProposalCubit extends Cubit<ProjectProposalState> {
 
     result.fold((failure) => emit(ProjectProposalError(failure.message)), (_) {
       emit(const ProjectProposalActionSuccess("تم حذف المقترح بنجاح"));
-      fetchProposalsToSupervisor();
+      if (state is ProjectProposalLoaded) {
+        final currentState = state as ProjectProposalLoaded;
+
+        final newProposal = currentState.proposals
+            .where((pro) => pro.id != id)
+            .toList();
+
+        emit(ProjectProposalLoaded(newProposal));
+      }
     });
   }
 }

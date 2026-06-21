@@ -2,7 +2,7 @@ import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_strings.dart';
 import 'package:graduation_management_idea_system/core/utils/images_assests.dart';
 import 'package:graduation_management_idea_system/core/utils/validator_manager.dart';
-import 'package:graduation_management_idea_system/feature/auth/presentation/helper/show_account_bottom_sheet.dart';
+//import 'package:graduation_management_idea_system/feature/auth/presentation/helper/show_account_bottom_sheet.dart';
 import 'package:graduation_management_idea_system/feature/auth/presentation/views/test_authFaeture/cubit/login_sup_cubit.dart';
 //import 'package:graduation_management_idea_system/feature/auth/presentation/manager/Login_Cubit/login_cubit.dart';
 
@@ -177,7 +177,11 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                             ),
                             TextButton(
                               onPressed: () {
-                                showAccountTypeBottomSheet(context);
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.signUpUser,
+                                );
+                                // showAccountTypeBottomSheet(context);
                               },
                               child: Text(
                                 AppStrings.createAccount,

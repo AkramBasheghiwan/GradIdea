@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_management_idea_system/feature/profile/presentation/views/profile_view.dart';
+import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/views/hod_get_my_projects_view.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/widgets/buid_nav_bar_item.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_floating_nav_bar.dart';
 import 'package:graduation_management_idea_system/feature/Admin/presentation/views/dashboard_view.dart';
-import 'package:graduation_management_idea_system/feature/projects/presentation/views/projects_upload_view.dart';
 import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
 class MainLayoutScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
 
   final List<Widget> _screens = const [
     AdminDashboardHome(),
-    ProjectsUploadView(),
+    HodGetMyProjectsView(),
     UserView(),
     ProfileView(),
   ];
@@ -50,9 +50,9 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
             onTap: onTap,
             currentIndex: _currentIndex,
             index: 1,
-            title: "رفع المشروع",
-            icon: Iconsax.document_upload,
-            activeIcon: Iconsax.document_upload5,
+            title: "مشاريعي",
+            icon: Iconsax.task_square,
+            activeIcon: Iconsax.task5,
           ),
 
           BuildNavBarItem(

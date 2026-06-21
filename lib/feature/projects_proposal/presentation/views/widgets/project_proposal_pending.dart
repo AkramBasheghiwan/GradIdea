@@ -29,7 +29,6 @@ class _SupervisorProjectProposalsViewState
     return BlocConsumer<ProjectProposalCubit, ProjectProposalState>(
       listener: (context, state) {
         if (state is ProjectProposalActionSuccess) {
-          Navigator.pop(context);
           AppSnackBar.show(
             context: context,
             message: state.message,

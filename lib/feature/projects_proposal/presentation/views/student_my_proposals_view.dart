@@ -93,42 +93,6 @@ class _StudentMyProposalViewState extends State<StudentMyProposalView>
 
               SizedBox(height: 24.h),
 
-              // /// search
-              // Container(
-              //   height: 54.h,
-              //   padding: EdgeInsets.symmetric(horizontal: 16.w),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(18.r),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withValues(alpha: .04),
-              //         blurRadius: 20,
-              //         offset: const Offset(0, 8),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       Icon(
-              //         Icons.search_rounded,
-              //         color: AppColor.grey,
-              //         size: 22.sp,
-              //       ),
-              //       SizedBox(width: 10.w),
-              //       Expanded(
-              //         child: Text(
-              //           "ابحث عن مشروع...",
-              //           style: AppTextStyle.medium(14, color: AppColor.grey),
-              //         ),
-              //       ),
-              //       // BuildIconSearchBar(onpressed: () {}),
-              //     ],
-              //   ),
-              // ),
-
-              // SizedBox(height: 24.h),
-
               /// tabs
               CustomBulidTabBar(
                 controller: _tabController,

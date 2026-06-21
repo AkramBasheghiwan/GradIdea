@@ -80,7 +80,7 @@ class HodGetMyProjectsView extends StatelessWidget {
                             ),
                             SizedBox(height: 6.h),
                             Text(
-                              "راجع المشاريع المقدمة واتخذ القرار المناسب بالموافقة أو الرفض.",
+                              "تابع مشاريع التخرج التي رفعتها واطلع على حالتها وتحديثاتها.",
                               style: AppTextStyle.medium(
                                 13,
                                 color: AppColor.grey,

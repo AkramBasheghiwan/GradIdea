@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/router/app_routes.dart';
+import 'package:graduation_management_idea_system/core/utils/app_text_style.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_build_card_projects_approved.dart';
 import 'package:graduation_management_idea_system/core/widgets/custom_show_snackbar.dart';
 
 import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_build_project_error_card.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/manager/student_project_cubit.dart/student_project_cubite.dart';
 import 'package:graduation_management_idea_system/feature/projects/my_projects/presentation/manager/student_project_cubit.dart/student_project_state.dart';
+import 'package:graduation_management_idea_system/feature/projects_proposal/presentation/views/widgets/custom_refershe_indicater.dart';
 
 class StudentProjectApproved extends StatefulWidget {
   const StudentProjectApproved({super.key});
@@ -50,11 +52,11 @@ class _StudentProjectApprovedState extends State<StudentProjectApproved> {
 
         if (state is StudentProjectLoaded) {
           if (state.proposals.isEmpty) {
-            return const Center(
-              child: Text(
-                'لا توجد طلبات معتمدة حالياً.',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
+            return CustomRefersheIndicater(
+              text: 'لا توجد طلبات معتمدة حالياً.',
+              onRefresh: () async {
+                context.read<StudentProjectCubit>().fetchMyProjects();
+              },
             );
           }
 
@@ -74,7 +76,11 @@ class _StudentProjectApprovedState extends State<StudentProjectApproved> {
                       context,
                       AppRoutes.projectDetail,
                       arguments: project,
-                    );
+                    ).then((_) {
+                      if (!context.mounted) return;
+
+                      context.read<StudentProjectCubit>().fetchMyProjects();
+                    });
                   },
                 );
               },
@@ -89,7 +95,22 @@ class _StudentProjectApprovedState extends State<StudentProjectApproved> {
           );
         }
 
-        return const SizedBox();
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<StudentProjectCubit>().fetchMyProjects();
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              Center(
+                child: Text(
+                  'لايوجد مشاريع تم رفعها',
+                  style: AppTextStyle.bold(18, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -51,9 +51,7 @@ class _ProjectsPendingViewState extends State<ProjectsPendingView> {
         if (state is HodProjectsLoaded) {
           return RefreshIndicator(
             onRefresh: () async {
-              await context
-                  .read<HodProjectsCubit>()
-                  .fetchAllProjectsByDepartment();
+              context.read<HodProjectsCubit>().fetchAllProjectsByDepartment();
             },
             child: state.projects.isEmpty
                 ? ListView(
@@ -119,9 +117,7 @@ class _ProjectsPendingViewState extends State<ProjectsPendingView> {
 
         return RefreshIndicator(
           onRefresh: () async {
-            await context
-                .read<HodProjectsCubit>()
-                .fetchAllProjectsByDepartment();
+            context.read<HodProjectsCubit>().fetchAllProjectsByDepartment();
           },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),

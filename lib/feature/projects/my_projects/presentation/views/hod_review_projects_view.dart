@@ -1,5 +1,4 @@
 // import 'package:flutter/material.dart';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +17,6 @@ class HodReviewProjectsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log(CacheHelper.getData(key: AppConstatnce.getRole));
     return BlocProvider(
       create: (_) => HodProjectsCubit(
         status: AppProjectsStatus.pending,

@@ -28,7 +28,7 @@ class GetProjectDetaileViewBody extends StatelessWidget {
         if (state is GetProjectError) {
           AppSnackBar.show(context: context, message: state.message);
         }
-        return Container();
+        return const SizedBox.shrink();
       },
     );
   }

@@ -8,12 +8,17 @@ abstract class SplashState extends Equatable {
 }
 
 class SplashInitial extends SplashState {}
-
+class SplashLoading extends SplashState{}
 class NavigateToOnboarding extends SplashState {}
 
 class NavigateToAuth extends SplashState {}
 
-class NavigateToEmailVerification extends SplashState {}
+class NavigateToEmailVerification extends SplashState {
+  final String message;
+  const NavigateToEmailVerification(this.message);
+  @override
+  List<Object> get props => [message];
+}
 
 class NavigateToHome extends SplashState {
   final String role;

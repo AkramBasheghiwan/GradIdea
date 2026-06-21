@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,6 +69,7 @@ class _ForgetPasswordOtpViewBodyState extends State<ForgetPasswordOtpViewBody> {
               message: state.message,
               type: SnackBarType.error,
             );
+            log(state.message);
             _otpController.clear();
           }
 
@@ -89,36 +91,38 @@ class _ForgetPasswordOtpViewBodyState extends State<ForgetPasswordOtpViewBody> {
           }
         },
         builder: (context, state) {
-          return Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(color: Color(0xffF8F9FE)),
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  children: [
-                    SizedBox(height: 35.h),
+          return SingleChildScrollView(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(color: Color(0xffF8F9FE)),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 35.h),
 
-                    _buildHeaderIcon(),
+                      _buildHeaderIcon(),
 
-                    SizedBox(height: 35.h),
+                      SizedBox(height: 35.h),
 
-                    _buildTextHeader(),
+                      _buildTextHeader(),
 
-                    SizedBox(height: 45.h),
+                      SizedBox(height: 45.h),
 
-                    _buildOtpInput(),
+                      _buildOtpInput(),
 
-                    SizedBox(height: 55.h),
+                      SizedBox(height: 55.h),
 
-                    _buildVerifyButton(state),
+                      _buildVerifyButton(state),
 
-                    SizedBox(height: 30.h),
+                      SizedBox(height: 30.h),
 
-                    _buildResendSection(context),
+                      _buildResendSection(context),
 
-                    const Spacer(),
-                  ],
+                      SizedBox(height: 40.h),
+                    ],
+                  ),
                 ),
               ),
             ),

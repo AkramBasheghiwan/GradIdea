@@ -80,11 +80,9 @@ class _ProposalApprovedBodyState extends State<ProposalApprovedBody> {
                 ),
               );
             }
-
             // رسم القائمة اللانهائية
             return ListView.builder(
               controller: _scrollController,
-
               itemCount: hasReachedMax ? projects.length : projects.length + 1,
               itemBuilder: (context, index) {
                 if (index >= projects.length) {
@@ -110,7 +108,6 @@ class _ProposalApprovedBodyState extends State<ProposalApprovedBody> {
                       arguments: project,
                     ).then((_) {
                       if (!context.mounted) return;
-
                       context.read<ProposalApprovedCubit>().fetchFirstPage();
                     });
                   },

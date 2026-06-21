@@ -19,8 +19,10 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (Failure failure) => emit(AuthUnauthenticated()),
-      (UserEntity user) =>
-          emit(AuthAuthenticated(user)), // تحديد النوع UserEntity
+      (UserEntity user) {
+        emit(AuthAuthenticated(user));
+      },
+      // تحديد النوع UserEntity
     );
   }
 

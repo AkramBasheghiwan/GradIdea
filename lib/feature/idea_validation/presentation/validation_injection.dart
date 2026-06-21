@@ -47,6 +47,8 @@ class ValidationInjection {
       () => AiSuggestionCubit(repository: scope<IdeaValidationApiRepository>()),
     );
 
-    scope.registerFactory(() => GetProjectCubit(scope<GetProjectRepository>()));
+    scope.registerFactory<GetProjectCubit>(
+      () => GetProjectCubit(scope<GetProjectRepository>()),
+    );
   }
 }

@@ -39,6 +39,7 @@ import 'package:graduation_management_idea_system/feature/proposal_approved%20&%
 import 'package:graduation_management_idea_system/feature/Splash/presentation/view/splash_view.dart';
 import 'package:graduation_management_idea_system/feature/Supervisor/presentation/views/main_layout_supervisor.dart';
 import 'package:graduation_management_idea_system/feature/proposal_approved%20&%20search/presentation/view/search_proposal_view.dart';
+import 'package:graduation_management_idea_system/feature/user/presentation/view/search_user_view.dart';
 
 //import 'package:graduation_management_idea_system/feature/user/presentation/view/user_view.dart';
 
@@ -180,10 +181,16 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (BuildContext context) => const SearchProposalView(),
         );
-      // case AppRoutes.getprojectstate:
-      //   return MaterialPageRoute(
-      //     builder: (BuildContext context) => const GetProjectDetaileView(),
-      //   );
+      case AppRoutes.searchUser:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const SearchUserView(),
+        );
+      case AppRoutes.getprojectstate:
+        final String projectId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (BuildContext context) =>
+              GetProjectDetaileView(projectId: projectId),
+        );
       default:
         return MaterialPageRoute(
           builder: (BuildContext context) => Scaffold(

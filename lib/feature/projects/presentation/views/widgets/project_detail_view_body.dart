@@ -179,7 +179,7 @@ class ProjectDetailsViewBody extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 55.h),
+                  SizedBox(height: 40.h),
 
                   Container(
                     width: 76.w,
@@ -200,6 +200,8 @@ class ProjectDetailsViewBody extends StatelessWidget {
                   Text(
                     projects.name,
                     style: AppTextStyle.bold(24, color: Colors.white),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ).animate().fade().slideY(begin: .2),
 
                   SizedBox(height: 14.h),

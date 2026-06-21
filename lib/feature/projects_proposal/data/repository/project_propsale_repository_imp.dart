@@ -8,13 +8,16 @@ import 'package:graduation_management_idea_system/feature/projects_proposal/data
 import 'package:graduation_management_idea_system/feature/projects_proposal/data/model/project_proposals_model.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/entities/project_proposals.dart';
 import 'package:graduation_management_idea_system/feature/projects_proposal/domain/repository/project_proposal_repository.dart';
+import 'package:graduation_management_idea_system/network/network_info.dart';
 
 class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
   final ProjectProposalRemoteDataSource remoteDataSource;
   final AppSettingsApiService settingsApiService;
+  final NetworkInfo networkInfo;
   ProjectProposalRepositoryImpl({
     required this.remoteDataSource,
     required this.settingsApiService,
+    required this.networkInfo,
   });
 
   @override
@@ -22,6 +25,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     String status,
   ) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       final result = await remoteDataSource.getProposalToSupervisor(status);
       final projectProposal = result.map((json) {
         return ProjectProposalsModel.fromEntity(json);
@@ -44,6 +50,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     String fileUrl,
   ) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       await remoteDataSource.deleteProjectProposal(id, fileUrl);
       return const Right(unit);
     } on ServerException catch (e) {
@@ -63,6 +72,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     File? newfile,
   ) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       final projectMap = ProjectProposalsModel.fromEntity(project);
 
       await remoteDataSource.updateProposal(projectMap, newfile);
@@ -85,6 +97,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     String? reason,
   }) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       await remoteDataSource.updateProposalStatus(
         id: id,
         status: status,
@@ -107,6 +122,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     ProjectProposals project,
   ) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       final canUpload = await settingsApiService.canUploadProposal();
       final hasProposal = await settingsApiService.hasProposal();
       if (!canUpload) {
@@ -142,6 +160,9 @@ class ProjectProposalRepositoryImpl implements ProjectProposalRepository {
     String departmentId,
   ) async {
     try {
+      if (await networkInfo.isConnected) {
+        return const Left(OfflineFailure("لا يوجد اتصال بالإنترنت"));
+      }
       final result = await remoteDataSource.getProposalsToHOD(departmentId);
 
       final projectProposal = result.map((json) {

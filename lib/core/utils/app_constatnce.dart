@@ -11,4 +11,6 @@ class AppConstatnce {
   static const String getRole = 'role';
   static const String getUid = 'uid';
   static const String getDepartment = 'department';
+  static const String projectBucket = 'archive_files';
+  static const String proposalBucket = 'proposal_buket';
 }

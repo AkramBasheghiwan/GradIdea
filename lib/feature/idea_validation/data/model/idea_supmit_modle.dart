@@ -71,20 +71,23 @@ class ValidationResponse extends Equatable {
 
 // 3. نموذج الأبحاث المتشابهة المسترجعة داخل نتيجة الفحص
 class SimilarPaperMatch extends Equatable {
-  final int externalId;
+  final String externalId;
+  final String abstract;
   final String title;
   final double similarityScore;
 
   const SimilarPaperMatch({
     required this.externalId,
     required this.title,
+    required this.abstract,
     required this.similarityScore,
   });
 
   factory SimilarPaperMatch.fromJson(Map<String, dynamic> json) {
     return SimilarPaperMatch(
-      externalId: json['external_id'] as int,
+      externalId: json['external_id'],
       title: json['title'] as String,
+      abstract: json['abstract'] as String,
       similarityScore: (json['similarity_score'] as num).toDouble(),
     );
   }

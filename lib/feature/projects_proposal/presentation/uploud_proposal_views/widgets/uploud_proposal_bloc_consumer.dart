@@ -51,12 +51,6 @@ class UploudProposalBlocConsumer extends StatelessWidget {
         }
       },
       child: UploudProposalViewBody(isLoading: false, projects: projects),
-      // builder: (context, state) {
-      //   return UploudProposalViewBody(
-      //     isLoading: state.status == UploadProposalStatus.loading,
-      //     projects: projects,
-      //   );
-      // },
     );
   }
 }

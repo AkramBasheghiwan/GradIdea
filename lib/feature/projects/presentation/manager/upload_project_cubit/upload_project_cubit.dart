@@ -97,6 +97,7 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
     required String year,
     required List<String> students,
     required String supervisor,
+    required String supervisorId,
   }) async {
     emit(state.copyWith(status: UploadProjectStatus.loading));
 
@@ -118,7 +119,8 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
         year: year,
         students: students,
         supervisor: supervisor,
-        projectFile: state.selectedFile, // نمرر الملف للـ UseCase
+        projectFile: state.selectedFile,
+        supervisorId: supervisorId, // نمرر الملف للـ UseCase
       ),
     );
 
@@ -167,6 +169,7 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
     required String year,
     required List<String> students,
     required String supervisor,
+    required String supervisorId,
     String? fileUrl,
     File? newFile,
   }) async {
@@ -182,6 +185,7 @@ class UploadProjectCubit extends Cubit<UploadProjectState> {
         students: students,
         supervisor: supervisor,
         fileUrl: fileUrl,
+        supervisorId: supervisorId,
       ),
       newFile: newFile,
     );

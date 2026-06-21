@@ -13,7 +13,7 @@ class ProjectEntity extends Equatable {
   final String? fileUrl;
   final String? status;
   final String? rejectionReason;
-
+  final String? supervisorId;
   const ProjectEntity({
     this.id,
     required this.name,
@@ -26,6 +26,7 @@ class ProjectEntity extends Equatable {
     this.fileUrl,
     this.status,
     this.rejectionReason,
+    this.supervisorId,
   });
 
   @override

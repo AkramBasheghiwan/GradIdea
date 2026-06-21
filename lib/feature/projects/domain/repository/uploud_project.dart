@@ -22,6 +22,10 @@ abstract class UploudProjectRepository {
     required String departmentId,
     required String status,
   });
+  Stream<Either<Failure, List<ProjectEntity>>> watchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  });
   Future<Either<Failure, Unit>> updateProjectsStatusReject({
     required String id,
     required String status,

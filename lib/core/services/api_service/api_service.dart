@@ -35,16 +35,25 @@ class ApiService {
   // ==========================================
   Future<ValidationResponse> validateIdea(IdeaSubmit idea) async {
     try {
+      // 1. طباعة البيانات المرسلة للتأكد من سلامتها قبل إرسالها
+      log('📤 البيانات المرسلة إلى السيرفر: ${idea.toJson()}');
+
       final response = await _dio.post('/validate/', data: idea.toJson());
 
       return ValidationResponse.fromJson(response.data);
     } on DioException catch (e, stackTrace) {
-      log('validateIdea Dio Error', error: e, stackTrace: stackTrace);
+      if (e.response != null) {
+        log('📋 [تفاصيل خطأ السيرفر 422 الدقيقة]:');
+        log('كود الحالة (Status Code): ${e.response?.statusCode}');
+        log('محتوى الخطأ (Response Data): ${e.response?.data}');
+      } else {
+        log('❌ لم يتم استلام أي رد من السيرفر (مشكلة شبكة أو سيرفر مغلق)');
+      }
 
+      log('validateIdea Dio Error', error: e, stackTrace: stackTrace);
       throw _mapDioException(e);
     } catch (e, stackTrace) {
       log('validateIdea Unknown Error', error: e, stackTrace: stackTrace);
-
       throw const ServerException('حدث خطأ غير متوقع أثناء فحص الفكرة');
     }
   }
@@ -68,6 +77,51 @@ class ApiService {
         'حدث خطأ غير متوقع أثناء إضافة الورقة البحثية',
       );
     }
+  }
+
+  // ==========================================
+  // 5. دالة تعديل ورقة بحثية (Update / PUT)
+  // ==========================================
+  Future<void> updatePaper(
+    String supabaseId,
+    UpdatePaperRequest updatedPaper,
+  ) async {
+    try {
+      // نرسل الطلب إلى المسار المتوقع مثل: /papers/id/
+      final response = await _dio.patch(
+        '/papers/$supabaseId',
+        data: updatedPaper.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        // السيرفر يعيد غالباً البيانات المعدلة بعد النجاح
+      }
+    } on DioException catch (e) {
+      throw _mapDioException(e);
+    }
+  }
+
+  // ==========================================
+  // 6. دالة حذف ورقة بحثية (Delete / DELETE)
+  // ==========================================
+  Future<bool> deletePaper(String paperId) async {
+    try {
+      final response = await _dio.delete('/papers/$paperId');
+
+      // في الغالب يعيد السيرفر كود 200 أو 204 عند الحذف الناجح
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        log('✅ تم حذف الورقة بنجاح.');
+        return true;
+      }
+    } on DioException catch (e) {
+      log('====================');
+      log('Status Code: ${e.response?.statusCode}');
+      log('Response: ${e.response?.data}');
+      log('Request: ${e.requestOptions.uri}');
+      log('====================');
+      throw _mapDioException(e);
+    }
+    return false;
   }
 
   // ==========================================

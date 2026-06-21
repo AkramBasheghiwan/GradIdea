@@ -55,7 +55,7 @@ class _AppSettingViewBodyState extends State<AppSettingViewBody> {
           }
         },
         builder: (context, state) {
-          if (state is AppSettingLoading || state is AppSettingInitial) {
+          if (state is AppSettingLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 

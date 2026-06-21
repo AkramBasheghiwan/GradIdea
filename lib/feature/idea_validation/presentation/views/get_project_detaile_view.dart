@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
-import 'package:graduation_management_idea_system/feature/idea_validation/domain/repository/get_project_repository.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/manager/get_project_detail/get_project_cubit.dart';
 import 'package:graduation_management_idea_system/feature/idea_validation/presentation/views/widgets/get_project_detaile_view_body.dart';
 
@@ -13,9 +11,8 @@ class GetProjectDetaileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GetProjectCubit(
-        sl<GetProjectRepository>()..getProjectDetaile(projectId),
-      ),
+      create: (context) => sl<GetProjectCubit>()..getProjectDetaile(projectId),
+
       child: const GetProjectDetaileViewBody(),
     );
   }

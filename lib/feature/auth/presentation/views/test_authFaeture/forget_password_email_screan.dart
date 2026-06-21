@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,12 +67,16 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   ),
                 ),
               );
+              log(controller.emailForgetController.text);
             }
           },
           builder: (context, state) {
             final isLoading = state is ForgotPasswordLoading;
 
-            return ForgetPasswordEmailViewBody(isLoading: isLoading);
+            return ForgetPasswordEmailViewBody(
+              isLoading: isLoading,
+              controller: controller,
+            );
           },
         ),
       ),
@@ -80,8 +86,12 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
 
 class ForgetPasswordEmailViewBody extends StatefulWidget {
   final bool isLoading;
-
-  const ForgetPasswordEmailViewBody({super.key, required this.isLoading});
+  final ForgetPasswordFormController controller;
+  const ForgetPasswordEmailViewBody({
+    super.key,
+    required this.isLoading,
+    required this.controller,
+  });
 
   @override
   State<ForgetPasswordEmailViewBody> createState() =>
@@ -92,24 +102,11 @@ class _ForgetPasswordEmailViewBodyState
     extends State<ForgetPasswordEmailViewBody> {
   final _formKey = GlobalKey<FormState>();
   // final _emailController = TextEditingController();
-  late ForgetPasswordFormController controller;
-  @override
-  void initState() {
-    controller = ForgetPasswordFormController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.close();
-    //_emailController.dispose();
-    super.dispose();
-  }
 
   void submit() {
     if (_formKey.currentState!.validate()) {
       context.read<ForgotPasswordCubits>().sendCode(
-        controller.emailForgetController.text.trim(),
+        widget.controller.emailForgetController.text.trim(),
       );
     }
   }
@@ -227,7 +224,8 @@ class _ForgetPasswordEmailViewBodyState
                   SizedBox(height: 12.h),
 
                   TextFormField(
-                    controller: controller.emailForgetController,
+                    controller: widget.controller.emailForgetController,
+
                     keyboardType: TextInputType.emailAddress,
                     style: AppTextStyle.medium(14),
                     decoration: InputDecoration(

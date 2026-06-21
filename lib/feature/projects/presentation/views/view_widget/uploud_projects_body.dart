@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
+import 'package:graduation_management_idea_system/feature/projects/presentation/helper/build_bottum_sheet_show_supervisor.dart';
 import 'package:graduation_management_idea_system/feature/projects/presentation/views/view_widget/upload_project_build_app_bar.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
@@ -36,10 +37,11 @@ class ProjectUploadViewBodys extends StatefulWidget {
 class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
   late ProjectUploadFormController controller;
   bool get isEditing => widget.projects != null;
-
+  String? _selectedSupervisorId;
   @override
   void initState() {
     controller = ProjectUploadFormController(project: widget.projects);
+
     super.initState();
   }
 
@@ -76,7 +78,10 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
         year: controller.yearController.text,
         students: studentsList,
         supervisor: controller.supervisorController.text.trim(),
-        newFile: file, // ممكن null لكن لازم handle داخل cubit
+        newFile: file,
+        supervisorId: widget
+            .projects!
+            .supervisorId!, // ممكن null لكن لازم handle داخل cubit
       );
     } else {
       cubit.submitProject(
@@ -86,7 +91,19 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
         year: controller.yearController.text,
         students: controller.studentsList,
         supervisor: controller.supervisorController.text,
+        supervisorId: _selectedSupervisorId!,
       );
+    }
+  }
+
+  void _pickSupervisor() async {
+    final supervisor = await buildBottumSheetShowSupervisor(context);
+
+    if (supervisor != null) {
+      setState(() {
+        _selectedSupervisorId = supervisor['id'];
+        controller.supervisorController.text = supervisor['name']!;
+      });
     }
   }
 
@@ -262,17 +279,22 @@ class _ProjectUploadViewBodyState extends State<ProjectUploadViewBodys> {
                   title: "03 فريق العمل",
                   icon: Iconsax.profile_2user,
                   children: [
-                    ProjectUploadBuildField(
-                      controller: controller.supervisorController,
-                      label: "الدكتور المشرف",
-                      hint: "اسم الدكتور المشرف",
-                      icon: Iconsax.teacher,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'اسم الدكتور المشرف مطلوب';
-                        }
-                        return null;
-                      },
+                    GestureDetector(
+                      onTap: _pickSupervisor,
+                      child: AbsorbPointer(
+                        child: ProjectUploadBuildField(
+                          controller: controller.supervisorController,
+                          label: "الدكتور المشرف",
+                          hint: "اسم الدكتور المشرف",
+                          icon: Iconsax.teacher,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'اسم الدكتور المشرف مطلوب';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
                     ),
 
                     SizedBox(height: 14.h),

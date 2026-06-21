@@ -1,4 +1,5 @@
 import 'package:graduation_management_idea_system/core/di/injection_container.dart';
+import 'package:graduation_management_idea_system/core/router/app_routes.dart';
 import 'package:graduation_management_idea_system/core/utils/app_colors.dart';
 import 'package:graduation_management_idea_system/core/utils/app_role.dart'
     show AppRoles;
@@ -19,18 +20,21 @@ class UserView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColor.background,
         appBar: AppBar(
           backgroundColor: AppColor.transparent,
           elevation: 0,
-          title: Text(
-            AppStrings.usersDirectory,
-            style: AppTextStyle.headline24BoldStyle,
-          ),
+          title: Text(AppStrings.usersDirectory, style: AppTextStyle.bold(22)),
           centerTitle: false,
-          actions: [BuildIconSearchBar(onpressed: () {})],
+          actions: [
+            BuildIconSearchBar(
+              onpressed: () {
+                Navigator.pushNamed(context, AppRoutes.searchUser);
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -57,15 +61,15 @@ class UserView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Tab(
-                    child: Text(
-                      "الجهات",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  // Tab(
+                  //   child: Text(
+                  //     "الجهات",
+                  //     style: TextStyle(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   Tab(
                     child: Text(
                       'المشرف',
@@ -94,13 +98,13 @@ class UserView extends StatelessWidget {
                       )..fetchUsers(),
                       child: const UsersListViewBlocBuilder(),
                     ),
-                    BlocProvider(
-                      create: (BuildContext context) => UsersCubit(
-                        userRepository: sl(),
-                        role: AppRoles.company,
-                      )..fetchUsers(),
-                      child: const UsersListViewBlocBuilder(),
-                    ),
+                    // BlocProvider(
+                    //   create: (BuildContext context) => UsersCubit(
+                    //     userRepository: sl(),
+                    //     role: AppRoles.company,
+                    //   )..fetchUsers(),
+                    //   child: const UsersListViewBlocBuilder(),
+                    // ),
                     BlocProvider(
                       create: (BuildContext context) => UsersCubit(
                         userRepository: sl(),

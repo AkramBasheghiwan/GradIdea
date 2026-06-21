@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_management_idea_system/core/utils/app_projects_status.dart';
 import 'package:graduation_management_idea_system/feature/projects/domain/entities/project_entity.dart';
@@ -8,7 +10,7 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
   final String status;
   final String departmentId;
   final UploudProjectRepository repository;
-
+  StreamSubscription? _reviewsSubscription;
   HodProjectsCubit({
     required this.status,
     required this.repository,
@@ -48,6 +50,22 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
         emit(const HodProjectsActionSuccess('تم عمليه التحديث بنجاح'));
       },
     );
+  }
+
+  Stream<void> watchAllProjectsByDepartment() async* {
+    emit(HodProjectsLoading());
+    _reviewsSubscription?.cancel();
+    _reviewsSubscription = repository
+        .watchAllProjectsByDepartment(
+          departmentId: departmentId,
+          status: status,
+        )
+        .listen((result) {
+          result.fold(
+            (failure) => emit(HodProjectsError(failure.message)),
+            (proposals) => emit(HodProjectsLoaded(proposals)),
+          );
+        });
   }
 
   Future<void> rejectProject(String id, String reason) async {
@@ -91,5 +109,11 @@ class HodProjectsCubit extends Cubit<HodProjectsState> {
       emit(const HodProjectsActionSuccess("تم حذف المشروع بنجاح"));
       // fetchAllProjectsByDepartment();
     });
+  }
+
+  @override
+  Future<void> close() {
+    _reviewsSubscription?.cancel();
+    return super.close();
   }
 }

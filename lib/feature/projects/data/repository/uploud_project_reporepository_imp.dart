@@ -179,8 +179,39 @@ class UploudProjectRepositoryImpl implements UploudProjectRepository {
     required String status,
   }) async* {
     try {
-      await for (final reviews in remoteDataSource.getMyProjects(
+      await for (final reviews in remoteDataSource.watchMyProjects(
         status: status,
+      )) {
+        final review = reviews
+            .map(
+              (e) => ProjectEntity(
+                name: e.name,
+                description: e.description,
+                supervisor: e.supervisor,
+                students: e.students,
+                department: e.department,
+                year: e.year,
+              ),
+            )
+            .toList();
+        yield Right(review);
+      }
+    } on ServerException catch (e) {
+      yield Left(ServerFailure(e.message));
+    } catch (e) {
+      yield Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, List<ProjectEntity>>> watchAllProjectsByDepartment({
+    required String departmentId,
+    required String status,
+  }) async* {
+    try {
+      await for (final reviews in remoteDataSource.watchAllProjectsByDepartment(
+        status: status,
+        departmentId: departmentId,
       )) {
         final review = reviews
             .map(

@@ -23,7 +23,7 @@ class ExploreProposaleApproved extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppColor.transparent,
           elevation: 0,
-          title: Text('استكشف المقترحات ', style: AppTextStyle.bold(22)),
+          title: Text('استكشف المقترحات ', style: AppTextStyle.bold(18)),
           centerTitle: false,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded),

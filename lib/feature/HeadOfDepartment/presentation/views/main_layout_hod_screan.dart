@@ -49,7 +49,7 @@ class _MainLayoutHODScreenState extends State<MainLayoutHODScreen> {
           title: "تأكيد الخروج",
           description: "هل تريد الخروج من التطبيق؟",
           confirmText: "خروج",
-          icon: Iconsax.logout,
+          icon: Iconsax.info_circle,
           confirmColor: AppColor.primaryColor,
           onConfirm: () {
             SystemNavigator.pop(); // أو SystemNavigator.pop();

@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_management_idea_system/core/utils/cache_helper.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../../../../../core/utils/app_colors.dart';
-import '../../../../../../core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_colors.dart';
+import '../../../../../core/utils/app_text_style.dart';
 
 PreferredSizeWidget buildProjectUploadAppBar({
   required BuildContext context,

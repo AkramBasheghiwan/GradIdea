@@ -13,6 +13,7 @@ class ProjectModel extends ProjectEntity {
     super.fileUrl,
     super.status,
     super.rejectionReason,
+    super.supervisorId,
   });
 
   Map<String, dynamic> toMap(String leaderId) {
@@ -23,6 +24,7 @@ class ProjectModel extends ProjectEntity {
       'students': students,
       'department': department,
       'year': year,
+      'supervisor_id': supervisorId,
       'leader_id': leaderId,
       if (fileUrl != null) 'fileurl': fileUrl,
       if (status != null) 'status': status,
@@ -37,7 +39,7 @@ class ProjectModel extends ProjectEntity {
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       supervisor: map['supervisor'] ?? '',
-
+      supervisorId: map['supervisor_id'] ?? '',
       students: map['students'] != null
           ? List<String>.from(map['students'])
           : [],
@@ -64,6 +66,7 @@ class ProjectModel extends ProjectEntity {
       fileUrl: pro.fileUrl,
       status: pro.status,
       rejectionReason: pro.rejectionReason,
+      supervisorId: pro.supervisorId,
     );
   }
 }
